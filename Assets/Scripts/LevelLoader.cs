@@ -14,11 +14,15 @@ public static class LevelLoader
     public static int EnemyCount { get; private set; }
     public static int PotentialScore { get; private set; }
 
-    // Kademeli zorluk: bölüm ilerledikçe tilkiler ve bloklar daha dayanıklı olur.
-    // Bölüm 1'de x1, bölüm 20'de tilki x1.5, blok x1.3.
-    public static float Difficulty(int index) => Mathf.Clamp01(index / (float)(Levels.Count - 1));
-    public static float FoxHealthMult(int index) => 1f + 0.5f * Difficulty(index);
-    public static float BlockHealthMult(int index) => 1f + 0.3f * Difficulty(index);
+    // Kademeli zorluk: her dünya (5 bölüm) bir kademe. Kademe içinde zorluk bölüm tasarımıyla
+    // testere dişi gibi artar (1. bölüm nefes aldırır, 5. bölüm kale/patron), her yeni dünyada
+    // tilkiler ve bloklar bir basamak daha dayanıklı olur.
+    //   Dünya:   1     2     3     4     5     6     7     8
+    //   Tilki:  x1.00 x1.08 x1.16 x1.24 x1.32 x1.40 x1.48 x1.56
+    //   Blok:   x1.00 x1.05 x1.10 x1.15 x1.20 x1.25 x1.30 x1.35
+    public static int Tier(int index) => Mathf.Clamp(index / Levels.PerWorld, 0, 7);
+    public static float FoxHealthMult(int index) => 1f + 0.08f * Tier(index);
+    public static float BlockHealthMult(int index) => 1f + 0.05f * Tier(index);
     static float blockMul = 1f;
 
     public static void Clear()
@@ -39,8 +43,12 @@ public static class LevelLoader
         blockMul = BlockHealthMult(def.index);
         float foxMul = FoxHealthMult(def.index);
 
+        int nestNo = 0;
         foreach (var p in def.pieces)
+        {
+            if (p.nest) { PotentialScore += CreateNest(p, levelRoot.transform, "nest_" + def.index + "_" + nestNo++); continue; }
             PotentialScore += CreatePiece(p, levelRoot.transform);
+        }
 
         foreach (var f in def.foxes)
         {
@@ -50,6 +58,32 @@ public static class LevelLoader
             fd.ResetHealth(fd.MaxHealth * foxMul);
             EnemyCount++;
         }
+    }
+
+    // ------------------------------------------------------------------ altın yuva
+    static int CreateNest(LevelDef.Piece p, Transform parent, string key)
+    {
+        bool collected = PlayerPrefs.GetInt(key, 0) == 1;
+        var go = new GameObject("AltinYuva");
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(p.center.x, p.center.y - 0.4f + 14f / 32f, 0f);
+        var sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = collected ? GameArt.I.nestEmpty : GameArt.I.nestGold;
+        sr.sortingOrder = 5;
+        var rb = go.AddComponent<Rigidbody2D>();
+        rb.useAutoMass = true;
+        var d = go.AddComponent<Destructible>();
+        d.material = BlockMaterial.Wood;
+        d.minImpact = 1.5f;
+        var bc = go.AddComponent<BoxCollider2D>();
+        bc.size = new Vector2(1.05f, 0.8f);
+        bc.offset = new Vector2(0f, -0.04f);
+        bc.sharedMaterial = PhysMats.Wood;
+        bc.density = 0.8f;
+        d.ResetHealth(3f);
+        d.scoreValue = 1000;
+        if (!collected) { d.bonusEggs = 3; d.bonusKey = key; }
+        return d.scoreValue;
     }
 
     // ------------------------------------------------------------------ bloklar

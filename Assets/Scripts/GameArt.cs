@@ -42,13 +42,13 @@ public class GameArt : ScriptableObject
     public FoxArt foxHelmet = new FoxArt();
 
     [Header("Bloklar")]
-    public Sprite wood, stone, ice, tnt, boulder, crack1, crack2, egg;
+    public Sprite wood, stone, ice, tnt, boulder, crack1, crack2, egg, nestGold, nestEmpty;
 
     [Header("Sapan")]
     public Sprite slingBack, slingFront, pouch;
 
     [Header("Temalar")]
-    public ThemeArt[] themes = new ThemeArt[4];
+    public ThemeArt[] themes = new ThemeArt[8];
     public Sprite starPx;
 
     [Header("Efektler")]
@@ -60,6 +60,8 @@ public class GameArt : ScriptableObject
     public Texture2D iconRestart, iconPause, iconPlay, iconNext, iconMenu, iconLock, iconHome, iconExit, iconPlus, iconShop, uiEgg;
 
     [Header("Sesler")]
+    public AudioClip[] duckVoice = new AudioClip[6], duckAbility = new AudioClip[6], duckHit = new AudioClip[6];
+    public AudioClip musicMenu, musicWorld, musicWorld2;
     public AudioClip sLaunch, sFlap, sPop, sDash, sHit, sThud, sWood, sStone, sIce, sBoom, sFox, sClick, sStar, sStretch, sWin, sLose, sWhoosh;
 
     public BirdArt Bird(BirdType t) => birds[(int)t];

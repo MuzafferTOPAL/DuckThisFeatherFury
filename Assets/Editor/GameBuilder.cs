@@ -11,7 +11,7 @@ using UnityEngine;
 [InitializeOnLoad]
 public static class GameBuilder
 {
-    const int Version = 14;
+    const int Version = 15;
     const string VersionFile = "ProjectSettings/OrdekOyunuBuilder.txt";
     const string CmdFile = "ProjectSettings/ordek_cmd.txt";
     const string ScenePath = "Assets/Scenes/Game.unity";
@@ -85,7 +85,8 @@ public static class GameBuilder
     [MenuItem("Ördek Oyunu/İlerlemeyi Sıfırla")]
     public static void ResetProgress()
     {
-        for (int i = 0; i < 20; i++) { PlayerPrefs.DeleteKey("stars_" + i); PlayerPrefs.DeleteKey("best_" + i); }
+        for (int i = 0; i < Levels.Count; i++) { PlayerPrefs.DeleteKey("stars_" + i); PlayerPrefs.DeleteKey("best_" + i); }
+        foreach (var k in Levels.NestKeys()) PlayerPrefs.DeleteKey(k);
         PlayerPrefs.DeleteKey("last_level");
         PlayerPrefs.DeleteKey("unlock_all");
         Economy.ResetAll();
@@ -158,7 +159,7 @@ public static class GameBuilder
                 case "stop": if (EditorApplication.isPlaying) EditorApplication.ExitPlaymode(); break;
                 case "autotest":
                     PlayerPrefs.SetInt("autotest_from", parts.Length > 1 ? int.Parse(parts[1]) : 1);
-                    PlayerPrefs.SetInt("autotest_to", parts.Length > 2 ? int.Parse(parts[2]) : 20);
+                    PlayerPrefs.SetInt("autotest_to", parts.Length > 2 ? int.Parse(parts[2]) : Levels.Count);
                     if (EditorApplication.isPlaying) { PlayerPrefs.SetInt("autotest", 1); EditorApplication.ExitPlaymode(); EditorApplication.delayCall += AutoTest; }
                     else AutoTest();
                     break;
@@ -282,7 +283,10 @@ public static class GameBuilder
                 if (ai == null) continue;
                 ai.forceToMono = true;
                 var ss = ai.defaultSampleSettings;
-                ss.loadType = AudioClipLoadType.DecompressOnLoad;
+                bool isMusic = Path.GetFileName(file).StartsWith("music_");
+                ss.loadType = isMusic ? AudioClipLoadType.CompressedInMemory : AudioClipLoadType.DecompressOnLoad;
+                ss.compressionFormat = isMusic ? AudioCompressionFormat.Vorbis : AudioCompressionFormat.ADPCM;
+                ss.quality = isMusic ? 0.45f : 1f;
                 ai.defaultSampleSettings = ss;
                 ai.SaveAndReimport();
             }
@@ -341,16 +345,18 @@ public static class GameBuilder
         art.foxHelmet = new GameArt.FoxArt { idle = Sp("foxh_idle"), blink = Sp("foxh_blink"), scared = Sp("foxh_scared"), hurt = Sp("foxh_hurt") };
 
         art.wood = Sp("block_wood"); art.stone = Sp("block_stone"); art.ice = Sp("block_ice"); art.tnt = Sp("block_tnt");
-        art.boulder = Sp("boulder"); art.egg = Sp("egg"); art.crack1 = Sp("crack_1"); art.crack2 = Sp("crack_2");
+        art.boulder = Sp("boulder"); art.egg = Sp("egg"); art.nestGold = Sp("nest_gold"); art.nestEmpty = Sp("nest_empty"); art.crack1 = Sp("crack_1"); art.crack2 = Sp("crack_2");
         art.slingBack = Sp("sling_back"); art.slingFront = Sp("sling_front"); art.pouch = Sp("pouch");
 
         Color[] trans =
         {
             new Color(0.07f, 0.15f, 0.27f), new Color(0.24f, 0.1f, 0.05f),
-            new Color(0.14f, 0.24f, 0.36f), new Color(0.09f, 0.06f, 0.17f)
+            new Color(0.14f, 0.24f, 0.36f), new Color(0.09f, 0.06f, 0.17f),
+            new Color(0.36f, 0.17f, 0.08f), new Color(0.03f, 0.27f, 0.38f),
+            new Color(0.32f, 0.2f, 0.36f), new Color(0.13f, 0.03f, 0.04f)
         };
-        art.themes = new GameArt.ThemeArt[4];
-        for (int i = 0; i < 4; i++)
+        art.themes = new GameArt.ThemeArt[8];
+        for (int i = 0; i < 8; i++)
         {
             art.themes[i] = new GameArt.ThemeArt
             {
@@ -358,7 +364,7 @@ public static class GameBuilder
                 water = Sp("water_" + i), dirt = Sp("dirt_" + i), sun = Sp("sun_" + i),
                 cloudA = Sp("cloudA_" + i), cloudB = Sp("cloudB_" + i), bush = Sp("bush_" + i),
                 decor0 = Sp("decor0_" + i), decor1 = Sp("decor1_" + i), decor2 = Sp("decor2_" + i),
-                transitionColor = trans[i], stars = i == 3
+                transitionColor = trans[i], stars = i == 3 || i == 7
             };
         }
         art.starPx = Sp("star_px");
@@ -379,6 +385,15 @@ public static class GameBuilder
         art.sIce = Au("sfx_ice"); art.sBoom = Au("sfx_boom"); art.sFox = Au("sfx_fox"); art.sClick = Au("sfx_click");
         art.sStar = Au("sfx_star"); art.sStretch = Au("sfx_stretch"); art.sWin = Au("sfx_win"); art.sLose = Au("sfx_lose");
         art.sWhoosh = Au("sfx_whoosh");
+        string[] duckNames = { "duck", "mandarin", "merganser", "muscovy", "scoter", "shelduck" };   // BirdType sırası
+        art.duckVoice = new AudioClip[6]; art.duckAbility = new AudioClip[6]; art.duckHit = new AudioClip[6];
+        for (int i = 0; i < 6; i++)
+        {
+            art.duckVoice[i] = Au("duck_voice_" + duckNames[i]);
+            art.duckAbility[i] = Au("duck_ability_" + duckNames[i]);
+            art.duckHit[i] = Au("duck_hit_" + duckNames[i]);
+        }
+        art.musicMenu = Au("music_menu"); art.musicWorld = Au("music_world"); art.musicWorld2 = Au("music_world2");
 
         EditorUtility.SetDirty(art);
         AssetDatabase.SaveAssets();

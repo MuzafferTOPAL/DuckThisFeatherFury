@@ -40,6 +40,8 @@ public class AutoTester : MonoBehaviour
         var savedBest = new int[Levels.Count];
         for (int k = 0; k < Levels.Count; k++) { savedStars[k] = Levels.Stars(k); savedBest[k] = Levels.Best(k); }
         int savedEggs = Economy.Eggs;
+        var savedNests = new System.Collections.Generic.Dictionary<string, int>();
+        foreach (var k in Levels.NestKeys()) savedNests[k] = PlayerPrefs.GetInt(k, 0);
         var gm = GameManager.Instance;
         Line("=== Otomatik test başladı " + System.DateTime.Now + " ===");
         int totalWins = 0, totalTrials = 0;
@@ -105,6 +107,7 @@ public class AutoTester : MonoBehaviour
             PlayerPrefs.SetInt("best_" + k, savedBest[k]);
         }
         Economy.Eggs = savedEggs;
+        foreach (var kv in savedNests) PlayerPrefs.SetInt(kv.Key, kv.Value);
         PlayerPrefs.Save();
         gm.OpenMenu();
         Destroy(this);

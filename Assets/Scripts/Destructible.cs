@@ -14,6 +14,8 @@ public class Destructible : MonoBehaviour
     public bool isEnemy;
     public int scoreValue = 500;
     public SpriteRenderer crackRenderer;
+    public int bonusEggs;          // altın yuva: kırılınca verilecek yumurta (bir kereliğine)
+    public string bonusKey;
 
     public float MaxHealth { get; private set; }
     public float HealthPercent => MaxHealth > 0f ? Mathf.Clamp01(health / MaxHealth) : 0f;
@@ -132,6 +134,7 @@ public class Destructible : MonoBehaviour
         {
             if (effects) GameManager.Instance.AddScore(scoreValue, pos);
             if (effects && !isEnemy) GameManager.Instance.BlockDestroyed(scoreValue);
+            if (effects && bonusEggs > 0) GameManager.Instance.NestBroken(bonusKey, bonusEggs, pos);
             if (isEnemy) GameManager.Instance.EnemyDefeated();
         }
         Destroy(gameObject);

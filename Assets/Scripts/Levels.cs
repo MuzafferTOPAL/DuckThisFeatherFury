@@ -10,6 +10,7 @@ public class LevelDef
         public BlockMaterial mat;
         public Vector2 center, size;
         public bool boulder;
+        public bool nest;      // altın yuva (bonus yumurta)
     }
 
     public struct FoxSpawn
@@ -23,6 +24,7 @@ public class LevelDef
     public string title;
     public BirdType[] birds;
     public BirdType? newBird;
+    public string tip;          // tanıtım kartında gösterilecek ipucu (Loc anahtarı)
     public float maxX = 11f;
     public readonly List<Piece> pieces = new List<Piece>();
     public readonly List<FoxSpawn> foxes = new List<FoxSpawn>();
@@ -50,12 +52,17 @@ public class LevelDef
         pieces.Add(new Piece { mat = BlockMaterial.Stone, center = new Vector2(x, y0 + r), size = new Vector2(r * 2f, r * 2f), boulder = true });
     }
     public void Fox(FoxKind k, float x, float y0) => foxes.Add(new FoxSpawn { kind = k, bottom = new Vector2(x, y0) });
+    // Altın yuva: kırılınca bir kereliğine +3 altın yumurta verir
+    public void Nest(float x, float y0) =>
+        pieces.Add(new Piece { mat = BlockMaterial.Wood, center = new Vector2(x, y0 + 0.4f), size = new Vector2(1.1f, 0.8f), nest = true });
 }
 
 public static class Levels
 {
-    public static readonly string[] WorldNames = { "GÖL KIYISI", "SONBAHAR ORMANI", "KARLI DAĞLAR", "GÜN BATIMI ÇİFTLİĞİ" };
-    public const int Count = 20;
+    public static readonly string[] WorldNames = { "GÖL KIYISI", "SONBAHAR ORMANI", "KARLI DAĞLAR", "GÜN BATIMI ÇİFTLİĞİ", "ÇÖL KANYONU", "TROPİK SAHİL", "KİRAZ VADİSİ", "ATEŞ DAĞI" };
+    public const int PerWorld = 5;
+    public static int Worlds => Count / PerWorld;
+    public const int Count = 40;
 
     static List<LevelDef> all;
     public static IReadOnlyList<LevelDef> All
@@ -111,6 +118,7 @@ public static class Levels
         a = l.Frame(I, I, 3.4f, 5.6f, y, 1.3f); l.Fox(N, 4.5f, y);
         l.Frame(I, I, 5.8f, 8.0f, y, 1.3f); l.Fox(N, 6.9f, y);
         t = l.Beam(W, 3.4f, 8.0f, a); l.Fox(HL, 5.7f, t);
+        l.Nest(10.2f, -4f);
 
         // ======================= DÜNYA 2: SONBAHAR ORMANI
         l = L(1, "ŞAHİN DALIŞI", 12.5f, new[] { H, H, D }, H);
@@ -145,6 +153,7 @@ public static class Levels
         l.Frame(W, W, 3.4f, 5.8f, y, 1.3f); l.Fox(HL, 4.6f, y);
         a = l.Frame(W, W, 6.2f, 8.6f, y, 1.3f); l.Fox(HL, 7.4f, y);
         t = l.Beam(W, 3.4f, 8.6f, a); l.Fox(N, 6f, t);
+        l.Nest(10.3f, -4f);
 
         // ======================= DÜNYA 3: KARLI DAĞLAR
         l = L(2, "KAZ GELİYOR", 11f, new[] { G, G, D }, G);
@@ -177,6 +186,7 @@ public static class Levels
         a = l.Frame(I, I, 6.4f, 9f, y, 1.3f); l.Fox(HL, 7.7f, y);
         b = l.Beam(S, 3.4f, 9f, a);
         t = l.Frame(W, W, 5f, 7.4f, b, 1.3f); l.Fox(N, 6.2f, b);
+        l.Nest(10.7f, -4f);
 
         // ======================= DÜNYA 4: GÜN BATIMI ÇİFTLİĞİ
         l = L(3, "KARGA BOMBASI", 11.5f, new[] { C, C, D }, C);
@@ -208,12 +218,163 @@ public static class Levels
         a = l.Frame(W, W, 7.2f, 10.5f, y, 1.4f); l.Fox(HL, 8.85f, y);
         b = l.Beam(S, 3.5f, 10.5f, a);
         t = l.Frame(I, I, 5.2f, 8.8f, b, 1.3f); l.Fox(N, 7f, b); l.Fox(N, 7f, t);
+        l.Nest(12.4f, -4f);
+
+        // ======================= DÜNYA 5: ÇÖL KANYONU  (kademe 2 başlar: tilkiler ve bloklar bir kademe daha sağlam)
+        l = L(4, "KUM FIRTINASI", 12f, new[] { D, SP, H, D }); l.tip = "tip_nest";
+        a = l.Frame(W, W, 3f, 5.4f, -4f, 1.4f); l.Fox(N, 4.2f, -4f);
+        t = l.Frame(W, W, 3f, 5.4f, a, 1.3f); l.Fox(K, 4.2f, a); l.Nest(4.2f, t);
+        b = l.Frame(W, W, 8f, 10.4f, -4f, 1.4f); l.Fox(N, 9.2f, -4f); l.Fox(K, 9.2f, b);
+
+        l = L(4, "KAKTÜS KULESİ", 11f, new[] { H, SP, D });
+        a = l.Frame(W, W, 5f, 7.4f, -4f, 1.4f); l.Fox(N, 6.2f, -4f);
+        b = l.Frame(W, W, 5f, 7.4f, a, 1.4f); l.Fox(N, 6.2f, a);
+        t = l.Frame(I, I, 5f, 7.4f, b, 1.3f); l.Fox(K, 6.2f, b); l.Fox(N, 6.2f, t);
+        l.Tnt(4.2f, -4f); l.Tnt(8.2f, -4f);
+
+        l = L(4, "VAHA", 12.5f, new[] { G, D, SP, G });
+        l.Cube(S, 3.4f, -4f, 1.2f); l.Cube(S, 9.6f, -4f, 1.2f);
+        y = l.Beam(S, 2.8f, 10.2f, -2.8f);
+        l.Fox(N, 5f, -4f); l.Fox(HL, 7.4f, -4f);
+        l.Boulder(3.9f, y, 0.45f); l.Boulder(9.1f, y, 0.45f);
+        t = l.Frame(I, I, 5.4f, 7.8f, y, 1.3f); l.Fox(N, 6.6f, y); l.Fox(K, 6.6f, t);
+
+        l = L(4, "KANYON KÖPRÜSÜ", 13f, new[] { SH, H, C });
+        l.Col(S, 3.5f, -4f, 2.6f); l.Col(W, 7f, -4f, 2.6f); l.Col(S, 10.5f, -4f, 2.6f);
+        y = l.Beam(W, 3.25f, 10.75f, -1.4f);
+        l.Fox(N, 5.2f, -4f); l.Fox(N, 8.8f, -4f);
+        l.Frame(W, W, 4f, 6.4f, y, 1.3f); l.Fox(HL, 5.2f, y);
+        l.Frame(W, W, 7.6f, 10f, y, 1.3f); l.Fox(N, 8.8f, y);
+        l.Nest(7f, y);
+
+        l = L(4, "FİRAVUN TİLKİ", 13f, new[] { G, C, SH, SP });
+        y = l.Frame(S, S, 3f, 11f, -4f, 2f);
+        l.Fox(B, 7f, -4f); l.Tnt(4.3f, -4f); l.Tnt(9.7f, -4f); l.Fox(K, 5.6f, -4f); l.Fox(K, 8.4f, -4f);
+        a = l.Frame(S, W, 4f, 10f, y, 1.4f); l.Fox(HL, 5.5f, y); l.Fox(HL, 8.5f, y); l.Cube(I, 7f, y, 1f);
+        t = l.Frame(W, W, 5.8f, 8.2f, a, 1.3f); l.Fox(N, 7f, a); l.Nest(7f, t);
+
+        // ======================= DÜNYA 6: TROPİK SAHİL
+        l = L(5, "KUMDAN KALE", 11.5f, new[] { SP, D, H, SP });
+        a = l.Frame(I, I, 4f, 6.4f, -4f, 1.3f); l.Fox(N, 5.2f, -4f); l.Fox(K, 5.2f, a);
+        b = l.Frame(W, I, 7f, 9.4f, -4f, 1.3f); l.Fox(N, 8.2f, -4f); l.Cube(I, 8.2f, b, 0.8f);
+        l.Nest(10.6f, -4f);
+
+        l = L(5, "HİNDİSTAN CEVİZİ", 13f, new[] { D, G, H, SP });
+        l.Col(W, 3.2f, -4f, 2.4f); l.Col(W, 6.8f, -4f, 2.4f);
+        y = l.Beam(W, 2.9f, 7.1f, -1.6f);
+        l.Boulder(3.8f, y, 0.45f); l.Boulder(6.2f, y, 0.45f); l.Fox(N, 5f, y);
+        l.Fox(N, 4.2f, -4f); l.Fox(HL, 5.8f, -4f);
+        l.Col(W, 9f, -4f, 1.6f); l.Col(W, 11.6f, -4f, 1.6f);
+        b = l.Beam(W, 8.7f, 11.9f, -2.4f); l.Boulder(10.6f, b, 0.45f); l.Nest(9.5f, b);
+        l.Fox(N, 10.3f, -4f);
+
+        l = L(5, "DENİZ FENERİ", 11.5f, new[] { H, G, C });
+        a = l.Frame(S, W, 5f, 7.4f, -4f, 1.4f); l.Fox(N, 6.2f, -4f);
+        b = l.Frame(W, W, 5f, 7.4f, a, 1.4f); l.Fox(HL, 6.2f, a);
+        t = l.Frame(I, I, 5f, 7.4f, b, 1.3f); l.Fox(K, 6.2f, b); l.Fox(N, 6.2f, t);
+        l.Frame(W, W, 9f, 11.4f, -4f, 1.3f); l.Fox(N, 10.2f, -4f);
+
+        l = L(5, "KORSAN GEMİSİ", 14f, new[] { C, SH, SP, D });
+        y = l.Beam(W, 2.5f, 12.5f, -4f);
+        a = l.Frame(W, W, 3f, 6f, y, 1.4f); l.Fox(N, 4.5f, y); l.Tnt(6.8f, y);
+        l.Frame(W, W, 7.6f, 10.6f, y, 1.4f); l.Fox(HL, 9.1f, y); l.Tnt(11.6f, y);
+        b = l.Beam(W, 3f, 10.6f, a);
+        t = l.Frame(W, W, 5.6f, 8f, b, 1.4f); l.Fox(N, 6.8f, b); l.Nest(6.8f, t);
+
+        l = L(5, "TİLKİ ADASI", 14f, new[] { G, C, SH, H });
+        a = l.Frame(S, W, 2.5f, 5.5f, -4f, 1.4f); l.Fox(HL, 4f, -4f);
+        l.Frame(W, W, 2.9f, 5.1f, a, 1.3f); l.Fox(N, 4f, a);
+        y = l.Frame(S, S, 7f, 12.4f, -4f, 2f);
+        l.Fox(B, 9.7f, -4f); l.Tnt(8.05f, -4f); l.Tnt(11.35f, -4f);
+        b = l.Frame(W, W, 7.4f, 9.6f, y, 1.3f); l.Fox(HL, 8.5f, y);
+        l.Frame(W, W, 9.8f, 12f, y, 1.3f); l.Fox(HL, 10.9f, y);
+        t = l.Beam(S, 7.4f, 12f, b); l.Fox(N, 9.7f, t);
+
+        // ======================= DÜNYA 7: KİRAZ VADİSİ  (kademe 3)
+        l = L(6, "PAGODA", 11.5f, new[] { SP, H, SH });
+        a = l.Frame(W, W, 4f, 8.4f, -4f, 1.4f); l.Fox(N, 5.2f, -4f); l.Fox(N, 7.2f, -4f);
+        b = l.Frame(W, W, 4.6f, 7.8f, a, 1.3f); l.Fox(N, 6.2f, a);
+        t = l.Frame(I, I, 5.1f, 7.3f, b, 1.2f); l.Fox(K, 6.2f, b); l.Fox(N, 6.2f, t);
+
+        l = L(6, "BAMBU ORMANI", 13f, new[] { H, H, SP, C });
+        a = l.Frame(W, W, 2.8f, 5.2f, -4f, 2.2f); l.Fox(N, 4f, -4f); l.Fox(K, 4f, a);
+        l.Frame(W, W, 5.6f, 8f, -4f, 2.2f); l.Fox(N, 6.8f, -4f); l.Nest(6.8f, a);
+        l.Frame(W, W, 8.4f, 10.8f, -4f, 2.2f); l.Fox(HL, 9.6f, -4f); l.Fox(N, 9.6f, a);
+
+        l = L(6, "TAŞ BAHÇE", 12.5f, new[] { G, SP, C });
+        y = l.Beam(S, 3f, 10f, -4f);
+        l.Cube(S, 3.6f, y, 1.1f); a = l.Cube(S, 9.4f, y, 1.1f);
+        l.Fox(HL, 5.4f, y); l.Fox(N, 7.6f, y);
+        b = l.Beam(I, 3f, 10f, a);
+        l.Frame(I, I, 4.4f, 6.8f, b, 1.3f); l.Fox(N, 5.6f, b);
+        l.Frame(I, I, 7f, 9.4f, b, 1.3f); l.Fox(N, 8.2f, b);
+        l.Boulder(3.6f, b, 0.45f);
+
+        l = L(6, "ÇAY EVİ", 13f, new[] { SH, C, G, SP, D });
+        a = l.Frame(W, W, 3f, 7f, -4f, 1.5f); l.Fox(N, 4.1f, -4f); l.Tnt(5.6f, -4f);
+        t = l.Frame(W, W, 3.4f, 6.6f, a, 1.3f); l.Fox(HL, 5f, a); l.Nest(5f, t);
+        l.Cube(S, 9f, -4f, 1f); l.Cube(S, 11.4f, -4f, 1f);
+        y = l.Beam(W, 8.5f, 11.9f, -3f); l.Fox(N, 10.2f, -4f); l.Fox(N, 10.2f, y);
+
+        l = L(6, "ŞOGUN TİLKİ", 14f, new[] { C, G, H, SP, SH });
+        y = l.Frame(S, S, 3f, 11f, -4f, 2f);
+        l.Fox(B, 7f, -4f); l.Cube(I, 4.3f, -4f, 1f); l.Cube(I, 9.7f, -4f, 1f); l.Fox(K, 5.5f, -4f); l.Fox(K, 8.5f, -4f);
+        l.Frame(W, W, 3.4f, 6.8f, y, 1.4f); l.Fox(HL, 5.1f, y);
+        a = l.Frame(W, W, 7.2f, 10.6f, y, 1.4f); l.Fox(HL, 8.9f, y);
+        b = l.Beam(S, 3.4f, 10.6f, a);
+        t = l.Frame(I, I, 5.6f, 8.4f, b, 1.3f); l.Fox(N, 7f, b); l.Fox(N, 7f, t);
+
+        // ======================= DÜNYA 8: ATEŞ DAĞI  (kademe 4, final)
+        l = L(7, "KÜL YOLU", 12f, new[] { C, H, SP, D });
+        a = l.Frame(S, W, 3.5f, 5.9f, -4f, 1.4f); l.Fox(N, 4.7f, -4f); l.Fox(HL, 4.7f, a);
+        b = l.Frame(W, W, 7.5f, 9.9f, -4f, 1.4f); l.Fox(N, 8.7f, -4f); l.Tnt(8.7f, b);
+        l.Nest(11f, -4f);
+
+        l = L(7, "OBSİDYEN KULE", 11.5f, new[] { G, C, G, SH });
+        a = l.Frame(S, S, 5f, 7.4f, -4f, 1.4f); l.Fox(HL, 6.2f, -4f);
+        b = l.Frame(S, S, 5f, 7.4f, a, 1.4f); l.Fox(HL, 6.2f, a);
+        t = l.Frame(S, W, 5f, 7.4f, b, 1.3f); l.Fox(N, 6.2f, b); l.Fox(N, 6.2f, t);
+        y = l.Cube(S, 3.6f, -4f, 1.2f); l.Fox(K, 3.6f, y);
+        y = l.Cube(S, 8.8f, -4f, 1.2f); l.Fox(K, 8.8f, y);
+
+        l = L(7, "LAV KÖPRÜSÜ", 13.5f, new[] { SH, C, H });
+        l.Col(S, 3.5f, -4f, 2.4f); l.Col(S, 7f, -4f, 2.4f); l.Col(S, 10.5f, -4f, 2.4f);
+        y = l.Beam(W, 3.25f, 10.75f, -1.6f);
+        l.Fox(N, 5.25f, -4f); l.Fox(N, 8.2f, -4f); l.Tnt(9.6f, -4f);
+        l.Boulder(4.2f, y, 0.45f);
+        l.Frame(W, W, 5f, 7.4f, y, 1.3f); l.Fox(HL, 6.2f, y);
+        l.Frame(I, I, 8f, 10.4f, y, 1.3f); l.Fox(N, 9.2f, y);
+
+        l = L(7, "EJDERHA MAĞARASI", 14f, new[] { SP, C, G, SH, H });
+        y = l.Frame(S, W, 2.5f, 8.5f, -4f, 1.8f);
+        l.Fox(N, 3.8f, -4f); l.Fox(HL, 5.5f, -4f); l.Fox(N, 7.2f, -4f);
+        a = l.Frame(I, I, 3f, 8f, y, 1.3f); l.Fox(N, 4.4f, y); l.Tnt(5.5f, y); l.Fox(N, 6.6f, y);
+        l.Fox(K, 5.5f, a);
+        b = l.Frame(S, W, 10f, 12.4f, -4f, 1.4f); l.Fox(HL, 11.2f, -4f); l.Nest(11.2f, b);
+
+        l = L(7, "TİLKİ İMPARATOR", 15f, new[] { C, G, SH, H, SP, D });
+        a = l.Frame(W, W, 2f, 4.4f, -4f, 1.4f); l.Fox(HL, 3.2f, -4f); l.Fox(N, 3.2f, a);
+        y = l.Frame(S, S, 6f, 13f, -4f, 2f);
+        l.Fox(B, 8.4f, -4f); l.Fox(B, 11f, -4f); l.Tnt(6.95f, -4f);
+        l.Frame(W, W, 6.4f, 9.4f, y, 1.4f); l.Fox(HL, 7.9f, y);
+        b = l.Frame(W, W, 9.6f, 12.6f, y, 1.4f); l.Fox(HL, 11.1f, y);
+        t = l.Beam(S, 6.4f, 12.6f, b);
+        a = l.Frame(I, I, 8.3f, 10.7f, t, 1.3f); l.Fox(N, 9.5f, t); l.Fox(K, 9.5f, a); l.Nest(7.2f, t);
     }
 
     // ---- ilerleme kaydı
     public static int Stars(int i) => PlayerPrefs.GetInt("stars_" + i, 0);
     public static int Best(int i) => PlayerPrefs.GetInt("best_" + i, 0);
     public static bool Unlocked(int i) => i == 0 || Stars(i - 1) > 0 || PlayerPrefs.GetInt("unlock_all", 0) == 1;
+    public static IEnumerable<string> NestKeys()
+    {
+        foreach (var l in All)
+        {
+            int n = 0;
+            foreach (var p in l.pieces) if (p.nest) yield return "nest_" + l.index + "_" + n++;
+        }
+    }
+
     public static int TotalStars()
     {
         int s = 0;

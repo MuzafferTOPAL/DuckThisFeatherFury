@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
         Application.targetFrameRate = 60;
         Time.timeScale = 1f;
+        PlayerProfile.Ensure();
         cam = Camera.main;
         rig = cam.GetComponent<CameraRig>();
     }
@@ -127,7 +128,7 @@ public class GameManager : MonoBehaviour
     public void NextLevel()
     {
         Sfx.Play(Sfx.Click);
-        if (LevelIndex + 1 >= Levels.Count) { SelectWorld = 3; OpenLevelSelect(); return; }
+        if (LevelIndex + 1 >= Levels.Count) { SelectWorld = Levels.Worlds - 1; OpenLevelSelect(); return; }
         PlayLevel(LevelIndex + 1);
     }
 
@@ -212,6 +213,8 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        UpdateMusic();
+
 #if ENABLE_LEGACY_INPUT_MANAGER
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -222,6 +225,23 @@ public class GameManager : MonoBehaviour
             else if (State == GState.Menu && Hud.Instance != null) Hud.Instance.AskQuit();
         }
 #endif
+    }
+
+    // ================================================================== müzik
+    void UpdateMusic()
+    {
+        switch (State)
+        {
+            case GState.Splash: Music.Play(Music.Track.None); break;
+            case GState.Menu:
+            case GState.LevelSelect:
+            case GState.Shop: Music.Play(Music.Track.Menu); break;
+            case GState.Transition: break;   // geçiş bitince değişir
+            default:
+                Music.Play(LevelLoader.Tier(LevelIndex) < 4 ? Music.Track.WorldA : Music.Track.WorldB);
+                break;
+        }
+        Music.SetDuck(Paused || State == GState.Lost);
     }
 
     // ================================================================== bölüm kurma
@@ -242,6 +262,7 @@ public class GameManager : MonoBehaviour
         NewRecord = false;
         DestroyedScore = 0;
         EggsEarned = 0;
+        NestEggs = 0;
         FirstClear = false;
 
         // yıldız eşikleri: tilki puanları + yıkım + kullanılmayan kuş bonusu
@@ -356,8 +377,9 @@ public class GameManager : MonoBehaviour
         if (State == GState.Playing && EnemiesLeft > 0)
         {
             Stars = 0;
-            EggsEarned = Economy.LoseReward(Destruction);
-            Economy.Eggs += EggsEarned;
+            int lose = Economy.LoseReward(Destruction);
+            Economy.Eggs += lose;
+            EggsEarned = lose + NestEggs;
             SetState(GState.Lost);
             Sfx.Play(Sfx.Lose, 1f, false);
         }
@@ -396,8 +418,9 @@ public class GameManager : MonoBehaviour
         Stars = Score >= ThreeStar ? 3 : Score >= TwoStar ? 2 : 1;
         NewRecord = Score > Levels.Best(LevelIndex);
         FirstClear = Levels.Stars(LevelIndex) == 0;
-        EggsEarned = Economy.WinReward(Stars, Destruction, FirstClear);
-        Economy.Eggs += EggsEarned;
+        int win = Economy.WinReward(Stars, Destruction, FirstClear);
+        Economy.Eggs += win;
+        EggsEarned = win + NestEggs;
         Levels.Save(LevelIndex, Stars, Score);
         yield return new WaitForSeconds(0.3f);
         Sfx.Play(Sfx.Win, 1f, false);
@@ -406,6 +429,20 @@ public class GameManager : MonoBehaviour
     }
 
     public bool EndShown { get; private set; }
+
+    // Altın yuva kırıldı: her yuva sadece bir kez yumurta verir
+    public int NestEggs { get; private set; }
+    public void NestBroken(string key, int eggs, Vector3 pos)
+    {
+        if (string.IsNullOrEmpty(key) || PlayerPrefs.GetInt(key, 0) == 1) return;
+        if (State != GState.Playing && State != GState.Won) return;
+        PlayerPrefs.SetInt(key, 1);
+        Economy.Eggs += eggs;
+        NestEggs += eggs;
+        Hud.Popup(pos + Vector3.up * 0.5f, "+" + eggs + " " + Loc.T("egg_short"), new Color(1f, 0.85f, 0.2f), 60);
+        Sfx.Play(Sfx.Star, 1f, false);
+        Fx.Stars(pos, 8);
+    }
 
     public void BlockDestroyed(int value)
     {

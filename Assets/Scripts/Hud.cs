@@ -133,9 +133,14 @@ public class Hud : MonoBehaviour
         if (Button(new Rect(vw / 2 - 170, 535, 340, 150), art.btnGreen, null, Loc.T("play"), 80)) gm.OpenLevelSelect();
         Text(new Rect(0, 695, vw, 56), "★ " + Levels.TotalStars() + " / " + (Levels.Count * 3), 46, Gold, TextAnchor.MiddleCenter);
         if (Button(new Rect(vw / 2 - 170, 765, 340, 120), art.btnOrange, null, Loc.T("shop"), 64)) gm.OpenShop();
-        EggPill(new Rect(vw - 190 - 340, 30, 340, 110));
+        EggPill(new Rect(vw - 320 - 340, 30, 340, 110));
+        if (Button(new Rect(vw - 290, 24, 120, 126), Music.Muted ? art.btnGrey : art.btnGreen, null, Music.Muted ? Loc.T("music_off") : Loc.T("music_on"), 30))
+        {
+            Music.Muted = !Music.Muted;
+            Sfx.Play(Sfx.Click);
+        }
 
-        if (Button(new Rect(vw - 160, 24, 120, 126), art.btnBlue, null, Sfx.Muted ? Loc.T("sound_off") : Loc.T("sound_on"), 30))
+        if (Button(new Rect(vw - 160, 24, 120, 126), Sfx.Muted ? art.btnGrey : art.btnBlue, null, Sfx.Muted ? Loc.T("sound_off") : Loc.T("sound_on"), 30))
             Sfx.Muted = !Sfx.Muted;
         if (Button(new Rect(40, 24, 300, 126), art.btnOrange, null, Loc.Names[Loc.Lang], 40)) { Sfx.Play(Sfx.Click); Loc.Next(); }
         if (Button(new Rect(vw / 2 - 130, 905, 260, 100), art.btnGrey, null, Loc.T("quit"), 52)) { Sfx.Play(Sfx.Click); confirmQuit = true; }
@@ -147,16 +152,18 @@ public class Hud : MonoBehaviour
         Dim(0.45f);
         Rect panel = new Rect(vw / 2 - 760, 150, 1520, 820);
         Panel(panel);
-        int w = Mathf.Clamp(gm.SelectWorld, 0, 3);
+        int w = Mathf.Clamp(gm.SelectWorld, 0, Levels.Worlds - 1);
         Ribbon(new Rect(vw / 2 - 520, 70, 1040, 170), Loc.T("world") + " " + (w + 1) + ": " + Loc.World(w), 66);
 
         // dünya sekmeleri
-        for (int i = 0; i < 4; i++)
+        int nw = Levels.Worlds;
+        float tabW = 150, tabG = 22, tabX0 = panel.center.x - (nw * tabW + (nw - 1) * tabG) / 2;
+        for (int i = 0; i < nw; i++)
         {
-            bool unlockedWorld = Levels.Unlocked(i * 5);
-            Rect r = new Rect(panel.x + 150 + i * 315, panel.y + 140, 290, 110);
+            bool unlockedWorld = Levels.Unlocked(i * Levels.PerWorld);
+            Rect r = new Rect(tabX0 + i * (tabW + tabG), panel.y + 140, tabW, 110);
             var tex = i == w ? art.btnOrange : unlockedWorld ? art.btnBlue : art.btnGrey;
-            if (Button(r, tex, unlockedWorld ? null : art.iconLock, unlockedWorld ? Loc.T("world") + " " + (i + 1) : "", 44) && unlockedWorld)
+            if (Button(r, tex, unlockedWorld ? null : art.iconLock, unlockedWorld ? (i + 1).ToString() : "", 64) && unlockedWorld)
             {
                 gm.SelectWorld = i;
                 Sfx.Play(Sfx.Click);
@@ -192,7 +199,9 @@ public class Hud : MonoBehaviour
         Dim(0.35f);
         float k = EaseBack(Mathf.Clamp01(gm.StateTime / 0.35f));
         bool hasNew = lvl.newBird.HasValue;
-        float ph = hasNew ? 720 : 470;
+        bool tierUp = lvl.index > 0 && lvl.index % Levels.PerWorld == 0;
+        bool hasTip = !string.IsNullOrEmpty(lvl.tip);
+        float ph = (hasNew ? 720 : 470) + (tierUp ? 70 : 0) + (hasTip ? 110 : 0);
         Rect panel = Centered(1100 * k, ph * k, 30);
         Panel(panel);
         if (k < 1f) return;
@@ -220,6 +229,20 @@ public class Hud : MonoBehaviour
             for (int i = 0; i < lvl.birds.Length; i++)
                 SpriteTex(new Rect(bx + i * 150, y + 10, 130, 100), art.Bird(lvl.birds[i]).idle);
             y += 130;
+        }
+
+        if (tierUp)
+        {
+            int tier = LevelLoader.Tier(lvl.index) + 1;
+            int pct = Mathf.RoundToInt((LevelLoader.FoxHealthMult(lvl.index) - 1f) * 100f);
+            Text(new Rect(panel.x + 30, y + 4, panel.width - 60, 56), string.Format(Loc.T("tier_up"), tier, pct), 40, new Color(0.8f, 0.25f, 0.15f), TextAnchor.MiddleCenter, 1f, 0);
+            y += 70;
+        }
+        if (hasTip)
+        {
+            SpriteTex(new Rect(panel.x + 70, y + 8, 120, 92), art.nestGold);
+            Text(new Rect(panel.x + 210, y + 10, panel.width - 260, 90), Loc.T(lvl.tip), 38, new Color(0.3f, 0.2f, 0.12f), TextAnchor.MiddleLeft, 1f, 0);
+            y += 110;
         }
 
         float blink = 0.55f + 0.45f * Mathf.Sin(Time.unscaledTime * 5f);

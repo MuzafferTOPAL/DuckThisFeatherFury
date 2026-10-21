@@ -52,6 +52,12 @@ public class Sfx : MonoBehaviour
     public static AudioClip Lose => A != null ? A.sLose : null;
     public static AudioClip Whoosh => A != null ? A.sWhoosh : null;
 
+    // ördek türüne özel sesler
+    static AudioClip Pick(AudioClip[] arr, BirdType t) => arr != null && (int)t < arr.Length ? arr[(int)t] : null;
+    public static AudioClip Voice(BirdType t) => A != null ? Pick(A.duckVoice, t) : null;
+    public static AudioClip Ability(BirdType t) => A != null ? Pick(A.duckAbility, t) : null;
+    public static AudioClip DuckHit(BirdType t) => A != null ? Pick(A.duckHit, t) : null;
+
     public static void Play(AudioClip clip, float volume = 1f, bool varyPitch = true)
     {
         if (clip == null || Muted || volume <= 0.01f) return;

@@ -130,7 +130,8 @@ public class Bird : MonoBehaviour
         {
             Fx.ClearTrail();
             Fx.Puff(transform.position, 0.5f, 4);
-            Sfx.Play(Sfx.Launch);
+            Sfx.Play(Sfx.Launch, 0.8f);
+            Sfx.Play(Sfx.Voice(type), 0.9f);
         }
     }
 
@@ -219,7 +220,7 @@ public class Bird : MonoBehaviour
                 squash = 0.2f;
                 Fx.Puff((Vector2)transform.position + Vector2.down * 0.45f, 0.45f, 4);
                 Fx.Feathers(transform.position, 3, BirdInfo.Get(type).featherColor);
-                Sfx.Play(Sfx.Flap);
+                Sfx.Play(Sfx.Ability(type));
                 break;
 
             case BirdType.Mandarin:
@@ -235,7 +236,7 @@ public class Bird : MonoBehaviour
                     if (GameManager.Instance != null) GameManager.Instance.RegisterExtraBird(clone);
                 }
                 Fx.Puff(transform.position, 0.6f, 5);
-                Sfx.Play(Sfx.Pop);
+                Sfx.Play(Sfx.Ability(type));
                 break;
 
             case BirdType.Merganser:
@@ -246,7 +247,7 @@ public class Bird : MonoBehaviour
                 rb.linearVelocity = hv.normalized * Mathf.Max(hv.magnitude * 1.9f, 21f);
                 squash = 0.35f;
                 Fx.Puff(transform.position, 0.7f, 6);
-                Sfx.Play(Sfx.Dash);
+                Sfx.Play(Sfx.Ability(type));
                 break;
 
             case BirdType.Muscovy:
@@ -257,7 +258,7 @@ public class Bird : MonoBehaviour
                 noHoming = true;
                 squash = -0.3f;
                 Fx.Puff(transform.position, 0.7f, 6);
-                Sfx.Play(Sfx.Dash);
+                Sfx.Play(Sfx.Ability(type));
                 break;
 
             case BirdType.Scoter:
@@ -274,7 +275,7 @@ public class Bird : MonoBehaviour
                 flapAnimLeft = 0.5f;
                 squash = 0.3f;
                 Fx.Puff((Vector2)transform.position + Vector2.down * 0.4f, 0.5f, 5);
-                Sfx.Play(Sfx.Pop);
+                Sfx.Play(Sfx.Ability(type));
                 break;
         }
     }
@@ -288,6 +289,7 @@ public class Bird : MonoBehaviour
     {
         if (finished) return;
         AbilityUsed = true;
+        Sfx.Play(Sfx.Ability(type), 0.7f);
         Explosion.Explode(transform.position, 3f, 16f, 28f * DamageMult, gameObject);
         FinishSilently();
     }
@@ -305,6 +307,7 @@ public class Bird : MonoBehaviour
             if (type == BirdType.Muscovy && AbilityUsed) shake = 0.45f;
             if (rig != null) rig.Shake(shake);
             if (type == BirdType.Scoter && !AbilityUsed) autoExplodeTimer = 0.8f;
+            if (!isClone && impact > 2f) Sfx.Play(Sfx.DuckHit(type), 0.75f);
         }
 
         if (impact > 2.5f)

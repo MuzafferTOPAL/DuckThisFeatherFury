@@ -25,6 +25,9 @@ public class LevelDef
     public BirdType[] birds;
     public BirdType? newBird;
     public string tip;          // tanıtım kartında gösterilecek ipucu (Loc anahtarı)
+    public string titleKey;     // el yapımı bölümler: Loc anahtarı (lvlN); üretilenlerde null
+    public bool generated;
+    public int world, slot;
     public float maxX = 11f;
     public readonly List<Piece> pieces = new List<Piece>();
     public readonly List<FoxSpawn> foxes = new List<FoxSpawn>();
@@ -59,10 +62,14 @@ public class LevelDef
 
 public static class Levels
 {
-    public static readonly string[] WorldNames = { "GÖL KIYISI", "SONBAHAR ORMANI", "KARLI DAĞLAR", "GÜN BATIMI ÇİFTLİĞİ", "ÇÖL KANYONU", "TROPİK SAHİL", "KİRAZ VADİSİ", "ATEŞ DAĞI" };
-    public const int PerWorld = 5;
-    public static int Worlds => Count / PerWorld;
-    public const int Count = 40;
+    // 10 bölüm (sahne) x 20 level = 200 level. Bir bölüm bitmeden sonraki açılmaz.
+    public const int PerWorld = 20;
+    public const int WorldCount = 10;
+    public static int Worlds => WorldCount;
+    public const int Count = PerWorld * WorldCount;
+
+    // El yapımı 40 levelin (eski 8 dünya x 5) her bölümdeki yerleri; geri kalanlar üretilir.
+    static readonly int[] HandSlots = { 0, 3, 6, 11, 19 };
 
     static List<LevelDef> all;
     public static IReadOnlyList<LevelDef> All
@@ -80,16 +87,73 @@ public static class Levels
     const BirdType D = BirdType.Mallard, SP = BirdType.Mandarin, H = BirdType.Merganser, G = BirdType.Muscovy, C = BirdType.Scoter, SH = BirdType.Shelduck;
     const FoxKind K = FoxKind.Kit, N = FoxKind.Normal, HL = FoxKind.Helmet, B = FoxKind.Boss;
 
+    static List<LevelDef> hand;
+
     static LevelDef L(int theme, string title, float maxX, BirdType[] birds, BirdType? newBird = null)
     {
-        var l = new LevelDef { index = all.Count, theme = theme, title = title, maxX = maxX, birds = birds, newBird = newBird };
-        all.Add(l);
+        var l = new LevelDef { index = hand.Count, theme = theme, title = title, maxX = maxX, birds = birds, newBird = newBird, titleKey = "lvl" + hand.Count };
+        hand.Add(l);
         return l;
     }
 
     static void Build()
     {
-        all = new List<LevelDef>();
+        BuildHandmade();
+        all = new List<LevelDef>(Count);
+        var avail = new List<BirdType>();
+        for (int w = 0; w < WorldCount; w++)
+        {
+            for (int s = 0; s < PerWorld; s++)
+            {
+                int index = w * PerWorld + s;
+                int j = System.Array.IndexOf(HandSlots, s);
+                LevelDef l;
+                if (w < 8 && j >= 0)
+                {
+                    l = hand[w * 5 + j];
+                    l.index = index;
+                    l.theme = w;
+                }
+                else
+                {
+                    if (avail.Count == 0) avail.Add(BirdType.Mallard);
+                    l = LevelGen.Make(index, w, s, LevelLoader.Difficulty(index), avail);
+                }
+                l.world = w; l.slot = s;
+                if (l.newBird.HasValue && !avail.Contains(l.newBird.Value)) avail.Add(l.newBird.Value);
+                all.Add(l);
+            }
+        }
+        // Altın yuva ipucu: oyuncunun karşılaşacağı ilk yuvalı levelde gösterilir
+        bool tipped = false;
+        foreach (var l in all)
+        {
+            if (l.tip == "tip_nest") l.tip = null;
+            bool hasNest = false;
+            foreach (var p in l.pieces) if (p.nest) hasNest = true;
+            if (hasNest && !tipped) { l.tip = "tip_nest"; tipped = true; }
+        }
+    }
+
+    // Level düzeni değişti (40 → 200 level): eski level ilerlemesi yeni sırayla uyuşmaz, bir kez sıfırlanır.
+    // Altın yumurta, yükseltmeler ve ekstra ördekler korunur.
+    public static void MigrateIfNeeded()
+    {
+        if (PlayerPrefs.GetInt("level_layout", 1) >= 2) return;
+        for (int i = 0; i < 40; i++)
+        {
+            PlayerPrefs.DeleteKey("stars_" + i);
+            PlayerPrefs.DeleteKey("best_" + i);
+            for (int n = 0; n < 4; n++) PlayerPrefs.DeleteKey("nest_" + i + "_" + n);
+        }
+        PlayerPrefs.DeleteKey("last_level");
+        PlayerPrefs.SetInt("level_layout", 2);
+        PlayerPrefs.Save();
+    }
+
+    static void BuildHandmade()
+    {
+        hand = new List<LevelDef>();
         float y, t, a, b;
         LevelDef l;
 

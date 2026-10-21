@@ -101,6 +101,40 @@ public static class Economy
 
     public static bool TypeUnlocked(BirdType t) => Levels.Unlocked(IntroLevel(t));
 
+    // ---------------------------------------------------------------- yıldız hediyeleri
+    // Her bölümde (20 level, en fazla 60 yıldız) iki hediye ördek: 20 ve 45 yıldızda.
+    // Hediye = o ana kadar tanışılan türlerden rastgele 1 ekstra ördek. Bölüm başına en fazla 2 ördek.
+    public static readonly int[] GiftStars = { 20, 45 };
+
+    public static int WorldStars(int world)
+    {
+        int s = 0;
+        for (int k = 0; k < Levels.PerWorld; k++) s += Levels.Stars(world * Levels.PerWorld + k);
+        return s;
+    }
+
+    public static bool GiftClaimed(int world, int k) => PlayerPrefs.GetInt("gift_" + world + "_" + k, -1) >= 0;
+    public static BirdType GiftDuck(int world, int k) => (BirdType)Mathf.Max(0, PlayerPrefs.GetInt("gift_" + world + "_" + k, 0));
+    public static bool GiftReady(int world, int k) => !GiftClaimed(world, k) && WorldStars(world) >= GiftStars[k];
+
+    public static bool AnyGiftReady(int world)
+    {
+        for (int k = 0; k < GiftStars.Length; k++) if (GiftReady(world, k)) return true;
+        return false;
+    }
+
+    public static BirdType ClaimGift(int world, int k)
+    {
+        var pool = new System.Collections.Generic.List<BirdType>();
+        for (int t = 0; t < TypeCount; t++) if (TypeUnlocked((BirdType)t)) pool.Add((BirdType)t);
+        if (pool.Count == 0) pool.Add(BirdType.Mallard);
+        var duck = pool[Random.Range(0, pool.Count)];
+        PlayerPrefs.SetInt("gift_" + world + "_" + k, (int)duck);
+        PlayerPrefs.SetInt("extra_" + (int)duck, Extra(duck) + 1);
+        PlayerPrefs.Save();
+        return duck;
+    }
+
     public static void ResetAll()
     {
         PlayerPrefs.DeleteKey("eggs");
@@ -110,6 +144,8 @@ public static class Economy
             PlayerPrefs.DeleteKey("aim_" + i);
             PlayerPrefs.DeleteKey("extra_" + i);
         }
+        for (int w = 0; w < Levels.WorldCount; w++)
+            for (int k = 0; k < GiftStars.Length; k++) PlayerPrefs.DeleteKey("gift_" + w + "_" + k);
         PlayerPrefs.Save();
     }
 }

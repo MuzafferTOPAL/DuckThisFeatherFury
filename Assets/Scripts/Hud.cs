@@ -149,46 +149,128 @@ public class Hud : MonoBehaviour
     // ================================================================== BÖLÜM SEÇİMİ
     void DrawSelect(GameManager gm, GameArt art)
     {
-        Dim(0.45f);
-        Rect panel = new Rect(vw / 2 - 760, 150, 1520, 820);
-        Panel(panel);
-        int w = Mathf.Clamp(gm.SelectWorld, 0, Levels.Worlds - 1);
-        Ribbon(new Rect(vw / 2 - 520, 70, 1040, 170), Loc.T("world") + " " + (w + 1) + ": " + Loc.World(w), 66);
+        bool modal = giftT > 0f;
+        GUI.enabled = !modal;
+        DrawSelectBody(gm, art);
+        GUI.enabled = true;
+        if (modal) DrawGiftReveal(art);
+    }
 
-        // dünya sekmeleri
+    void DrawSelectBody(GameManager gm, GameArt art)
+    {
+        Dim(0.45f);
+        Rect panel = new Rect(vw / 2 - 780, 150, 1560, 860);
+        Panel(panel);
         int nw = Levels.Worlds;
-        float tabW = 150, tabG = 22, tabX0 = panel.center.x - (nw * tabW + (nw - 1) * tabG) / 2;
+        int w = Mathf.Clamp(gm.SelectWorld, 0, nw - 1);
+        Ribbon(new Rect(vw / 2 - 560, 70, 1120, 170), Loc.T("world") + " " + (w + 1) + ": " + Loc.World(w), 64);
+
+        // bölüm sekmeleri (önceki bölüm bitmeden sonraki açılmaz)
+        float tabW = 124, tabG = 12, tabX0 = panel.center.x - (nw * tabW + (nw - 1) * tabG) / 2;
         for (int i = 0; i < nw; i++)
         {
-            bool unlockedWorld = Levels.Unlocked(i * Levels.PerWorld);
-            Rect r = new Rect(tabX0 + i * (tabW + tabG), panel.y + 140, tabW, 110);
-            var tex = i == w ? art.btnOrange : unlockedWorld ? art.btnBlue : art.btnGrey;
-            if (Button(r, tex, unlockedWorld ? null : art.iconLock, unlockedWorld ? (i + 1).ToString() : "", 64) && unlockedWorld)
+            bool open = Levels.Unlocked(i * Levels.PerWorld);
+            Rect r = new Rect(tabX0 + i * (tabW + tabG), panel.y + 125, tabW, 100);
+            var tex = i == w ? art.btnOrange : open ? art.btnBlue : art.btnGrey;
+            if (Button(r, tex, open ? null : art.iconLock, open ? (i + 1).ToString() : "", 60))
             {
-                gm.SelectWorld = i;
                 Sfx.Play(Sfx.Click);
+                if (open) gm.SelectWorld = i;
+                else lockMsgT = Time.unscaledTime;
             }
+            if (open && Economy.AnyGiftReady(i))
+                Tex(new Rect(r.xMax - 40, r.y - 18 + Mathf.Sin(Time.unscaledTime * 6f) * 4f, 48, 48), art.iconGift);
         }
 
-        // 5 bölüm
-        for (int k = 0; k < 5; k++)
+        // 20 level: 2 sıra x 10
+        int per = Levels.PerWorld, cols = 10;
+        float bw = 122, bh = 118, gx = 18;
+        float gx0 = panel.center.x - (cols * bw + (cols - 1) * gx) / 2;
+        for (int k = 0; k < per; k++)
         {
-            int idx = w * 5 + k;
+            int idx = w * per + k;
             bool open = Levels.Unlocked(idx);
-            Rect r = new Rect(panel.x + 120 + k * 262, panel.y + 320, 230, 240);
-            if (Button(r, open ? art.btnGreen : art.btnGrey, open ? null : art.iconLock, open ? (idx + 1).ToString() : "", 110) && open)
+            int row = k / cols, col = k % cols;
+            Rect r = new Rect(gx0 + col * (bw + gx), panel.y + 262 + row * 228, bw, bh);
+            bool boss = k == per - 1;
+            var bg = !open ? art.btnGrey : boss ? art.btnOrange : art.btnGreen;
+            if (Button(r, bg, open ? null : art.iconLock, open ? (idx + 1).ToString() : "", idx + 1 >= 100 ? 50 : 60) && open)
                 gm.PlayLevel(idx);
             int st = Levels.Stars(idx);
             for (int j = 0; j < 3; j++)
-                Tex(new Rect(r.x + 8 + j * 74, r.yMax + 12, 68, 68), j < st ? art.uiStar : art.uiStarEmpty);
-            if (open)
-                Text(new Rect(r.x - 20, r.yMax + 86, r.width + 40, 40), Loc.LevelTitle(idx), 30, Brown, TextAnchor.MiddleCenter, 1f, 0);
+                Tex(new Rect(r.x + 4 + j * 39, r.yMax + 8, 36, 36), j < st ? art.uiStar : art.uiStarEmpty);
+        }
+
+        int ws = 0;
+        for (int k = 0; k < per; k++) ws += Levels.Stars(w * per + k);
+        // ---- yıldız hediyeleri: bölüm başına 2 hediye ördek
+        Text(new Rect(panel.center.x - 520, panel.yMax - 140, 360, 50), "★ " + ws + " / " + (per * 3), 46, Brown, TextAnchor.MiddleCenter, 1f, 0);
+        Text(new Rect(panel.center.x - 520, panel.yMax - 92, 360, 40), Loc.T("gift_hint"), 28, new Color(0.55f, 0.4f, 0.28f), TextAnchor.MiddleCenter, 1f, 0);
+        for (int g = 0; g < Economy.GiftStars.Length; g++)
+        {
+            Rect gr = new Rect(panel.center.x - 140 + g * 268, panel.yMax - 140, 250, 108);
+            bool claimed = Economy.GiftClaimed(w, g), ready = Economy.GiftReady(w, g);
+            float pulse = ready ? 1f + 0.05f * Mathf.Sin(Time.unscaledTime * 8f) : 1f;
+            Rect pr = new Rect(gr.center.x - gr.width * pulse / 2, gr.center.y - gr.height * pulse / 2, gr.width * pulse, gr.height * pulse);
+            bool click = Button(pr, ready ? art.btnGreen : claimed ? art.btnBlue : art.btnGrey, null, null, 0);
+            if (claimed)
+            {
+                SpriteTex(new Rect(pr.x + 18, pr.y + 12, 90, 72), art.Bird(Economy.GiftDuck(w, g)).idle);
+                Text(new Rect(pr.x + 110, pr.y, pr.width - 120, pr.height * 0.86f), "+1", 56, Color.white, TextAnchor.MiddleCenter);
+            }
+            else
+            {
+                Tex(new Rect(pr.x + 16, pr.y + 16, 64, 64), art.iconGift, ready ? 1f : 0.55f);
+                Text(new Rect(pr.x + 84, pr.y, pr.width - 96, pr.height * 0.86f), ready ? Loc.T("gift_take") : Economy.GiftStars[g] + "★", ready ? 52 : 50, Color.white, TextAnchor.MiddleCenter);
+            }
+            if (click && ready)
+            {
+                giftDuck = Economy.ClaimGift(w, g);
+                giftT = Time.unscaledTime;
+                Sfx.Play(Sfx.Win, 0.8f, false);
+            }
+            else if (click) Sfx.Play(Sfx.Click);
+        }
+
+
+        if (lockMsgT > 0f && Time.unscaledTime - lockMsgT < 1.6f)
+        {
+            int need = 0;
+            for (int i = 0; i < nw; i++) if (!Levels.Unlocked(i * Levels.PerWorld)) { need = i; break; }
+            Text(new Rect(panel.x, panel.y + 222, panel.width, 44), string.Format(Loc.T("locked_world"), need), 38, new Color(0.85f, 0.25f, 0.15f), TextAnchor.MiddleCenter, 1f, 0);
         }
 
         if (Button(new Rect(panel.x + 40, panel.yMax - 150, 120, 126), art.btnBlue, art.iconMenu, null, 0)) gm.OpenMenu();
-        if (Button(new Rect(panel.center.x - 170, panel.yMax - 122, 340, 104), art.btnOrange, null, Loc.T("shop"), 56)) gm.OpenShop();
+        if (Button(new Rect(panel.xMax - 380, panel.yMax - 132, 340, 104), art.btnOrange, null, Loc.T("shop"), 56)) gm.OpenShop();
         EggPill(new Rect(vw - 30 - 340, 30, 340, 110));
-        Text(new Rect(panel.xMax - 520, panel.yMax - 110, 480, 70), "★ " + Levels.TotalStars() + " / " + (Levels.Count * 3), 54, Brown, TextAnchor.MiddleRight, 1f, 0);
+        Text(new Rect(30, 40, 480, 70), "★ " + Levels.TotalStars() + " / " + (Levels.Count * 3), 50, Gold, TextAnchor.MiddleLeft);
+    }
+
+    float lockMsgT = -1f;
+    float giftT = -1f;
+    BirdType giftDuck;
+
+    // Hediye açılış penceresi
+    void DrawGiftReveal(GameArt art)
+    {
+        float t = Time.unscaledTime - giftT;
+        Dim(0.6f * Mathf.Clamp01(t / 0.2f));
+        float k = EaseBack(Mathf.Clamp01(t / 0.35f));
+        Rect panel = Centered(820 * k, 600 * k, 20);
+        Panel(panel);
+        if (k < 1f) return;
+        Ribbon(new Rect(vw / 2 - 400, panel.y - 70, 800, 150), Loc.T("gift_title"), 64);
+        var b = art.Bird(giftDuck);
+        var sp = Mathf.FloorToInt(Time.unscaledTime * 6f) % 2 == 0 ? b.up : b.down;
+        float bob = Mathf.Sin(Time.unscaledTime * 4f) * 8f;
+        SpriteTex(new Rect(panel.center.x - 150, panel.y + 110 + bob, 300, 230), sp);
+        Text(new Rect(panel.x, panel.y + 350, panel.width, 70), Loc.BirdName(giftDuck), 60, Brown, TextAnchor.MiddleCenter, 1f, 0);
+        Text(new Rect(panel.x, panel.y + 418, panel.width, 50), "+1 " + Loc.T("extra") + "  (" + Loc.T("owned") + ": " + Economy.Extra(giftDuck) + ")", 36, new Color(0.3f, 0.55f, 0.2f), TextAnchor.MiddleCenter, 1f, 0);
+        if (t > 0.6f && Button(new Rect(panel.center.x - 130, panel.yMax - 110, 260, 104), art.btnGreen, null, Loc.T("ok"), 56))
+        {
+            Sfx.Play(Sfx.Click);
+            giftT = -1f;
+        }
     }
 
     // ================================================================== TANITIM KARTI
@@ -299,24 +381,28 @@ public class Hud : MonoBehaviour
     {
         Dim(0.55f);
         if (confirmQuit) { DrawQuitConfirm(gm, art); return; }
-        Rect panel = Centered(1080, 480, 30);
+        Rect panel = Centered(820, 820, 40);
         Panel(panel);
         Ribbon(new Rect(vw / 2 - 400, panel.y - 70, 800, 150), Loc.T("paused"), 66);
-        float bs = 140, gap = 52, by = panel.y + 150;
-        float x0 = panel.center.x - (bs * 5 + gap * 4) / 2;
+        if (gm.Level != null)
+            Text(new Rect(panel.x, panel.y + 96, panel.width, 50), Loc.T("level") + " " + (gm.Level.index + 1) + " - " + Loc.LevelTitle(gm.Level.index), 40, Brown, TextAnchor.MiddleCenter, 1f, 0);
+
         var items = new (Texture2D bg, Texture2D icon, string label)[]
         {
             (art.btnGreen, art.iconPlay, Loc.T("resume")),
-            (art.btnOrange, art.iconRestart, Loc.T("retry")),
+            (art.btnOrange, art.iconRestart, Loc.T("restart_level")),
             (art.btnBlue, art.iconMenu, Loc.T("levels")),
             (art.btnBlue, art.iconHome, Loc.T("main_menu")),
             (art.btnGrey, art.iconExit, Loc.T("quit")),
         };
+        float bw = 600, bh = 104, gap = botGap;
+        float y0 = panel.y + 160;
         for (int i = 0; i < items.Length; i++)
         {
-            Rect r = new Rect(x0 + i * (bs + gap), by, bs, bs * 1.05f);
-            bool clicked = Button(r, items[i].bg, items[i].icon, null, 0);
-            Text(new Rect(r.x - 40, r.yMax + 6, r.width + 80, 50), items[i].label, 34, Brown, TextAnchor.MiddleCenter, 1f, 0);
+            Rect r = new Rect(panel.center.x - bw / 2, y0 + i * (bh + gap), bw, bh);
+            bool clicked = Button(r, items[i].bg, null, null, 0);
+            Tex(new Rect(r.x + 26, r.y + 18, 60, 60), items[i].icon);
+            Text(new Rect(r.x + 100, r.y - 4, r.width - 120, r.height * 0.9f), items[i].label, 48, Color.white, TextAnchor.MiddleCenter);
             if (!clicked) continue;
             switch (i)
             {
@@ -328,6 +414,8 @@ public class Hud : MonoBehaviour
             }
         }
     }
+
+    const float botGap = 22f;
 
     // ================================================================== ÇIKIŞ ONAYI
     bool confirmQuit;
@@ -381,6 +469,12 @@ public class Hud : MonoBehaviour
         if (won)
             Text(new Rect(panel.x, panel.y + 470, panel.width, 50), gm.NewRecord ? Loc.T("new_record") : Loc.T("best") + "  " + Levels.Best(gm.LevelIndex).ToString("N0"),
                  40, gm.NewRecord ? new Color(0.9f, 0.3f, 0.2f) : Brown, TextAnchor.MiddleCenter, 1f, 0);
+
+        if (won && gm.Level != null && Economy.AnyGiftReady(gm.Level.world))
+        {
+            Tex(new Rect(panel.center.x - 250, panel.y + 588, 44, 44), art.iconGift);
+            Text(new Rect(panel.center.x - 200, panel.y + 584, 460, 50), Loc.T("gift_ready"), 38, new Color(0.85f, 0.35f, 0.1f), TextAnchor.MiddleLeft, 1f, 0);
+        }
 
         // yıkım oranı + kazanılan altın yumurta
         float ly = panel.y + 528;

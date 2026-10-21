@@ -14,15 +14,18 @@ public static class LevelLoader
     public static int EnemyCount { get; private set; }
     public static int PotentialScore { get; private set; }
 
-    // Kademeli zorluk: her dünya (5 bölüm) bir kademe. Kademe içinde zorluk bölüm tasarımıyla
-    // testere dişi gibi artar (1. bölüm nefes aldırır, 5. bölüm kale/patron), her yeni dünyada
-    // tilkiler ve bloklar bir basamak daha dayanıklı olur.
-    //   Dünya:   1     2     3     4     5     6     7     8
-    //   Tilki:  x1.00 x1.08 x1.16 x1.24 x1.32 x1.40 x1.48 x1.56
-    //   Blok:   x1.00 x1.05 x1.10 x1.15 x1.20 x1.25 x1.30 x1.35
-    public static int Tier(int index) => Mathf.Clamp(index / Levels.PerWorld, 0, 7);
-    public static float FoxHealthMult(int index) => 1f + 0.08f * Tier(index);
-    public static float BlockHealthMult(int index) => 1f + 0.05f * Tier(index);
+    // Zorluk eğrisi (D): her bölüm (20 level) kendi içinde 5 puan yükselir, bir sonraki bölüm
+    // öncekinin bitişinden biraz geride başlar (nefes payı):
+    //   1. bölüm: 0 → 5    2. bölüm: 4 → 9    3. bölüm: 8 → 13   ...   10. bölüm: 36 → 41
+    // D; tilki/blok dayanıklılığını ve üretilen levellerin yapısını (modül, kat, taş, miğfer, yedek ördek) belirler.
+    public static float Difficulty(int index)
+    {
+        int w = index / Levels.PerWorld, s = index % Levels.PerWorld;
+        return 4f * w + 5f * s / (Levels.PerWorld - 1);
+    }
+    public static int Tier(int index) => Mathf.Clamp(index / Levels.PerWorld, 0, Levels.WorldCount - 1);
+    public static float FoxHealthMult(int index) => 1f + 0.02f * Difficulty(index);
+    public static float BlockHealthMult(int index) => 1f + 0.01f * Difficulty(index);
     static float blockMul = 1f;
 
     public static void Clear()

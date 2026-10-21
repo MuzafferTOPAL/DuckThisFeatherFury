@@ -48,7 +48,12 @@ public static class Loc
     }
 
     public static string World(int i) => T("w" + i);
-    public static string LevelTitle(int i) => T("lvl" + i);
+    public static string LevelTitle(int i)
+    {
+        var d = Levels.Get(i);
+        if (!string.IsNullOrEmpty(d.titleKey)) return T(d.titleKey);
+        return World(d.world) + " " + (d.slot + 1);
+    }
     public static string BirdName(BirdType t) => T("bird" + (int)t);
     public static string BirdAbility(BirdType t) => T("abil" + (int)t);
 
@@ -72,7 +77,7 @@ public static class Loc
         { "add_duck",   new[] { "ÖRDEK EKLE", "ADD A DUCK", "ENTE HINZUFÜGEN", "AÑADIR UN PATO", "AJOUTER UN CANARD", "ADICIONAR PATO", "AGGIUNGI ANATRA" } },
         { "use",        new[] { "KULLAN", "USE", "NUTZEN", "USAR", "UTILISER", "USAR", "USA" } },
         { "continue",   new[] { "ÖRDEKLE DEVAM", "CONTINUE", "WEITER", "CONTINUAR", "CONTINUER", "CONTINUAR", "CONTINUA" } },
-        { "unlock_at",  new[] { "BÖLÜM {0} İLE AÇILIR", "UNLOCKS AT LEVEL {0}", "AB LEVEL {0}", "SE ABRE EN EL NIVEL {0}", "DÉBLOQUÉ AU NIVEAU {0}", "LIBERA NO NÍVEL {0}", "SBLOCCATA AL LIVELLO {0}" } },
+        { "unlock_at", new[] { "LEVEL {0} İLE AÇILIR", "UNLOCKS AT LEVEL {0}", "AB LEVEL {0}", "SE ABRE EN EL NIVEL {0}", "DÉBLOQUÉ AU NIVEAU {0}", "LIBERA NO NÍVEL {0}", "SBLOCCATA AL LIVELLO {0}" } },
         { "no_eggs",    new[] { "YETERSİZ YUMURTA!", "NOT ENOUGH EGGS!", "NICHT GENUG EIER!", "¡FALTAN HUEVOS!", "PAS ASSEZ D'ŒUFS !", "OVOS INSUFICIENTES!", "UOVA INSUFFICIENTI!" } },
         { "first_clear",new[] { "İLK GEÇİŞ BONUSU", "FIRST CLEAR BONUS", "ERSTSIEG-BONUS", "BONO PRIMERA VEZ", "BONUS 1RE VICTOIRE", "BÔNUS 1ª VITÓRIA", "BONUS PRIMA VITTORIA" } },
         { "subtitle",   new[] { "TİLKİLER YUMURTALARI ÇALDI!", "THE FOXES STOLE THE EGGS!", "DIE FÜCHSE HABEN DIE EIER GESTOHLEN!", "¡LOS ZORROS ROBARON LOS HUEVOS!", "LES RENARDS ONT VOLÉ LES ŒUFS !", "AS RAPOSAS ROUBARAM OS OVOS!", "LE VOLPI HANNO RUBATO LE UOVA!" } },
@@ -80,8 +85,8 @@ public static class Loc
         { "quit",       new[] { "ÇIKIŞ", "QUIT", "BEENDEN", "SALIR", "QUITTER", "SAIR", "ESCI" } },
         { "sound_on",   new[] { "SES\nAÇIK", "SOUND\nON", "TON\nAN", "SONIDO\nSÍ", "SON\nOUI", "SOM\nSIM", "AUDIO\nSÌ" } },
         { "sound_off",  new[] { "SES\nKAPALI", "SOUND\nOFF", "TON\nAUS", "SONIDO\nNO", "SON\nNON", "SOM\nNÃO", "AUDIO\nNO" } },
-        { "world",      new[] { "DÜNYA", "WORLD", "WELT", "MUNDO", "MONDE", "MUNDO", "MONDO" } },
-        { "level",      new[] { "BÖLÜM", "LEVEL", "LEVEL", "NIVEL", "NIVEAU", "NÍVEL", "LIVELLO" } },
+        { "world", new[] { "BÖLÜM", "WORLD", "WELT", "MUNDO", "MONDE", "MUNDO", "MONDO" } },
+        { "level", new[] { "LEVEL", "LEVEL", "LEVEL", "NIVEL", "NIVEAU", "NÍVEL", "LIVELLO" } },
         { "score",      new[] { "PUAN", "SCORE", "PUNKTE", "PUNTOS", "SCORE", "PONTOS", "PUNTI" } },
         { "best",       new[] { "EN İYİ", "BEST", "BESTER", "MEJOR", "RECORD", "RECORDE", "RECORD" } },
         { "foxes",      new[] { "TİLKİ", "FOXES", "FÜCHSE", "ZORROS", "RENARDS", "RAPOSAS", "VOLPI" } },
@@ -90,7 +95,7 @@ public static class Loc
         { "paused",     new[] { "DURAKLATILDI", "PAUSED", "PAUSE", "PAUSA", "PAUSE", "PAUSA", "PAUSA" } },
         { "resume",     new[] { "DEVAM", "RESUME", "WEITER", "SEGUIR", "REPRENDRE", "CONTINUAR", "RIPRENDI" } },
         { "retry",      new[] { "TEKRAR", "RETRY", "NOCHMAL", "REPETIR", "REJOUER", "REPETIR", "RIPROVA" } },
-        { "levels",     new[] { "BÖLÜMLER", "LEVELS", "LEVELS", "NIVELES", "NIVEAUX", "NÍVEIS", "LIVELLI" } },
+        { "levels", new[] { "LEVELLER", "LEVELS", "LEVELS", "NIVELES", "NIVEAUX", "NÍVEIS", "LIVELLI" } },
         { "main_menu",  new[] { "ANA MENÜ", "MAIN MENU", "HAUPTMENÜ", "MENÚ", "MENU", "MENU", "MENU" } },
         { "quit_q",     new[] { "OYUNDAN ÇIKMAK İSTİYOR MUSUN?", "DO YOU WANT TO QUIT?", "SPIEL WIRKLICH BEENDEN?", "¿QUIERES SALIR?", "VEUX-TU QUITTER ?", "QUER SAIR DO JOGO?", "VUOI DAVVERO USCIRE?" } },
         { "yes",        new[] { "EVET", "YES", "JA", "SÍ", "OUI", "SIM", "SÌ" } },
@@ -138,10 +143,19 @@ public static class Loc
         { "lvl17", new[] { "PİRAMİT", "PYRAMID", "PYRAMIDE", "PIRÁMIDE", "PYRAMIDE", "PIRÂMIDE", "PIRAMIDE" } },
         { "lvl18", new[] { "ÜÇ KALE", "THREE FORTS", "DREI FESTUNGEN", "TRES FUERTES", "TROIS FORTS", "TRÊS FORTES", "TRE FORTI" } },
         { "lvl19", new[] { "TİLKİ KRAL", "FOX KING", "FUCHSKÖNIG", "REY ZORRO", "ROI RENARD", "REI RAPOSA", "RE VOLPE" } },
+        { "gift_hint", new[] { "HER BÖLÜMDE 2 HEDİYE ÖRDEK", "2 GIFT DUCKS PER WORLD", "2 GESCHENK-ENTEN PRO WELT", "2 PATOS DE REGALO POR MUNDO", "2 CANARDS CADEAUX PAR MONDE", "2 PATOS DE PRESENTE POR MUNDO", "2 ANATRE REGALO PER MONDO" } },
+        { "gift_take", new[] { "AL!", "CLAIM!", "HOLEN!", "¡RECLAMAR!", "PRENDRE !", "PEGAR!", "PRENDI!" } },
+        { "gift_title", new[] { "HEDİYE ÖRDEK!", "GIFT DUCK!", "GESCHENK-ENTE!", "¡PATO DE REGALO!", "CANARD CADEAU !", "PATO DE PRESENTE!", "ANATRA IN REGALO!" } },
+        { "gift_ready", new[] { "HEDİYE ÖRDEK HAZIR!", "A GIFT DUCK IS READY!", "GESCHENK-ENTE BEREIT!", "¡PATO DE REGALO LISTO!", "CANARD CADEAU DISPONIBLE !", "PATO DE PRESENTE PRONTO!", "ANATRA REGALO PRONTA!" } },
+        { "ok", new[] { "TAMAM", "OK", "OK", "VALE", "OK", "OK", "OK" } },
         { "w4", new[] { "ÇÖL KANYONU", "DESERT CANYON", "WÜSTENSCHLUCHT", "CAÑÓN DEL DESIERTO", "CANYON DU DÉSERT", "CÂNION DO DESERTO", "CANYON DEL DESERTO" } },
         { "w5", new[] { "TROPİK SAHİL", "TROPICAL BEACH", "TROPENSTRAND", "PLAYA TROPICAL", "PLAGE TROPICALE", "PRAIA TROPICAL", "SPIAGGIA TROPICALE" } },
         { "w6", new[] { "KİRAZ VADİSİ", "BLOSSOM VALLEY", "KIRSCHBLÜTENTAL", "VALLE DE LOS CEREZOS", "VALLÉE DES CERISIERS", "VALE DAS CEREJEIRAS", "VALLE DEI CILIEGI" } },
         { "w7", new[] { "ATEŞ DAĞI", "FIRE MOUNTAIN", "FEUERBERG", "MONTAÑA DE FUEGO", "MONTAGNE DE FEU", "MONTANHA DE FOGO", "MONTAGNA DI FUOCO" } },
+        { "locked_world", new[] { "ÖNCE {0}. BÖLÜMÜ BİTİR", "FINISH WORLD {0} FIRST", "ERST WELT {0} ABSCHLIESSEN", "TERMINA EL MUNDO {0} PRIMERO", "TERMINE D'ABORD LE MONDE {0}", "TERMINE O MUNDO {0} PRIMEIRO", "FINISCI PRIMA IL MONDO {0}" } },
+        { "restart_level", new[] { "LEVELİ YENİDEN BAŞLAT", "RESTART LEVEL", "LEVEL NEU STARTEN", "REINICIAR NIVEL", "RECOMMENCER LE NIVEAU", "REINICIAR NÍVEL", "RICOMINCIA LIVELLO" } },
+        { "w9", new[] { "TİLKİ KRALLIĞI", "FOX KINGDOM", "FUCHSKÖNIGREICH", "REINO ZORRO", "ROYAUME DES RENARDS", "REINO DAS RAPOSAS", "REGNO DELLE VOLPI" } },
+        { "w8", new[] { "SİSLİ BATAKLIK", "MISTY SWAMP", "NEBELSUMPF", "PANTANO BRUMOSO", "MARAIS BRUMEUX", "PÂNTANO NEBULOSO", "PALUDE NEBBIOSA" } },
         { "lvl20", new[] { "KUM FIRTINASI", "SANDSTORM", "SANDSTURM", "TORMENTA DE ARENA", "TEMPÊTE DE SABLE", "TEMPESTADE DE AREIA", "TEMPESTA DI SABBIA" } },
         { "lvl21", new[] { "KAKTÜS KULESİ", "CACTUS TOWER", "KAKTUSTURM", "TORRE DEL CACTUS", "TOUR DU CACTUS", "TORRE DO CACTO", "TORRE DEL CACTUS" } },
         { "lvl22", new[] { "VAHA", "OASIS", "OASE", "OASIS", "OASIS", "OÁSIS", "OASI" } },
@@ -163,7 +177,7 @@ public static class Loc
         { "lvl38", new[] { "EJDERHA MAĞARASI", "DRAGON'S CAVE", "DRACHENHÖHLE", "CUEVA DEL DRAGÓN", "CAVERNE DU DRAGON", "CAVERNA DO DRAGÃO", "GROTTA DEL DRAGO" } },
         { "lvl39", new[] { "TİLKİ İMPARATOR", "FOX EMPEROR", "FUCHSKAISER", "EMPERADOR ZORRO", "EMPEREUR RENARD", "IMPERADOR RAPOSA", "IMPERATORE VOLPE" } },
         { "tip_nest", new[] { "YENİ: ALTIN YUVA! KIR VE +3 ALTIN YUMURTA KAP (HER YUVA BİR KEZ)", "NEW: GOLDEN NEST! BREAK IT FOR +3 GOLDEN EGGS (ONCE PER NEST)", "NEU: GOLDENES NEST! ZERSTÖREN FÜR +3 GOLDENE EIER (EINMALIG)", "¡NUEVO: NIDO DORADO! RÓMPELO Y GANA +3 HUEVOS DE ORO (UNA VEZ)", "NOUVEAU : NID DORÉ ! CASSE-LE POUR +3 ŒUFS D'OR (UNE FOIS)", "NOVO: NINHO DOURADO! QUEBRE PARA +3 OVOS DE OURO (UMA VEZ)", "NOVITÀ: NIDO D'ORO! ROMPILO PER +3 UOVA D'ORO (UNA VOLTA)" } },
-        { "tier_up", new[] { "{0}. KADEME: TİLKİLER %{1} DAHA DAYANIKLI!", "TIER {0}: FOXES ARE {1}% TOUGHER!", "STUFE {0}: FÜCHSE SIND {1}% ZÄHER!", "NIVEL {0}: ¡ZORROS UN {1}% MÁS DUROS!", "PALIER {0} : RENARDS {1} % PLUS COSTAUDS !", "NÍVEL {0}: RAPOSAS {1}% MAIS FORTES!", "LIVELLO {0}: VOLPI PIÙ FORTI DEL {1}%!" } },
+        { "tier_up", new[] { "{0}. BÖLÜM: TİLKİLER %{1} DAHA DAYANIKLI!", "WORLD {0}: FOXES ARE {1}% TOUGHER!", "WELT {0}: FÜCHSE SIND {1}% ZÄHER!", "MUNDO {0}: ¡ZORROS UN {1}% MÁS DUROS!", "MONDE {0} : RENARDS {1} % PLUS COSTAUDS !", "MUNDO {0}: RAPOSAS {1}% MAIS FORTES!", "MONDO {0}: VOLPI PIÙ FORTI DEL {1}%!" } },
         { "egg_short", new[] { "YUMURTA", "EGGS", "EIER", "HUEVOS", "ŒUFS", "OVOS", "UOVA" } },
         { "music_on", new[] { "MÜZİK\nAÇIK", "MUSIC\nON", "MUSIK\nAN", "MÚSICA\nSÍ", "MUSIQUE\nOUI", "MÚSICA\nSIM", "MUSICA\nSÌ" } },
         { "music_off", new[] { "MÜZİK\nKAPALI", "MUSIC\nOFF", "MUSIK\nAUS", "MÚSICA\nNO", "MUSIQUE\nNON", "MÚSICA\nNÃO", "MUSICA\nNO" } },

@@ -11,7 +11,7 @@ using UnityEngine;
 [InitializeOnLoad]
 public static class GameBuilder
 {
-    const int Version = 15;
+    const int Version = 17;
     const string VersionFile = "ProjectSettings/OrdekOyunuBuilder.txt";
     const string CmdFile = "ProjectSettings/ordek_cmd.txt";
     const string ScenePath = "Assets/Scenes/Game.unity";
@@ -160,10 +160,19 @@ public static class GameBuilder
                 case "autotest":
                     PlayerPrefs.SetInt("autotest_from", parts.Length > 1 ? int.Parse(parts[1]) : 1);
                     PlayerPrefs.SetInt("autotest_to", parts.Length > 2 ? int.Parse(parts[2]) : Levels.Count);
+                    PlayerPrefs.SetInt("autotest_trials", parts.Length > 3 ? int.Parse(parts[3]) : 4);
+                    PlayerPrefs.SetInt("autotest_upg", parts.Length > 4 ? int.Parse(parts[4]) : 0);
                     if (EditorApplication.isPlaying) { PlayerPrefs.SetInt("autotest", 1); EditorApplication.ExitPlaymode(); EditorApplication.delayCall += AutoTest; }
                     else AutoTest();
                     break;
                 case "eggs": Economy.Eggs = int.Parse(parts[1]); break;
+                case "stars":   // stars bölüm sayı  -> o bölümün ilk N levelini 3 yıldızlı yap (test)
+                    {
+                        int w = int.Parse(parts[1]) - 1, n = int.Parse(parts[2]);
+                        for (int k = 0; k < Levels.PerWorld; k++) PlayerPrefs.SetInt("stars_" + (w * Levels.PerWorld + k), k < n ? 3 : 0);
+                        PlayerPrefs.Save();
+                    }
+                    break;
                 case "lang": Loc.Lang = int.Parse(parts[1]); break;
                 case "aimshot":
                     if (GameManager.Instance != null)
@@ -353,10 +362,11 @@ public static class GameBuilder
             new Color(0.07f, 0.15f, 0.27f), new Color(0.24f, 0.1f, 0.05f),
             new Color(0.14f, 0.24f, 0.36f), new Color(0.09f, 0.06f, 0.17f),
             new Color(0.36f, 0.17f, 0.08f), new Color(0.03f, 0.27f, 0.38f),
-            new Color(0.32f, 0.2f, 0.36f), new Color(0.13f, 0.03f, 0.04f)
+            new Color(0.32f, 0.2f, 0.36f), new Color(0.13f, 0.03f, 0.04f),
+            new Color(0.08f, 0.16f, 0.13f), new Color(0.07f, 0.07f, 0.2f)
         };
-        art.themes = new GameArt.ThemeArt[8];
-        for (int i = 0; i < 8; i++)
+        art.themes = new GameArt.ThemeArt[10];
+        for (int i = 0; i < 10; i++)
         {
             art.themes[i] = new GameArt.ThemeArt
             {
@@ -364,7 +374,7 @@ public static class GameBuilder
                 water = Sp("water_" + i), dirt = Sp("dirt_" + i), sun = Sp("sun_" + i),
                 cloudA = Sp("cloudA_" + i), cloudB = Sp("cloudB_" + i), bush = Sp("bush_" + i),
                 decor0 = Sp("decor0_" + i), decor1 = Sp("decor1_" + i), decor2 = Sp("decor2_" + i),
-                transitionColor = trans[i], stars = i == 3 || i == 7
+                transitionColor = trans[i], stars = i == 3 || i == 7 || i == 8 || i == 9
             };
         }
         art.starPx = Sp("star_px");
@@ -378,7 +388,7 @@ public static class GameBuilder
         art.iconRestart = Tx("icon_restart"); art.iconPause = Tx("icon_pause"); art.iconPlay = Tx("icon_play");
         art.iconNext = Tx("icon_next"); art.iconMenu = Tx("icon_menu"); art.iconLock = Tx("icon_lock");
         art.iconHome = Tx("icon_home"); art.iconExit = Tx("icon_exit");
-        art.iconPlus = Tx("icon_plus"); art.iconShop = Tx("icon_shop"); art.uiEgg = Tx("ui_egg");
+        art.iconPlus = Tx("icon_plus"); art.iconGift = Tx("icon_gift"); art.iconShop = Tx("icon_shop"); art.uiEgg = Tx("ui_egg");
 
         art.sLaunch = Au("sfx_launch"); art.sFlap = Au("sfx_flap"); art.sPop = Au("sfx_pop"); art.sDash = Au("sfx_dash");
         art.sHit = Au("sfx_hit"); art.sThud = Au("sfx_thud"); art.sWood = Au("sfx_wood"); art.sStone = Au("sfx_stone");

@@ -21,6 +21,7 @@ public class AutoTester : MonoBehaviour
     {
         fromLevel = Mathf.Clamp(PlayerPrefs.GetInt("autotest_from", 1) - 1, 0, Levels.Count - 1);
         toLevel = Mathf.Clamp(PlayerPrefs.GetInt("autotest_to", Levels.Count) - 1, fromLevel, Levels.Count - 1);
+        trials = Mathf.Clamp(PlayerPrefs.GetInt("autotest_trials", 4), 0, 10);
         path = Path.Combine(Application.dataPath, "../Logs/autotest.txt");
         StartCoroutine(Run());
     }
@@ -40,6 +41,10 @@ public class AutoTester : MonoBehaviour
         var savedBest = new int[Levels.Count];
         for (int k = 0; k < Levels.Count; k++) { savedStars[k] = Levels.Stars(k); savedBest[k] = Levels.Best(k); }
         int savedEggs = Economy.Eggs;
+        // upg=1: oyuncunun o bölüme kadar biriktireceği yumurtayla alacağı tahmini yükseltmeler
+        bool upg = PlayerPrefs.GetInt("autotest_upg", 0) == 1;
+        var savedUpg = new int[Economy.TypeCount * 2];
+        for (int k = 0; k < Economy.TypeCount; k++) { savedUpg[k * 2] = PlayerPrefs.GetInt("dmg_" + k, 0); savedUpg[k * 2 + 1] = PlayerPrefs.GetInt("aim_" + k, 0); }
         var savedNests = new System.Collections.Generic.Dictionary<string, int>();
         foreach (var k in Levels.NestKeys()) savedNests[k] = PlayerPrefs.GetInt(k, 0);
         var gm = GameManager.Instance;
@@ -48,6 +53,15 @@ public class AutoTester : MonoBehaviour
 
         for (int i = fromLevel; i <= toLevel; i++)
         {
+            if (upg)
+            {
+                int w = i / Levels.PerWorld;
+                for (int k = 0; k < Economy.TypeCount; k++)
+                {
+                    PlayerPrefs.SetInt("dmg_" + k, Mathf.Min(4, (w + 1) / 2 + (w >= 6 ? 1 : 0)));
+                    PlayerPrefs.SetInt("aim_" + k, Mathf.Min(3, w / 3));
+                }
+            }
             // 1) sağlamlık
             gm.DebugStart(i, false);
             Time.timeScale = speed;
@@ -55,7 +69,7 @@ public class AutoTester : MonoBehaviour
             yield return null;
             int foxes0 = gm.EnemiesLeft;
             int pieces0 = CountPieces();
-            yield return new WaitForSeconds(4f);
+            yield return new WaitForSeconds(trials == 0 ? 2.5f : 4f);
             int foxes1 = gm.EnemiesLeft;
             int pieces1 = CountPieces();
             string stab = (foxes1 == foxes0 && pieces1 == pieces0) ? "SAĞLAM" : $"SORUN (tilki {foxes0}->{foxes1}, blok {pieces0}->{pieces1})";
@@ -97,7 +111,7 @@ public class AutoTester : MonoBehaviour
             }
             totalWins += wins;
             var def = Levels.Get(i);
-            Line($"Bölüm {i + 1,2} {def.title,-18} | {stab,-30} | kazanma {wins}/{trials} | en iyi {bestStars}★ {bestScore} | min atış {(minShots == 99 ? "-" : minShots.ToString())}/{def.birds.Length} | 2★≥{gm.TwoStar} 3★≥{gm.ThreeStar}");
+            Line($"Level {i + 1,3} D{LevelLoader.Difficulty(i),4:0.0} {def.title,-18} | {stab,-30} | kazanma {wins}/{trials} | en iyi {bestStars}★ {bestScore} | min atış {(minShots == 99 ? "-" : minShots.ToString())}/{def.birds.Length} | 2★≥{gm.TwoStar} 3★≥{gm.ThreeStar}");
         }
         Time.timeScale = 1f;
         Line($"=== Bitti: toplam {totalWins}/{totalTrials} kazanma ===");
@@ -107,6 +121,7 @@ public class AutoTester : MonoBehaviour
             PlayerPrefs.SetInt("best_" + k, savedBest[k]);
         }
         Economy.Eggs = savedEggs;
+        for (int k = 0; k < Economy.TypeCount; k++) { PlayerPrefs.SetInt("dmg_" + k, savedUpg[k * 2]); PlayerPrefs.SetInt("aim_" + k, savedUpg[k * 2 + 1]); }
         foreach (var kv in savedNests) PlayerPrefs.SetInt(kv.Key, kv.Value);
         PlayerPrefs.Save();
         gm.OpenMenu();

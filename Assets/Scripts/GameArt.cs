@@ -48,7 +48,7 @@ public class GameArt : ScriptableObject
     public Sprite slingBack, slingFront, pouch;
 
     [Header("Temalar")]
-    public ThemeArt[] themes = new ThemeArt[8];
+    public ThemeArt[] themes = new ThemeArt[10];
     public Sprite starPx;
 
     [Header("Efektler")]
@@ -57,7 +57,7 @@ public class GameArt : ScriptableObject
     [Header("Arayüz")]
     public Font font;
     public Texture2D uiPanel, uiRibbon, uiStar, uiStarEmpty, btnGreen, btnOrange, btnBlue, btnGrey, pill;
-    public Texture2D iconRestart, iconPause, iconPlay, iconNext, iconMenu, iconLock, iconHome, iconExit, iconPlus, iconShop, uiEgg;
+    public Texture2D iconRestart, iconPause, iconPlay, iconNext, iconMenu, iconLock, iconHome, iconExit, iconPlus, iconShop, uiEgg, iconGift;
 
     [Header("Sesler")]
     public AudioClip[] duckVoice = new AudioClip[6], duckAbility = new AudioClip[6], duckHit = new AudioClip[6];

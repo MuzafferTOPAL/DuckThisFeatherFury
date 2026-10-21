@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = 60;
         Time.timeScale = 1f;
         PlayerProfile.Ensure();
+        Levels.MigrateIfNeeded();
         cam = Camera.main;
         rig = cam.GetComponent<CameraRig>();
     }
@@ -76,7 +77,7 @@ public class GameManager : MonoBehaviour
         sling = Slingshot.Create(new Vector2(LevelLoader.SlingX, LevelLoader.GroundY - 0.05f), LevelLoader.GroundY);
         sling.OnLaunched += OnLaunched;
         LevelIndex = Mathf.Clamp(PlayerPrefs.GetInt("last_level", 0), 0, Levels.Count - 1);
-        SelectWorld = LevelIndex / 5;
+        SelectWorld = LevelIndex / Levels.PerWorld;
         LoadLevel(LevelIndex, false);
         SetState(GState.Splash);
 
@@ -136,7 +137,7 @@ public class GameManager : MonoBehaviour
     {
         Sfx.Play(Sfx.Click);
         SetPaused(false);
-        SelectWorld = LevelIndex / 5;
+        SelectWorld = LevelIndex / Levels.PerWorld;
         StartTransition(LevelIndex, () => { LoadLevel(LevelIndex, false); ClearBirds(); }, () => SetState(GState.LevelSelect));
     }
 
@@ -145,7 +146,7 @@ public class GameManager : MonoBehaviour
     {
         Sfx.Play(Sfx.Click);
         SetPaused(false);
-        SelectWorld = LevelIndex / 5;
+        SelectWorld = LevelIndex / Levels.PerWorld;
         StartTransition(LevelIndex, () => { LoadLevel(LevelIndex, false); }, () => SetState(GState.Menu));
     }
 
@@ -238,7 +239,7 @@ public class GameManager : MonoBehaviour
             case GState.Shop: Music.Play(Music.Track.Menu); break;
             case GState.Transition: break;   // geçiş bitince değişir
             default:
-                Music.Play(LevelLoader.Tier(LevelIndex) < 4 ? Music.Track.WorldA : Music.Track.WorldB);
+                Music.Play(LevelLoader.Tier(LevelIndex) < 5 ? Music.Track.WorldA : Music.Track.WorldB);
                 break;
         }
         Music.SetDuck(Paused || State == GState.Lost);

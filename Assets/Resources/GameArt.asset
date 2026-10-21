@@ -1,0 +1,172 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b53982c6f48bc7748bbee7d5d4c83e5f, type: 3}
+  m_Name: GameArt
+  m_EditorClassIdentifier: Assembly-CSharp::GameArt
+  birds:
+  - idle: {fileID: 21300000, guid: 5a98fe87577b58d4da9309c40329554f, type: 3}
+    blink: {fileID: 21300000, guid: c8e9887b37fadcc4188c0ae4054a2a59, type: 3}
+    up: {fileID: 21300000, guid: e1398d5dad8d1844989fb7e961a8b8c4, type: 3}
+    down: {fileID: 21300000, guid: e03e254ee2eaaf74c9e9b151f1dbefd6, type: 3}
+    hit: {fileID: 21300000, guid: ced860e1ff6bb324cb3ca3ca27e63a9b, type: 3}
+  - idle: {fileID: 21300000, guid: ce610ad24211ab5489fa48ff9aa380bd, type: 3}
+    blink: {fileID: 21300000, guid: 7deaedfeeba1fc34c846ac25f0034099, type: 3}
+    up: {fileID: 21300000, guid: 4ed6689f67524b349bfa981142a7deab, type: 3}
+    down: {fileID: 21300000, guid: ed798cdcb148d89439d917356df990f4, type: 3}
+    hit: {fileID: 21300000, guid: 7b7893436b8e68a42b82aadc1caaa05d, type: 3}
+  - idle: {fileID: 21300000, guid: 11650069d9681ee44b50aafc265abda1, type: 3}
+    blink: {fileID: 21300000, guid: cec8f7b605d62c245b93050bfbb5d37d, type: 3}
+    up: {fileID: 21300000, guid: fcc52b774a2cdf643b0b27bf6ee377fe, type: 3}
+    down: {fileID: 21300000, guid: 85076b9429d9f4f4b94e592da058d213, type: 3}
+    hit: {fileID: 21300000, guid: 150d9a97d2956bd4d86bd7144215862f, type: 3}
+  - idle: {fileID: 21300000, guid: cb73add987c1e2e4c8eea55a9fd56e0d, type: 3}
+    blink: {fileID: 21300000, guid: 84a46093069c2ca44bf41443ece7fae3, type: 3}
+    up: {fileID: 21300000, guid: e8e600923a5e6914e8e57783f22b26ab, type: 3}
+    down: {fileID: 21300000, guid: 868e25b8b06420b4b8c461596feb7fd3, type: 3}
+    hit: {fileID: 21300000, guid: 20dd883922c95d94096058e25ffbae56, type: 3}
+  - idle: {fileID: 21300000, guid: 8f06823f89593d5418bb0d3297166a7d, type: 3}
+    blink: {fileID: 21300000, guid: 785b9947b4b900448882d11a2cded918, type: 3}
+    up: {fileID: 21300000, guid: d7ce3df33110c10498e25153dc8b8d12, type: 3}
+    down: {fileID: 21300000, guid: 08741fcefae2c904fbaf74f5b613374e, type: 3}
+    hit: {fileID: 21300000, guid: bf8bce8031d183643b24e11ef27c2096, type: 3}
+  - idle: {fileID: 21300000, guid: fdde19cacd595ab4e8ddff2f0fbd22cc, type: 3}
+    blink: {fileID: 21300000, guid: 36d17bad3d9e01e48a1027a9ac45ded4, type: 3}
+    up: {fileID: 21300000, guid: b5551e376e7a2414693c18718400a1db, type: 3}
+    down: {fileID: 21300000, guid: 3f9f1dda44bf21442bd5ef08934b9c20, type: 3}
+    hit: {fileID: 21300000, guid: 04176d5213499624fb6bd53066d388f8, type: 3}
+  fox:
+    idle: {fileID: 21300000, guid: d6ad34c177543b74d841e8a54ee99644, type: 3}
+    blink: {fileID: 21300000, guid: 025fba8f7cfc89343a3a360c875b2d76, type: 3}
+    scared: {fileID: 21300000, guid: 82ca27ae08e2fae46824e66a76aa15dc, type: 3}
+    hurt: {fileID: 21300000, guid: 1c845b0470b378449b9892f29b8cac7d, type: 3}
+  foxHelmet:
+    idle: {fileID: 21300000, guid: c6f1031c903138347a099cf3a7d0ff08, type: 3}
+    blink: {fileID: 21300000, guid: 4c8b05f5edeb5ed4c83c4a8ba8b607ec, type: 3}
+    scared: {fileID: 21300000, guid: 45fc89527613016439c3ace71049ec80, type: 3}
+    hurt: {fileID: 21300000, guid: fae1566dd8284c548ae9c4b87b4b085c, type: 3}
+  wood: {fileID: 21300000, guid: d7630fecf5c09b6449fd7d423156a8b4, type: 3}
+  stone: {fileID: 21300000, guid: 567d570e0491b7a45a8e11e67506f1c8, type: 3}
+  ice: {fileID: 21300000, guid: 2c28ba4568afa604c8f22f281b23b63b, type: 3}
+  tnt: {fileID: 21300000, guid: 8de0f3d18f9d2304aa07f40d5221c9d0, type: 3}
+  boulder: {fileID: 21300000, guid: f4c578392bde2014b80ebc410e9a2bdd, type: 3}
+  crack1: {fileID: 21300000, guid: d525151b0e8ba0b4b841c29e4474f53f, type: 3}
+  crack2: {fileID: 21300000, guid: 006b90a2f68c6ec4cafce524edf451bc, type: 3}
+  egg: {fileID: 21300000, guid: 1f0bdef701626f5438e2c17e8b17141e, type: 3}
+  slingBack: {fileID: 21300000, guid: 018adcd3bf5a657478ec8d55c75b4b63, type: 3}
+  slingFront: {fileID: 21300000, guid: ca6af8c9499741c4b83b1e59101b09cd, type: 3}
+  pouch: {fileID: 21300000, guid: 97bd99158f0ad28488c844f7c54dc1c0, type: 3}
+  themes:
+  - sky: {fileID: 21300000, guid: c71dd2b55d2ce6e4a861ef7215f1c717, type: 3}
+    far: {fileID: 21300000, guid: 89ed0bbabf266cd4c99d68c29b8d6fc8, type: 3}
+    near: {fileID: 21300000, guid: 057f60ffe4049ba4f8f68e1b111dcdde, type: 3}
+    ground: {fileID: 21300000, guid: 122d604d402e26748888c4b57d41d443, type: 3}
+    water: {fileID: 21300000, guid: 82afcfe7ff8bfce44a4b7275bed43dd1, type: 3}
+    dirt: {fileID: 21300000, guid: e92a9f9d41ecac44eb48f950169bc765, type: 3}
+    sun: {fileID: 21300000, guid: be7f5ab94c44d7c4ea079fa4923f3795, type: 3}
+    cloudA: {fileID: 21300000, guid: ebac7036fdb251747bb8fecfcf2e07bf, type: 3}
+    cloudB: {fileID: 21300000, guid: 35b5fce7aff408e42b0961ab7db5ec3e, type: 3}
+    bush: {fileID: 21300000, guid: 5f019f3767de7584cb8b04d8a1427ac5, type: 3}
+    decor0: {fileID: 21300000, guid: 3b368b784c142b54780a16a20081eba6, type: 3}
+    decor1: {fileID: 21300000, guid: 896faf50ec3473340ad0e23fdb6971e1, type: 3}
+    decor2: {fileID: 21300000, guid: 2d6e784bdb0c2f246b40deceadfaf8d2, type: 3}
+    transitionColor: {r: 0.07, g: 0.15, b: 0.27, a: 1}
+    stars: 0
+  - sky: {fileID: 21300000, guid: 1c8297e005af6cd48b9f044ace1a0573, type: 3}
+    far: {fileID: 21300000, guid: 1b42f501dbe89d24a8e3ad2a3fd94d9c, type: 3}
+    near: {fileID: 21300000, guid: f27fe1c893fcb2149b1a09442fa2fae2, type: 3}
+    ground: {fileID: 21300000, guid: 053f5af740eee2b4a9b1560212b82039, type: 3}
+    water: {fileID: 21300000, guid: 67862ee9f0c70a74e9f7d1c67b515cdd, type: 3}
+    dirt: {fileID: 21300000, guid: 485133efd389aa04889416fe99bcd3e7, type: 3}
+    sun: {fileID: 21300000, guid: 8d2b30a3c835985408bc6628f3fb5632, type: 3}
+    cloudA: {fileID: 21300000, guid: ea8741ce91dcd6d4dae027d39a0b0a26, type: 3}
+    cloudB: {fileID: 21300000, guid: 8c29735ac42e32a42b08a4958bf67545, type: 3}
+    bush: {fileID: 21300000, guid: e77a8d774f04f214081db189c402d104, type: 3}
+    decor0: {fileID: 21300000, guid: 26459a132d559d642a1ef9f261794464, type: 3}
+    decor1: {fileID: 21300000, guid: 005840f5eb2f1a04fb4eede06f2dc681, type: 3}
+    decor2: {fileID: 21300000, guid: 19409b5037c736c43ae3e28e4c22015d, type: 3}
+    transitionColor: {r: 0.24, g: 0.1, b: 0.05, a: 1}
+    stars: 0
+  - sky: {fileID: 21300000, guid: bf148d3df0f366e48b1d9137671d787b, type: 3}
+    far: {fileID: 21300000, guid: 2cbdcd2a578ef44458d0ab9a4c169c57, type: 3}
+    near: {fileID: 21300000, guid: ab167366d16c2f1488d5a3ad4de4bb0b, type: 3}
+    ground: {fileID: 21300000, guid: 883432d1d3766414bbb0d498b40b1871, type: 3}
+    water: {fileID: 21300000, guid: a923d70207b8b3b4f919f623cfd0ed06, type: 3}
+    dirt: {fileID: 21300000, guid: 1e5667bdfd78ab9439746ac5f52d889a, type: 3}
+    sun: {fileID: 21300000, guid: 240d5eb12c4965a479c2db6b4453db19, type: 3}
+    cloudA: {fileID: 21300000, guid: 5236027e3f235dd4886295b5888a3c4e, type: 3}
+    cloudB: {fileID: 21300000, guid: 6aa96f50265054049a455c6d2296d55c, type: 3}
+    bush: {fileID: 21300000, guid: a0b771d8c3efaeb4d922571cce9ddc57, type: 3}
+    decor0: {fileID: 21300000, guid: 505469b26a8869b4c807fe2c9e846f44, type: 3}
+    decor1: {fileID: 21300000, guid: f99d0a1ffe839be4a8009eaa0d06ce29, type: 3}
+    decor2: {fileID: 21300000, guid: e939dc465e7d24748b7e0c82ab259dff, type: 3}
+    transitionColor: {r: 0.14, g: 0.24, b: 0.36, a: 1}
+    stars: 0
+  - sky: {fileID: 21300000, guid: ecd94905fcfc8c846b18749d56330982, type: 3}
+    far: {fileID: 21300000, guid: 114f238288fec8640a8b4d80f19328a7, type: 3}
+    near: {fileID: 21300000, guid: 424fbdf48cc5011459c00f3875933715, type: 3}
+    ground: {fileID: 21300000, guid: 629ae076dca929c429fc9a6769e4b753, type: 3}
+    water: {fileID: 21300000, guid: aeef66077a3c22246a77396345f7515b, type: 3}
+    dirt: {fileID: 21300000, guid: 4d65305afd84308469ed856cc779635d, type: 3}
+    sun: {fileID: 21300000, guid: 00bff7c845d63b8408215a496a54c25c, type: 3}
+    cloudA: {fileID: 21300000, guid: c59c3a46756469f49848ca717002ee79, type: 3}
+    cloudB: {fileID: 21300000, guid: 415dd92a40d1cfb4a9c5a42f8faa394f, type: 3}
+    bush: {fileID: 21300000, guid: 63408ddc4744d6d4faf6dbd141d23c48, type: 3}
+    decor0: {fileID: 21300000, guid: 6816369c8c6843a459ee646f46e103f2, type: 3}
+    decor1: {fileID: 21300000, guid: f3304aa1fdb7ecf40bba14f9f86208a1, type: 3}
+    decor2: {fileID: 21300000, guid: 16c5b214622f43a448b027cd5941e0bb, type: 3}
+    transitionColor: {r: 0.09, g: 0.06, b: 0.17, a: 1}
+    stars: 1
+  starPx: {fileID: 21300000, guid: 5b73f53eaae4ad847b2b3ffb1dac7c8f, type: 3}
+  fxDot: {fileID: 21300000, guid: 00ffbfef05e98774a9577838a0ab2c14, type: 3}
+  fxPuff: {fileID: 21300000, guid: 81f3fd25530695f4fa8039bbc83d9c5a, type: 3}
+  fxPixel: {fileID: 21300000, guid: 759ad8bbc8871e447a1a5c7d7196f2b5, type: 3}
+  fxFeather: {fileID: 21300000, guid: 5f17d082ee527bf41b2c19bcad13be26, type: 3}
+  fxStar: {fileID: 21300000, guid: 9f60ec113a14994409b3de4817ea5210, type: 3}
+  fxBoom: {fileID: 21300000, guid: 3d51ef2c96ec3d44586615dc5befc6bb, type: 3}
+  font: {fileID: 12800000, guid: 53e8cde6a557f474faa3b428641d68c6, type: 3}
+  uiPanel: {fileID: 2800000, guid: a5f9bfca3407d5c4695dcc2710a20881, type: 3}
+  uiRibbon: {fileID: 2800000, guid: 373efac57de60cd45a4deedd69598b87, type: 3}
+  uiStar: {fileID: 2800000, guid: 1da677a1545407d4abafd8beacb06a6d, type: 3}
+  uiStarEmpty: {fileID: 2800000, guid: 2874c21d42803f84abaecc86f7d3e302, type: 3}
+  btnGreen: {fileID: 2800000, guid: b830801143ea7dc40bc94f714b307808, type: 3}
+  btnOrange: {fileID: 2800000, guid: 517c743d5e3bb0141a57035a5491407d, type: 3}
+  btnBlue: {fileID: 2800000, guid: 8bbc0e173149e184da4000103227419a, type: 3}
+  btnGrey: {fileID: 2800000, guid: f69bf75fa44acf549975a991cddbf86e, type: 3}
+  pill: {fileID: 2800000, guid: 86ca54276da41ac4fa4bb0c873f9aefd, type: 3}
+  iconRestart: {fileID: 2800000, guid: df3f3908167460c4bb4ac983520ddcd0, type: 3}
+  iconPause: {fileID: 2800000, guid: 733f8c37783a53c40b38c6fca54d3f9e, type: 3}
+  iconPlay: {fileID: 2800000, guid: 3b8c6be5f6416e442b43beea438e7dea, type: 3}
+  iconNext: {fileID: 2800000, guid: dfdbf7bc968de2d41ae68ddd27f81ed7, type: 3}
+  iconMenu: {fileID: 2800000, guid: 941189e6f5e0cd948bcefc3d773a32bd, type: 3}
+  iconLock: {fileID: 2800000, guid: fcbd1357cf3b9e34fa017daf727077f9, type: 3}
+  iconHome: {fileID: 2800000, guid: 0dbb272d818e0a343a06a1bd6063f3cb, type: 3}
+  iconExit: {fileID: 2800000, guid: b35826d9f23e4704390dbd7f78f149eb, type: 3}
+  iconPlus: {fileID: 2800000, guid: 0ecb0cd9a8ee23d4a8b91e0d9bc3c681, type: 3}
+  iconShop: {fileID: 2800000, guid: a9621351a65eb09419dca0c2fd6c1c27, type: 3}
+  uiEgg: {fileID: 2800000, guid: c240e5d1545ac584db41d034414bf8cc, type: 3}
+  sLaunch: {fileID: 8300000, guid: 815b2d2030da3fd4fbac27dc6d3ca9c7, type: 3}
+  sFlap: {fileID: 8300000, guid: e8dd57140b14bf742bcafea9d718b064, type: 3}
+  sPop: {fileID: 8300000, guid: 11dabf2630f84f14e838e0b07e21a39c, type: 3}
+  sDash: {fileID: 8300000, guid: fa9755375da1d1a41b197b94b63aa460, type: 3}
+  sHit: {fileID: 8300000, guid: 6cf1446e52d69924a8b201830e2c9c82, type: 3}
+  sThud: {fileID: 8300000, guid: 873dee894947d1041bd5d0dbfd89638c, type: 3}
+  sWood: {fileID: 8300000, guid: 3844bf00e2602aa4f806fe917cf8e674, type: 3}
+  sStone: {fileID: 8300000, guid: 0aa462c4715de574ea7e868e7873ce7b, type: 3}
+  sIce: {fileID: 8300000, guid: 641e769fe7ac52041bbb071c995ecc0f, type: 3}
+  sBoom: {fileID: 8300000, guid: 35eff33ac0fec694495d4bb8ced27ec8, type: 3}
+  sFox: {fileID: 8300000, guid: 78f57d300a51734458d5a23416abca28, type: 3}
+  sClick: {fileID: 8300000, guid: af4379b4a1935054db199abc2ae4a745, type: 3}
+  sStar: {fileID: 8300000, guid: 17684e27aa77c0c42a26218b8896b3c8, type: 3}
+  sStretch: {fileID: 8300000, guid: 6deb58302d6da4642a25c9a37173f0d2, type: 3}
+  sWin: {fileID: 8300000, guid: 07d2e408c85f5ef429152f716a60909f, type: 3}
+  sLose: {fileID: 8300000, guid: 2245863ea73c3574395f70d99acca8da, type: 3}
+  sWhoosh: {fileID: 8300000, guid: 510039c1912c88040a76058e1764e112, type: 3}

@@ -10,7 +10,7 @@
 [![Unity](https://img.shields.io/badge/Unity-6000.6.6f1-222?logo=unity&logoColor=white)](https://unity.com/)
 [![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)](#-download)
 [![Version](https://img.shields.io/badge/Version-1.0-f0a020)](CHANGELOG.md)
-[![Levels](https://img.shields.io/badge/Levels-20-d63c2e)](#-worlds)
+[![Levels](https://img.shields.io/badge/Levels-40-d63c2e)](#-worlds)
 [![Languages](https://img.shields.io/badge/Languages-7-4a90e2)](#-localization)
 
 [**Download**](#-download) · [**Game Manifest**](MANIFEST.md) · [**Changelog**](CHANGELOG.md) · [**Build from source**](#-build-from-source)
@@ -57,8 +57,11 @@ Rewards based on stars and destruction, plus a first-clear bonus.
 **🛒 Shop and upgrades**<br>
 Damage (+15% per level), **Auto-Aim** (the duck homes in on foxes) and extra ducks for each species.
 
-**🌍 20 levels, 4 worlds**<br>
-Each world has its own theme, parallax background and pixel transition effect. Difficulty ramps up gradually.
+**🌍 40 levels, 8 worlds**<br>
+Each world has its own theme and parallax background. Difficulty rises in tiers: every world is one step tougher, with a breather at the start and a boss fortress at the end.
+
+**🎵 Music & duck voices**<br>
+Three chiptune soundtracks, plus a unique voice, ability sound and squawk for every duck species.
 
 **🌐 7 languages**<br>
 Turkish, English, German, Spanish, French, Portuguese and Italian.
@@ -102,6 +105,7 @@ and the **Fox King** (huge). They blink, panic when a duck is in the air, and fl
 | Each star earned | **+10** |
 | Destruction rate (0–100%) | **up to +20** |
 | First time clearing a level | **+15** |
+| Breaking a **Golden Nest** 🪺 (once per nest) | **+3** |
 | Losing a level | up to +8 (consolation) |
 
 | Upgrade (per duck) | Levels | Effect | Cost |
@@ -118,8 +122,24 @@ and the **Fox King** (huge). They blink, panic when a duck is in the air, and fl
 
 | | |
 |:-:|:-:|
-| <img src="docs/media/world-level3.png"> **World 1: Lakeside** | <img src="docs/media/world-level8.png"> **World 2: Autumn Forest** |
-| <img src="docs/media/world-level14.png"> **World 3: Snowy Peaks** | <img src="docs/media/world-level19.png"> **World 4: Sunset Farm** |
+| <img src="docs/media/world-level3.png"> **1 · Lakeside** | <img src="docs/media/world-level8.png"> **2 · Autumn Forest** |
+| <img src="docs/media/world-level14.png"> **3 · Snowy Peaks** | <img src="docs/media/world-level19.png"> **4 · Sunset Farm** |
+| <img src="docs/media/world-level23.png"> **5 · Desert Canyon** | <img src="docs/media/world-level29.png"> **6 · Tropical Beach** |
+| <img src="docs/media/world-level31.png"> **7 · Blossom Valley** | <img src="docs/media/world-level40.png"> **8 · Fire Mountain** |
+
+### 📈 Tiered difficulty
+
+Each world is a **tier**. Inside a world, difficulty follows a sawtooth: a **breather** level first, then a
+build-up, then a **boss fortress**. Every new world starts one step tougher and announces it with a
+*"Tier N: foxes are X% tougher!"* banner.
+
+| World | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Fox health | ×1.00 | ×1.08 | ×1.16 | ×1.24 | ×1.32 | ×1.40 | ×1.48 | ×1.56 |
+| Block durability | ×1.00 | ×1.05 | ×1.10 | ×1.15 | ×1.20 | ×1.25 | ×1.30 | ×1.35 |
+
+Upgrades and extra ducks are tuned to outpace the curve, so there is always a way forward. See the
+[Game Manifest](MANIFEST.md#6-difficulty-curve) for details.
 
 ## 📸 Screenshots
 
@@ -128,6 +148,7 @@ and the **Fox King** (huge). They blink, panic when a duck is in the air, and fl
 | <img src="docs/media/splash.png"><br>Splash | <img src="docs/media/menu.png"><br>Main menu |
 | <img src="docs/media/level-select.png"><br>Level select | <img src="docs/media/new-duck.png"><br>New duck introduction |
 | <img src="docs/media/level-clear.png"><br>Level clear, with Golden Egg reward | <img src="docs/media/shop.png"><br>Shop |
+| <img src="docs/media/tier-intro.png"><br>New tier banner & Golden Nest tip | <img src="docs/media/add-duck.png"><br>Add a duck mid-level |
 
 ## 📥 Download
 
@@ -192,9 +213,11 @@ Assets/
     ├── BirdType.cs       duck stats & material multipliers
     ├── Fox.cs            enemies
     ├── Destructible.cs   damage model for blocks & foxes
-    ├── Levels.cs         20 level layouts (data in code)
+    ├── Levels.cs         40 level layouts (data in code)
     ├── LevelLoader.cs    level & theme building, difficulty scaling
     ├── Loc.cs            localization (7 languages)
+    ├── Music.cs          background music with cross-fades
+    ├── PlayerProfile.cs  guest profile & save export / import (groundwork for accounts)
     └── …                 Slingshot, CameraRig, Fx, Sfx, Explosion, EggBomb, AutoTester
 ```
 
@@ -209,18 +232,20 @@ The device language is detected automatically. You can switch languages from the
 
 ## 🗺 Roadmap
 
-- [x] 20 levels, 6 ducks, 4 fox types
-- [x] Golden Egg economy, shop and upgrades
+- [x] 40 levels in 8 worlds with tiered difficulty
+- [x] 6 ducks with unique voices, 4 fox types
+- [x] Golden Egg economy, Golden Nests, shop and upgrades
+- [x] Background music (3 tracks)
 - [x] 7 languages
-- [ ] Background music
-- [ ] More worlds and levels
+- [ ] Optional accounts (Google / email) with cloud save; playing as a guest stays possible
+- [ ] In-app Golden Egg packs (see the [plan](MANIFEST.md#12-accounts--purchases-planned))
 - [ ] Google Play release
 
 ## 🇹🇷 Türkçe
 
 **DuckThis Feather Fury** is a pixel-art, physics-based slingshot game for Android starring ducks.
 
-You face the foxes' wood, stone, ice and TNT forts across 20 levels and 4 worlds, with 6 duck species that
+You face the foxes' wood, stone, ice and TNT forts across 40 levels and 8 worlds, with 6 duck species that
 each have their own ability. At the end of each level you earn **Golden Eggs** based on your stars and
 destruction. In the shop you can spend them on **Damage**, **Auto-Aim** and **Extra Duck** for each species.
 

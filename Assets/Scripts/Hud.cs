@@ -179,7 +179,7 @@ public class Hud : MonoBehaviour
         }
 
         if (Button(new Rect(panel.x + 40, panel.yMax - 150, 120, 126), art.btnBlue, art.iconMenu, null, 0)) gm.OpenMenu();
-        if (Button(new Rect(panel.center.x - 180, panel.yMax - 150, 360, 126), art.btnOrange, null, Loc.T("shop"), 60)) gm.OpenShop();
+        if (Button(new Rect(panel.center.x - 170, panel.yMax - 122, 340, 104), art.btnOrange, null, Loc.T("shop"), 56)) gm.OpenShop();
         EggPill(new Rect(vw - 30 - 340, 30, 340, 110));
         Text(new Rect(panel.xMax - 520, panel.yMax - 110, 480, 70), "★ " + Levels.TotalStars() + " / " + (Levels.Count * 3), 54, Brown, TextAnchor.MiddleRight, 1f, 0);
     }
@@ -721,14 +721,17 @@ public class Hud : MonoBehaviour
 
     void Text(Rect r, string text, int size, Color color, TextAnchor anchor, float alpha = 1f, int outline = 4)
     {
-        label.fontSize = Mathf.Max(1, Mathf.RoundToInt(size * s));
+        // Yazı boyutları 4 piksellik adımlara yuvarlanır: her karede farklı boyut istemek
+        // dinamik font atlasını sürekli yeniden kurdurup harflerin kaybolmasına yol açıyordu.
+        label.fontSize = QuantSize(size * s);
         label.alignment = anchor;
         Rect p = Px(r);
         if (p.width > 4f)
         {
             float w = label.CalcSize(new GUIContent(text)).x;
-            if (w > p.width) label.fontSize = Mathf.Max(1, Mathf.FloorToInt(label.fontSize * p.width / w));
+            if (w > p.width) label.fontSize = QuantSize(label.fontSize * p.width / w, true);
         }
+        label.font.RequestCharactersInTexture(text, label.fontSize);
         if (outline > 0)
         {
             float o = Mathf.Max(1f, outline * s);
@@ -742,6 +745,13 @@ public class Hud : MonoBehaviour
         color.a = alpha;
         label.normal.textColor = color;
         GUI.Label(p, text, label);
+    }
+
+    static int QuantSize(float px, bool down = false)
+    {
+        int v = Mathf.Max(1, down ? Mathf.FloorToInt(px) : Mathf.RoundToInt(px));
+        if (v <= 16) return v;
+        return down ? (v / 4) * 4 : Mathf.RoundToInt(v / 4f) * 4;
     }
 
     static float EaseBack(float t)

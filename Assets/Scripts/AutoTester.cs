@@ -143,7 +143,7 @@ public class AutoTester : MonoBehaviour
     }
 
     // Rastgele bir tilkiye balistik nişan (biraz gürültüyle)
-    static Vector2 AimAtFox(GameManager gm, int trial, out Vector2 aimed)
+    public static Vector2 AimAtFox(GameManager gm, int trial, out Vector2 aimed)
     {
         var foxes = FindObjectsByType<Fox>();
         Vector2 start = gm.Sling.launchPoint.position;

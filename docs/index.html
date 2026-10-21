@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuckThis Feather Fury</title>
+<meta name="description" content="A pixel-art physics slingshot game for Android starring six kinds of ducks. The foxes stole the eggs — time to take them back.">
+<meta property="og:title" content="DuckThis Feather Fury">
+<meta property="og:description" content="Pixel-art physics slingshot game for Android. 20 levels, 6 ducks, Golden Eggs & upgrades.">
+<meta property="og:image" content="media/banner.png">
+<meta name="theme-color" content="#2a2f45">
+<link rel="icon" href="media/ducks/duck.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  @font-face{font-family:"Jersey 10";src:url(fonts/Jersey10-Regular.ttf) format("truetype");font-display:swap}
+  :root{
+    --ink:#1a1420; --night:#2a2f45; --night2:#20243a; --cream:#fff6dc; --paper:#fdf1d2;
+    --gold:#ffd140; --orange:#ff8c33; --red:#d63c2e; --green:#5cbf3a; --blue:#4a90e2; --sky:#7cc4f2;
+    --brown:#6b3f1f; --text:#2b2230; --muted:#7a6352;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--night);color:var(--cream);font-family:Nunito,system-ui,sans-serif;line-height:1.55}
+  img{max-width:100%;display:block}
+  .px{image-rendering:pixelated;image-rendering:crisp-edges}
+  a{color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+  h1,h2,h3,.pix{font-family:"Jersey 10",monospace;font-weight:400;letter-spacing:.5px;line-height:1}
+  h2{font-size:clamp(40px,6vw,64px);margin:0 0 8px;color:var(--gold);text-shadow:4px 4px 0 var(--ink)}
+  .lead{color:#d9d3e8;max-width:720px;margin:0 0 32px;font-size:18px}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:10;background:rgba(26,20,32,.88);backdrop-filter:blur(6px);border-bottom:4px solid var(--ink)}
+  nav .wrap{display:flex;align-items:center;gap:20px;height:60px}
+  nav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:"Jersey 10";font-size:28px;color:var(--gold)}
+  nav .brand img{width:40px}
+  nav .links{margin-left:auto;display:flex;gap:18px;font-weight:700;font-size:15px}
+  nav .links a{text-decoration:none;color:#d9d3e8}
+  nav .links a:hover{color:var(--gold)}
+  @media(max-width:720px){nav .links a:not(.keep){display:none}}
+
+  /* buttons — game-style */
+  .btn{display:inline-flex;align-items:center;gap:10px;font-family:"Jersey 10";font-size:30px;text-decoration:none;color:#fff;
+       padding:12px 26px 16px;border:4px solid var(--ink);border-radius:6px;background:var(--green);
+       box-shadow:inset 0 -8px 0 rgba(0,0,0,.22), inset 0 4px 0 rgba(255,255,255,.35), 0 6px 0 var(--ink);
+       text-shadow:2px 2px 0 var(--ink);transition:transform .08s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn:active{transform:translateY(4px);box-shadow:inset 0 -4px 0 rgba(0,0,0,.22),0 2px 0 var(--ink)}
+  .btn.orange{background:var(--orange)} .btn.blue{background:var(--blue)}
+  .btn img{width:28px}
+
+  /* hero */
+  .hero{background:var(--ink);border-bottom:6px solid var(--ink)}
+  .hero img.banner{width:100%;max-width:1600px;margin:0 auto;aspect-ratio:2/1;object-fit:cover}
+  .hero .cta{background:linear-gradient(#5b3a22,#3d2616);border-top:6px solid var(--ink);padding:26px 0 34px}
+  .hero .cta .wrap{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:center}
+  .hero .tag{width:100%;text-align:center;font-family:"Jersey 10";font-size:clamp(24px,3.4vw,36px);color:var(--cream);text-shadow:3px 3px 0 var(--ink);margin:0 0 6px}
+
+  section{padding:88px 0}
+  section.alt{background:var(--night2)}
+  section.paper{background:var(--paper);color:var(--text)}
+  section.paper h2{color:var(--red);text-shadow:3px 3px 0 #f0c98a}
+  section.paper .lead{color:var(--muted)}
+
+  /* trailer */
+  .frame{border:6px solid var(--ink);border-radius:10px;overflow:hidden;box-shadow:0 10px 0 var(--ink);background:#000}
+  .trailer{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center}
+  @media(max-width:900px){.trailer{grid-template-columns:1fr}}
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:24px}
+  .stat{background:var(--night);border:4px solid var(--ink);border-radius:8px;padding:14px 16px;box-shadow:0 5px 0 var(--ink)}
+  .stat b{display:block;font-family:"Jersey 10";font-size:48px;color:var(--gold);line-height:1}
+  .stat span{color:#c9c2da;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+  /* ducks */
+  .ducks{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:900px){.ducks{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.ducks{grid-template-columns:1fr}}
+  .card{background:#fff8e6;border:4px solid var(--ink);border-radius:10px;box-shadow:0 6px 0 var(--ink);padding:18px;position:relative}
+  .card .sprite{height:96px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:8px;background:linear-gradient(#bfe3fb,#e6f5ff);border:3px solid var(--ink);border-radius:6px}
+  .card .sprite img{height:88px;width:auto;animation:bob 1.6s ease-in-out infinite}
+  .card:nth-child(2n) .sprite img{animation-delay:-.6s}
+  @keyframes bob{50%{transform:translateY(-6px)}}
+  @media (prefers-reduced-motion:reduce){.card .sprite img{animation:none}}
+  .card h3{font-size:34px;margin:6px 0 4px;color:var(--brown)}
+  .card p{margin:0 0 10px;color:var(--text)}
+  .chip{display:inline-block;font-weight:800;font-size:12px;letter-spacing:.4px;text-transform:uppercase;padding:3px 9px;border:3px solid var(--ink);border-radius:999px;margin-right:6px;background:#fff}
+  .chip.ice{background:#cdeeff}.chip.wood{background:#f2c48d}.chip.stone{background:#d5d9de}.chip.boom{background:#ffb199}.chip.lvl{background:var(--gold)}
+
+  /* features */
+  .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:900px){.feat{grid-template-columns:1fr}}
+  .feat div{background:var(--night);border:4px solid var(--ink);border-radius:10px;padding:22px;box-shadow:0 6px 0 var(--ink)}
+  .feat h3{font-size:34px;color:var(--gold);margin:0 0 8px}
+  .feat p{margin:0;color:#d9d3e8}
+
+  /* economy */
+  .eco{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+  @media(max-width:900px){.eco{grid-template-columns:1fr}}
+  table{width:100%;border-collapse:separate;border-spacing:0;background:#fff8e6;border:4px solid var(--ink);border-radius:10px;overflow:hidden;box-shadow:0 6px 0 var(--ink)}
+  th,td{padding:12px 14px;text-align:left;border-bottom:2px solid #ecd9b0}
+  th{background:var(--brown);color:var(--cream);font-family:"Jersey 10";font-weight:400;font-size:24px;letter-spacing:.5px}
+  tr:last-child td{border-bottom:0}
+  td b{color:var(--red)}
+  .egg{display:inline-block;width:18px;vertical-align:-3px;margin-right:4px}
+
+  /* worlds gallery */
+  .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+  @media(max-width:720px){.gallery{grid-template-columns:1fr}}
+  .gallery figure{margin:0}
+  .gallery figcaption{font-family:"Jersey 10";font-size:28px;margin-top:10px;color:var(--gold)}
+
+  /* download */
+  .dl{text-align:center}
+  .dl .steps{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:28px 0 36px}
+  .dl .step{background:var(--night);border:4px solid var(--ink);border-radius:10px;padding:16px 18px;width:250px;box-shadow:0 6px 0 var(--ink);text-align:left}
+  .dl .step b{font-family:"Jersey 10";font-size:40px;color:var(--gold);display:block;line-height:1}
+  code{background:rgba(0,0,0,.25);padding:2px 6px;border-radius:4px;font-size:.92em}
+
+  footer{background:var(--ink);color:#a79fb8;padding:36px 0;text-align:center;font-size:14px}
+  footer .pix{font-size:28px;color:var(--gold);margin-bottom:6px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#"><img class="px" src="media/ducks/duck.png" alt="">DUCKTHIS</a>
+    <div class="links">
+      <a href="#ducks">Ducks</a>
+      <a href="#features">Features</a>
+      <a href="#eggs">Golden Eggs</a>
+      <a href="#worlds">Worlds</a>
+      <a class="keep" href="#download">Download</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <img class="banner px" src="media/banner.png" alt="DuckThis Feather Fury: ducks, a slingshot and a fox fort">
+  <div class="cta">
+    <div class="wrap">
+      <p class="tag">A pixel-art slingshot game for Android</p>
+      <a class="btn" href="https://github.com/MuzafferTOPAL/DuckThisFeatherFury/releases/latest"><img class="px" src="media/ducks/ui_egg.png" alt="">Download APK</a>
+      <a class="btn blue" href="https://github.com/MuzafferTOPAL/DuckThisFeatherFury">View on GitHub</a>
+    </div>
+  </div>
+</header>
+
+<section class="alt">
+  <div class="wrap trailer">
+    <div class="frame"><img src="media/gameplay-tnt.gif" alt="A duck hits a TNT crate and the whole fox fort explodes" loading="lazy"></div>
+    <div>
+      <h2>Ducks. Foxes. Physics.</h2>
+      <p class="lead">The foxes stole the eggs. Pull back the slingshot, pick the right duck and bring their wood, stone, ice and TNT forts crashing down. Then spend your recovered Golden Eggs to make your flock even stronger.</p>
+      <div class="stats">
+        <div class="stat"><b>20</b><span>Levels</span></div>
+        <div class="stat"><b>6</b><span>Duck species</span></div>
+        <div class="stat"><b>4</b><span>Themed worlds</span></div>
+        <div class="stat"><b>7</b><span>Languages</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="paper" id="ducks">
+  <div class="wrap">
+    <h2>Meet the flock</h2>
+    <p class="lead">Every duck has one trick: tap mid-flight to use it. Match the duck to the material and watch the fort fold.</p>
+    <div class="ducks">
+      <div class="card"><div class="sprite"><img class="px" src="media/ducks/duck.png" alt="Mallard"></div>
+        <h3>Mallard</h3><p>Flaps upward, up to twice. Perfect for fixing a low shot.</p><span class="chip lvl">Level 1</span></div>
+      <div class="card"><div class="sprite"><img class="px" src="media/ducks/mandarin.png" alt="Mandarin Duck"></div>
+        <h3>Mandarin Duck</h3><p>Splits into three, covering a wide area.</p><span class="chip ice">Ice ×2.5</span><span class="chip lvl">Level 4</span></div>
+      <div class="card"><div class="sprite"><img class="px" src="media/ducks/merganser.png" alt="Merganser"></div>
+        <h3>Merganser</h3><p>An arrow-fast dive that pierces straight through structures.</p><span class="chip wood">Wood ×2.2</span><span class="chip lvl">Level 6</span></div>
+      <div class="card"><div class="sprite"><img class="px" src="media/ducks/muscovy.png" alt="Muscovy Duck"></div>
+        <h3>Muscovy Duck</h3><p>The heaviest of the flock. A brutal ground pound.</p><span class="chip stone">Stone ×2.2</span><span class="chip lvl">Level 11</span></div>
+      <div class="card"><div class="sprite"><img class="px" src="media/ducks/shelduck.png" alt="Ruddy Shelduck"></div>
+        <h3>Ruddy Shelduck</h3><p>Drops an egg bomb on the foxes, then rockets back up.</p><span class="chip boom">Bomb</span><span class="chip lvl">Level 13</span></div>
+      <div class="card"><div class="sprite"><img class="px" src="media/ducks/scoter.png" alt="Black Scoter"></div>
+        <h3>Black Scoter</h3><p>Kaboom! It explodes whenever you say so.</p><span class="chip boom">Explosive</span><span class="chip lvl">Level 16</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <h2>Built to be replayed</h2>
+    <p class="lead">Short turns, quick retries and a progression system that keeps you going for one more shot.</p>
+    <div class="feat">
+      <div><h3>Real physics</h3><p>Damage comes from impact speed, mass and material. TNT crates chain-react, and cracks show exactly what's about to give.</p></div>
+      <div><h3>Auto-Aim</h3><p>Upgrade a duck and it homes in on the nearest fox mid-flight. Three levels, from a gentle nudge to a heat-seeker.</p></div>
+      <div><h3>Extra ducks</h3><p>Out of ducks? Tap <b>+</b> to call in reinforcements mid-level, or continue right after losing.</p></div>
+      <div><h3>Fair difficulty</h3><p>Foxes and forts toughen up gradually across the 20 levels. Upgrades help when you're stuck.</p></div>
+      <div><h3>Pixel craft</h3><p>Hand-placed 16 px art, parallax worlds, four pixel transition styles and chiptune effects.</p></div>
+      <div><h3>7 languages</h3><p>Turkish, English, German, Spanish, French, Portuguese and Italian, detected automatically.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="paper" id="eggs">
+  <div class="wrap">
+    <h2>Golden Eggs</h2>
+    <p class="lead">The foxes stole the eggs, so every egg you win back is currency. Earn them by playing well, and spend them on your flock.</p>
+    <div class="eco">
+      <table>
+        <tr><th>Earn</th><th>Eggs</th></tr>
+        <tr><td>Each star</td><td><img class="egg px" src="media/ducks/ui_egg.png" alt=""><b>+10</b></td></tr>
+        <tr><td>Destruction (0–100%)</td><td><img class="egg px" src="media/ducks/ui_egg.png" alt=""><b>up to +20</b></td></tr>
+        <tr><td>First clear bonus</td><td><img class="egg px" src="media/ducks/ui_egg.png" alt=""><b>+15</b></td></tr>
+        <tr><td>Losing (consolation)</td><td><img class="egg px" src="media/ducks/ui_egg.png" alt=""><b>up to +8</b></td></tr>
+      </table>
+      <table>
+        <tr><th>Spend (per duck)</th><th>Effect</th></tr>
+        <tr><td><b>Damage</b> ×4</td><td>+15% damage per level</td></tr>
+        <tr><td><b>Auto-Aim</b> ×3</td><td>Homes in on foxes: 25° / 45° / 70° per second</td></tr>
+        <tr><td><b>Extra Duck</b></td><td>Add a duck mid-level or continue after losing</td></tr>
+      </table>
+    </div>
+    <div class="frame" style="margin-top:36px"><img src="media/shop.png" alt="The in-game shop" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="alt" id="worlds">
+  <div class="wrap">
+    <h2>Four worlds</h2>
+    <p class="lead">Each world has its own look, its own palette and a new duck to master.</p>
+    <div class="gallery">
+      <figure><div class="frame"><img src="media/world-level3.png" alt="Lakeside" loading="lazy"></div><figcaption>1 · Lakeside</figcaption></figure>
+      <figure><div class="frame"><img src="media/world-level8.png" alt="Autumn Forest" loading="lazy"></div><figcaption>2 · Autumn Forest</figcaption></figure>
+      <figure><div class="frame"><img src="media/world-level14.png" alt="Snowy Peaks" loading="lazy"></div><figcaption>3 · Snowy Peaks</figcaption></figure>
+      <figure><div class="frame"><img src="media/world-level19.png" alt="Sunset Farm" loading="lazy"></div><figcaption>4 · Sunset Farm</figcaption></figure>
+    </div>
+    <div class="frame" style="margin-top:36px"><img src="media/gameplay-split.gif" alt="A Mandarin Duck splits into three and shatters an ice tower" loading="lazy"></div>
+  </div>
+</section>
+
+<section id="download" class="dl">
+  <div class="wrap">
+    <h2>Get the game</h2>
+    <p class="lead" style="margin:0 auto">Version 1.0 · Android 8.0+ · 64-bit ARM · about 16 MB</p>
+    <div class="steps">
+      <div class="step"><b>1</b>Download the APK from the latest release.</div>
+      <div class="step"><b>2</b>Open it on your phone and allow <i>Install unknown apps</i> if asked.</div>
+      <div class="step"><b>3</b>Launch the game and take back the eggs!</div>
+    </div>
+    <a class="btn" href="https://github.com/MuzafferTOPAL/DuckThisFeatherFury/releases/latest"><img class="px" src="media/ducks/ui_egg.png" alt="">Download APK</a>
+    <a class="btn orange" href="https://github.com/MuzafferTOPAL/DuckThisFeatherFury/blob/main/MANIFEST.md">Game Manifest</a>
+  </div>
+</section>
+
+<footer>
+  <div class="pix">DUCKTHISGAMES</div>
+  Made with 🦆 in Unity · © 2026 DuckThisGames. All rights reserved.
+</footer>
+
+</body>
+</html>

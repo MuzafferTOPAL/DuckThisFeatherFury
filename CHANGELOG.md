@@ -9,3 +9,5 @@
 - 7 languages.
 - DuckThisGames splash screen.
 - Pause menu: resume, retry, levels, main menu, quit.
+- Fix: text could disappear or turn pale because of dynamic font atlas rebuilds. Font sizes are now quantized.
+- Tooling: `DevRecorder` records gameplay frames for trailers and GIFs.

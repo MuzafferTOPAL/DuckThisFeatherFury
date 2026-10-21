@@ -133,6 +133,8 @@ public static class GameBuilder
     }
 
     // ================================================================== uzaktan komutlar
+    static float F(string v) => float.Parse(v, System.Globalization.CultureInfo.InvariantCulture);
+
     static void Poll()
     {
         if (EditorApplication.timeSinceStartup < nextPoll) return;
@@ -161,6 +163,27 @@ public static class GameBuilder
                     else AutoTest();
                     break;
                 case "eggs": Economy.Eggs = int.Parse(parts[1]); break;
+                case "lang": Loc.Lang = int.Parse(parts[1]); break;
+                case "aimshot":
+                    if (GameManager.Instance != null)
+                        GameManager.Instance.AutoLaunch(AutoTester.AimAtFox(GameManager.Instance, parts.Length > 1 ? int.Parse(parts[1]) : 0, out _));
+                    break;
+                case "rec":      // rec ad saniye
+                    if (EditorApplication.isPlaying)
+                        DevRecorder.Record(parts[1], float.Parse(parts[2], System.Globalization.CultureInfo.InvariantCulture));
+                    break;
+                case "recshot":  // recshot ad saniye gecikme tnt|fox yetenekZamanı
+                    if (EditorApplication.isPlaying)
+                        DevRecorder.RecordShot(parts[1], F(parts[2]), F(parts[3]), parts[4], parts.Length > 5 ? F(parts[5]) : 0f, parts.Length > 6 ? F(parts[6]) : 0f);
+                    break;
+                case "setp": PlayerPrefs.SetInt(parts[1], int.Parse(parts[2])); PlayerPrefs.Save(); break;
+                case "maxgame":  // Game penceresini tam ekran yap/geri al
+                    {
+                        var gvType = typeof(Editor).Assembly.GetType("UnityEditor.GameView");
+                        var gv = EditorWindow.GetWindow(gvType);
+                        gv.maximized = parts.Length < 2 || parts[1] != "off";
+                    }
+                    break;
                 case "unlockall": PlayerPrefs.SetInt("unlock_all", 1); PlayerPrefs.Save(); break;
                 case "reset": ResetProgress(); break;
                 case "android": BuildAndroid(); break;

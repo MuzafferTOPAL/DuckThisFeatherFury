@@ -2,6 +2,20 @@
 
 ## 1.0
 
+### 200 levels
+
+- **10 worlds × 20 levels = 200 levels.** Worlds unlock in order. New worlds: Misty Swamp and Fox Kingdom.
+- **New difficulty curve.** D goes 0 → 5 in world 1, 4 → 9 in world 2, and so on up to 36 → 41 in world 10.
+  D drives fox and block toughness and the structure of every level.
+- **Procedural level generator** (seeded): fills the levels around the 40 hand-made ones. All 200 levels
+  pass the stability test.
+- Level 20 of every world is a boss fortress. Golden Nests appear in levels 10 and 20.
+- New level select: 10 world tabs and a 2 × 10 level grid, with a message when a world is locked.
+- New pause menu with labeled buttons, including **Restart level**.
+- **Star gifts:** 2 gift ducks per world, at 20★ and 45★.
+- Late-world balance: more spare ducks and a gentler toughness curve.
+- Turkish UI: "Bölüm" now means world and "Level" means level.
+
 ### Content update
 
 - **20 new levels**, for a total of **40 levels in 8 worlds**. New worlds: Desert Canyon, Tropical Beach,

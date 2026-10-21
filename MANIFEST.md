@@ -11,7 +11,7 @@
 | **Title** | DuckThis Feather Fury |
 | **Developer** | DuckThisGames |
 | **Genre** | Physics puzzle, slingshot |
-| **Content** | 40 levels · 8 worlds · 6 ducks |
+| **Content** | 200 levels · 10 worlds × 20 · 6 ducks |
 | **Platform** | Android (phone, landscape) |
 | **Engine** | Unity 6000.6.6f1 |
 | **Version** | 1.0 |
@@ -85,20 +85,37 @@ style.
 
 ## 5. World & levels
 
-| World | Theme | Levels | New duck(s) |
-|---|---|:-:|---|
-| 1 | Lakeside | 1–5 | Mallard, Mandarin Duck |
-| 2 | Autumn Forest | 6–10 | Merganser |
-| 3 | Snowy Peaks | 11–15 | Muscovy Duck, Ruddy Shelduck |
-| 4 | Sunset Farm | 16–20 | Black Scoter |
-| 5 | Desert Canyon | 21–25 | Golden Nests |
-| 6 | Tropical Beach | 26–30 | – |
-| 7 | Blossom Valley | 31–35 | – |
-| 8 | Fire Mountain | 36–40 | Final: Fox Emperor (two bosses) |
+The game has **10 worlds** with **20 levels** each, for **200 levels** in total. Worlds unlock in order: you
+can't enter world N+1 before finishing world N. Inside a world, levels unlock one by one.
 
-Worlds 1–4 each introduce a new duck; worlds 5–8 remix all six ducks against bigger, tougher forts. Each new element gets an intro card. Levels mix materials so the new duck shines. Each
-world has its own parallax background, color palette and pixel transition style (dissolve, iris, blinds,
-diagonal).
+| World | Theme | Levels | Introduces |
+|---|---|:-:|---|
+| 1 | Lakeside | 1–20 | Mallard (1), Mandarin Duck (12) |
+| 2 | Autumn Forest | 21–40 | Merganser (21) |
+| 3 | Snowy Peaks | 41–60 | Muscovy Duck (41), Ruddy Shelduck (47) |
+| 4 | Sunset Farm | 61–80 | Black Scoter (61) |
+| 5 | Desert Canyon | 81–100 | Golden Nests |
+| 6 | Tropical Beach | 101–120 | |
+| 7 | Blossom Valley | 121–140 | |
+| 8 | Fire Mountain | 141–160 | |
+| 9 | Misty Swamp | 161–180 | |
+| 10 | Fox Kingdom | 181–200 | Final boss |
+
+**Hand-made and generated levels.** In worlds 1–8, the 40 hand-designed levels sit at fixed slots: levels
+1, 4, 7, 12 and 20 of each world. Duck introductions and boss levels are hand-made. All other levels come
+from a **seeded procedural generator** (`LevelGen.cs`), so level *N* always has the same layout.
+
+The generator assembles forts from modules that are proven to stand: towers of 1–3 floors, stone
+pedestals, a wall with a frame, a boulder shelf, a bridge, twin towers, a pyramid and a boss bunker.
+Difficulty (§ 6) controls:
+- the number and size of modules
+- the share of stone and ice
+- the share of helmeted foxes, TNT placement and spare ducks
+
+The duck line-up is weighted toward the counters for that fort: Muscovy for stone, Mandarin for ice,
+Merganser for wood and Scoter for bosses and TNT.
+
+**Every one of the 200 levels is checked by the AutoTester**: it must stand still with no shot fired.
 
 ### Materials
 
@@ -115,50 +132,46 @@ Blocks get a 0.8 s spawn grace period so structures settle safely.
 
 ## 6. Difficulty curve
 
-Difficulty rises in **tiers**, not in a straight line. Each world (5 levels) is one tier, and every new
-world makes foxes and blocks one step tougher. Inside a world the curve is a **sawtooth**:
+Difficulty **D** rises by **5 points across each world**. Each new world starts **1 point below** where
+the previous one ended, so a new world opens with a short breather:
 
 ```
-World:   1       2       3       4       5       6       7       8
-       ▁▂▂▃▄   ▂▃▃▄▅   ▃▄▄▅▆   ▄▅▅▆▇   ▄▅▆▆▇   ▅▆▆▇█   ▅▆▇▇█   ▆▇▇██
-       └─ each world: breather → build-up → boss, then the next tier starts a step higher
+D = 4 × (world − 1) + 5 × (level in world − 1) / 19
+
+World 1:  0 ──────────▶ 5
+World 2:       4 ──────────▶ 9
+World 3:            8 ──────────▶ 13
+  ...
+World 10:                                36 ──────────▶ 41
 ```
 
-- **Level 1 of a world** is a breather: a new theme, a smaller fort and a spare duck.
-- **Levels 2–4** build up with mixed materials and more foxes.
-- **Level 5** is a fortress with a boss fox.
+| Effect | Formula | D = 0 | D = 20 | D = 41 |
+|---|---|:-:|:-:|:-:|
+| Fox health | × (1 + 0.02·D) | ×1.00 | ×1.40 | ×1.82 |
+| Block durability | × (1 + 0.01·D) | ×1.00 | ×1.20 | ×1.41 |
+| Helmeted fox chance | 2% + 1.7%·D | 2% | 36% | 60% |
+| Stone share | 8% + 1.4%·D | 8% | 36% | 55% |
+| Spare ducks | | 2 | 1 | 2 |
 
-The next world opens with a short **"Tier N: foxes are X% tougher!"** banner, so the jump is visible and fair.
+The first level of every world shows a **"World N: foxes are X% tougher!"** banner. Level 20 of every world
+is a **boss fortress**. Upgrades (Damage up to ×1.6, Auto-Aim), Golden Nests and extra ducks are there so
+committed players can keep pace, while players who skip the shop feel the climb.
 
-| World | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-|---|---|---|---|---|---|---|---|---|
-| Fox health | ×1.00 | ×1.08 | ×1.16 | ×1.24 | ×1.32 | ×1.40 | ×1.48 | ×1.56 |
-| Block durability | ×1.00 | ×1.05 | ×1.10 | ×1.15 | ×1.20 | ×1.25 | ×1.30 | ×1.35 |
+**Balancing:** the AutoTester can run with an *expected upgrade profile*: the Damage and Auto-Aim levels a
+player could afford with the eggs they have earned by that world. Late worlds are tuned so they stay
+winnable under that profile.
 
-Upgrades (Damage up to ×1.6, Auto-Aim) and extra ducks are designed to outpace this curve. A player who
-spends their Golden Eggs always has a way forward, while a player who skips the shop feels the climb.
+### Star gifts 🎁
 
-**Balancing target**, measured by the built-in AutoTester (a simple bot with no upgrades):
-
-| Level in world | Bot win rate |
-|---|---|
-| Breather (level 1) | ≥ 50% |
-| Mid levels (2–4) | 25–75% |
-| Boss (level 5) | 25–50% |
+Each world has **two gift ducks**, at **20★** and **45★** of the world's 60 stars. Claim them on the
+level-select screen: each gives one random extra duck from the species you have met. That makes **at most
+2 gift ducks per world** (20 in the whole game). A gift icon on the world tab and a line on the level-clear
+screen show when one is ready.
 
 ### Golden Nests
 
-From world 5 onward, and in every boss level, forts hide **Golden Nests**. Breaking one pays **+3 Golden
-Eggs**, once per nest, forever. An empty nest stays behind on replays, so nests reward exploration and
-can't be farmed.
-
-**Stars** are based on the score:
-
-- **1★:** clear the level.
-- **2★:** fox score + 25% of possible destruction + bonus for unused ducks.
-- **3★:** fox score + 45% of possible destruction + bonus for unused ducks.
-
-Each unused duck is worth **10,000** points at the end of a level.
+Golden Nests appear in levels 10 and 20 of every world, in the hand-made boss levels and in some hand-made
+levels from world 5 on. Breaking one pays **+3 Golden Eggs**, once per nest, forever.
 
 ## 7. Economy: Golden Eggs 🥚
 
@@ -172,7 +185,7 @@ The foxes stole the eggs, so recovering them *is* the currency.
 | First clear of a level | `+15` |
 | Loss | `round(destruction % × 8)` |
 
-A perfect first clear pays **65 eggs**. Forty levels pay roughly 2,000 eggs on a first playthrough, plus about **50** from Golden Nests.
+A perfect first clear pays **65 eggs**. 200 levels pay roughly 10,000 eggs on a first playthrough, plus about **80** from Golden Nests.
 
 ### Spending (per duck species)
 
@@ -189,6 +202,7 @@ Fully upgrading one duck costs **1,860** eggs, so players have to make meaningfu
 All UI is pixel-art IMGUI, scaled from a 1080 px reference height.
 
 - **Screens:** Splash → Main menu → Level select → Level intro → HUD → Pause / Result → Shop / Add a duck.
+- **Pause menu:** resume, **restart level**, levels, main menu, quit.
 - **HUD:** pause, restart, **+** (extra duck with an owned-count badge), score and best, fox counter,
   remaining duck icons.
 - **Accessibility of input:** a big drag area, with ability use on any tap that doesn't land on a UI button.
@@ -217,8 +231,8 @@ Three seamless loops: square-wave lead, arpeggio, triangle bass and noise drums.
 | Track | Key / tempo | Where it plays |
 |---|---|---|
 | `music_menu` | C major, 112 BPM | Menus, level select, shop |
-| `music_world` | G major, 128 BPM | Worlds 1–4 |
-| `music_world2` | A minor, 140 BPM | Worlds 5–8 (more driving) |
+| `music_world` | G major, 128 BPM | Worlds 1–5 |
+| `music_world2` | A minor, 140 BPM | Worlds 6–10 (more driving) |
 
 Tracks cross-fade when you move between menus and levels. The music ducks while the game is paused or on
 the lose screen. Music and sound effects have separate toggles in the main menu.
@@ -237,7 +251,7 @@ transitions.
 | Level data | Plain C# (`Levels.cs`), built at runtime by `LevelLoader` |
 | Persistence | `PlayerPrefs` (stars, best scores, eggs, upgrades, inventory, language) |
 | Build | IL2CPP, ARM64, minimum API 26 (Android 8.0), landscape auto-rotate |
-| Tooling | `GameBuilder` one-click setup; `AutoTester` plays all 40 levels automatically for stability and winnability checks |
+| Tooling | `GameBuilder` one-click setup; `AutoTester` checks all 200 levels automatically (stability mode and play mode) for stability and winnability checks |
 
 ## 11. Quality bar
 
@@ -283,7 +297,7 @@ These are **not in the game yet**; this section is the agreed direction so the c
 
 | Version | Goals |
 |---|---|
-| **1.0** ✅ | 40 levels in 8 worlds, tiered difficulty, 6 ducks with unique voices, Golden Eggs & Nests, shop, background music, 7 languages |
+| **1.0** ✅ | 200 levels in 10 worlds, stepped difficulty curve, 6 ducks with unique voices, Golden Eggs & Nests, shop, background music, 7 languages |
 | Next | Optional Google / email accounts with cloud save, then in-app egg packs; daily challenges; Google Play release |
 
 ---

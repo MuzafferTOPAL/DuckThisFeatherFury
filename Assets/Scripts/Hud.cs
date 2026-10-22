@@ -26,6 +26,7 @@ public class Hud : MonoBehaviour
     {
         Instance = this;
         cam = Camera.main;
+        useGUILayout = false;   // GUILayout kullanılmıyor: her karedeki Layout geçişini atla (performans)
     }
 
     public static void Popup(Vector3 world, string text, Color color, int size = 44)
@@ -925,7 +926,7 @@ public class Hud : MonoBehaviour
     // Fontta olmayan yazılar (Çince, Hintçe, Arapça...) LocText ile atlas görsellerinden çizilir.
     void Text(Rect r, string text, int size, Color color, TextAnchor anchor, float alpha = 1f, int outline = 4, string lang = null)
     {
-        if (string.IsNullOrEmpty(text)) return;
+        if (string.IsNullOrEmpty(text) || Event.current.type != EventType.Repaint) return;   // yazı yalnızca çizim geçişinde
         var items = LocText.Layout(text, lang);
         if (items == null) PlainText(r, text, size, color, anchor, alpha, outline);
         else RichText(r, items, size, color, anchor, alpha, outline);

@@ -63,10 +63,29 @@ public class GameManager : MonoBehaviour
     int levelToken;   // eski bölümden kalan coroutine'leri iptal etmek için
 
 
+    // Performans: yüksek çözünürlüklü telefonlarda (1440p ve üstü) pixel-art oyunu tam çözünürlükte çizmek
+    // gereksiz GPU yükü. Kısa kenar en fazla 1080 (düşük RAM'li cihazlarda 720) piksele indirilir.
+    static void LimitResolution()
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        int w = Screen.width, h = Screen.height;
+        int shortSide = Mathf.Min(w, h);
+        bool lowEnd = SystemInfo.systemMemorySize > 0 && SystemInfo.systemMemorySize < 3000 || SystemInfo.processorCount <= 4;
+        int max = lowEnd ? 720 : 1080;
+        if (shortSide > max)
+        {
+            float k = (float)max / shortSide;
+            Screen.SetResolution(Mathf.RoundToInt(w * k), Mathf.RoundToInt(h * k), true);
+        }
+#endif
+    }
+
     void Awake()
     {
         Instance = this;
         Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0;
+        LimitResolution();
         Time.timeScale = 1f;
         PlayerProfile.Ensure();
         Levels.MigrateIfNeeded();

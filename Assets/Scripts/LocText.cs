@@ -62,8 +62,17 @@ public static class LocText
         if (png != null && idx != null)
         {
             a = new Atlas();
-            a.tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-            a.tex.LoadImage(png.bytes, true);
+            var raw = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            raw.LoadImage(png.bytes, false);
+            // Bellek: 16 bit (RGBA4444) yeterli (beyaz yazı + alfa). Yarı bellek; CPU kopyası da bırakılır.
+            if (SystemInfo.SupportsTextureFormat(TextureFormat.RGBA4444))
+            {
+                a.tex = new Texture2D(raw.width, raw.height, TextureFormat.RGBA4444, false);
+                a.tex.SetPixels32(raw.GetPixels32());
+                a.tex.Apply(false, true);
+                Object.Destroy(raw);
+            }
+            else { raw.Apply(false, true); a.tex = raw; }
             a.tex.filterMode = FilterMode.Bilinear;
             a.tex.wrapMode = TextureWrapMode.Clamp;
             foreach (var line in idx.text.Split('\n'))

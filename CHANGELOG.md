@@ -2,6 +2,19 @@
 
 ## 1.0
 
+### Compatibility & performance
+
+- **Runs on 32-bit phones too:** the APK now contains ARMv7 and ARM64 code (many budget / Android Go
+  phones, including some Android 12 devices, are 32-bit only). Minimum Android 8.0 (API 26, the oldest
+  Unity 6.6 supports), target = latest SDK.
+- Graphics: OpenGL ES 3 first, Vulkan as fallback (avoids buggy Vulkan drivers on cheap devices).
+- Performance: resolution capped at 1080p (720p on phones with < 3 GB RAM or ≤ 4 cores), vSync off at
+  60 fps with optimized frame pacing, UI text drawn only in the repaint pass, GUILayout pass skipped,
+  text atlases stored as 16-bit textures without a CPU copy (half the memory).
+- **Language review:** every language was reviewed and scored (grammar, local usage, duck names);
+  70 fixes applied. Report: `tools/loc/review/REPORT.md`.
+
+
 ### 500 levels, 9 ducks, 30 languages
 
 - **25 worlds × 20 levels = 500 levels**, each world with its own name and theme (15 new worlds, from

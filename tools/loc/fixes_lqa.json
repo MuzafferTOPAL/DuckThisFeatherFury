@@ -1,0 +1,194 @@
+{
+ "tr": {
+  "U": {
+   "shop": "MAĞAZA",
+   "restart": "TEKRAR",
+   "no_eggs": "YETERLİ YUMURTA YOK!"
+  },
+  "LVL": {
+   "6": "AHŞAP KULE",
+   "13": "YUVARLANAN KAYALAR"
+  }
+ },
+ "de": {
+  "U": {
+   "shop": "SHOP",
+   "add_btn": "+ ENTE",
+   "owned": "IM BESITZ"
+  }
+ },
+ "es": {
+  "U": {
+   "ok": "OK",
+   "no_eggs": "¡HUEVOS INSUFICIENTES!",
+   "first_clear": "BONUS PRIMERA VICTORIA",
+   "aim_d": "EN VUELO, SE DIRIGE A LOS ZORROS"
+  },
+  "ABIL": {
+   "3": "TOCA EN VUELO: ¡GOLPE AL SUELO! APLASTA LA PIEDRA"
+  },
+  "W": {
+   "9": "REINO DE LOS ZORROS",
+   "21": "OASIS DEL ESPEJISMO",
+   "23": "ARBOLEDA DEL CREPÚSCULO",
+   "24": "TRONO DE LOS ZORROS"
+  },
+  "LVL": {
+   "29": "ISLA DE LOS ZORROS"
+  }
+ },
+ "fr": {
+  "U": {
+   "restart": "REJOUER"
+  }
+ },
+ "pt": {
+  "DUCKS": {
+   "4": "NEGROLA",
+   "5": "PATO-FERRUGÍNEO",
+   "6": "ARRÁBIO"
+  }
+ },
+ "it": {
+  "U": {
+   "owned": "IN POSSESSO"
+  },
+  "ABIL": {
+   "0": "TOCCA IN VOLO: SBATTE LE ALI E SALE (2 VOLTE)"
+  }
+ },
+ "pl": {
+  "U": {
+   "add_btn": "+ KACZKA",
+   "gift_hint": "2 KACZKI W PREZENCIE W KAŻDYM ŚWIECIE",
+   "tip_nest": "NOWOŚĆ: ZŁOTE GNIAZDO! ROZBIJ JE I ZGARNIJ ZŁOTE JAJA: +{0} (RAZ NA GNIAZDO)"
+  },
+  "DUCKS": {
+   "6": "ROŻENIEC"
+  }
+ },
+ "id": {
+  "DUCKS": {
+   "2": "MERGANSER BESAR",
+   "6": "BEBEK EKOR LANCIP"
+  },
+  "W": {
+   "3": "LADANG SENJA"
+  }
+ },
+ "sw": {
+  "U": {
+   "unlock_at": "KITAFUNGUKA KWENYE KIWANGO {0}",
+   "max": "UPEO"
+  },
+  "DUCKS": {
+   "0": "BATA KICHWA-KIJANI"
+  },
+  "ABIL": {
+   "0": "GUSA AKIRUKA: HUPIGA MABAWA JUU (MARA 2)",
+   "1": "GUSA AKIRUKA: HUJIGAWA KUWA WATATU! BORA DHIDI YA BARAFU",
+   "2": "GUSA AKIRUKA: HUPIGA MBIZI KAMA MSHALE! HUTOBOA MBAO",
+   "3": "GUSA AKIRUKA: HUANGUKA KWA NGUVU! HUVUNJA MAWE",
+   "4": "GUSA AKIRUKA: KABUM! HULIPUA KILA KITU",
+   "5": "GUSA AKIRUKA: HUDONDOSHA BOMU LA YAI NA KUPAA JUU",
+   "6": "GUSA AKIRUKA: BUMERANGI! HURUDI NA KUPIGA KUTOKA NYUMA",
+   "7": "GUSA AKIRUKA: WIMBI LA MSHTUKO! HUSUKUMA KILA KITU",
+   "8": "GUSA AKIRUKA: HUMLENGA MBWEHA ALIYE KARIBU! IMARA DHIDI YA MBWEHA"
+  }
+ },
+ "ha": {
+  "U": {
+   "play": "FARA WASA"
+  },
+  "DUCKS": {
+   "5": "JAR AGWAGWA"
+  }
+ },
+ "vi": {
+  "U": {
+   "quit_q": "BẠN CÓ MUỐN THOÁT TRÒ CHƠI?"
+  },
+  "DUCKS": {
+   "6": "VỊT MỐC"
+  },
+  "LVL": {
+   "5": "VỊT MỎ NHỌN BỔ NHÀO"
+  }
+ },
+ "ru": {
+  "U": {
+   "tip_nest": "НОВОЕ: ЗОЛОТОЕ ГНЕЗДО! РАЗБЕЙТЕ ЕГО: ЗОЛОТЫЕ ЯЙЦА +{0} (ОДИН РАЗ С КАЖДОГО ГНЕЗДА)"
+  },
+  "LVL": {
+   "10": "ТЯЖЕЛОВЕС"
+  }
+ },
+ "uk": {
+  "U": {
+   "tip_nest": "НОВЕ: ЗОЛОТЕ ГНІЗДО! РОЗБИЙТЕ ЙОГО: ЗОЛОТІ ЯЙЦЯ +{0} (ОДИН РАЗ З КОЖНОГО ГНІЗДА)"
+  },
+  "ABIL": {
+   "3": "ТОРКНІТЬСЯ В ПОЛЬОТІ: УДАР З ВИСОТИ! ТРОЩИТЬ КАМІНЬ"
+  },
+  "LVL": {
+   "10": "ВАЖКОВАГОВИК",
+   "16": "СТОДОЛА"
+  }
+ },
+ "zh-Hans": {
+  "LVL": {
+   "0": "第一击"
+  }
+ },
+ "zh-Hant": {
+  "LVL": {
+   "0": "第一擊"
+  }
+ },
+ "ko": {
+  "U": {
+   "restart": "재시작",
+   "locked_world": "월드 {0} 클리어 필요"
+  }
+ },
+ "te": {
+  "U": {
+   "no": "లేదు"
+  }
+ },
+ "ta": {
+  "U": {
+   "on": "ஆன்",
+   "off": "ஆஃப்"
+  },
+  "LVL": {
+   "37": "லாவா பாலம்"
+  }
+ },
+ "gu": {
+  "U": {
+   "subtitle": "શિયાળ ઈંડાં ચોરી ગયાં!"
+  }
+ },
+ "pa": {
+  "U": {
+   "max": "ਅਧਿਕਤਮ"
+  }
+ },
+ "ar": {
+  "U": {
+   "egg_short": "بيض",
+   "owned": "لديك",
+   "max": "الحد الأقصى",
+   "tip_nest": "جديد: العش الذهبي! حطّمه لتحصل على بيض ذهبي +{0} (مرة لكل عش)"
+  }
+ },
+ "fa": {
+  "DUCKS": {
+   "2": "اردک‌ماهی‌خوار بزرگ"
+  },
+  "LVL": {
+   "5": "شیرجه‌ی اردک‌ماهی‌خوار"
+  }
+ }
+}

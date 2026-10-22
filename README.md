@@ -172,7 +172,7 @@ Level 20 of every world is a **boss fortress**. See the [Game Manifest](MANIFEST
 
 The latest Android build is published on the [**Releases**](../../releases) page.
 
-1. Download `DuckThis_FeatherFury_v1.0.apk` to your Android phone (Android 8.0 or newer, 64-bit ARM).
+1. Download `DuckThis_FeatherFury_v1.0.apk` to your Android phone (Android 8.0 or newer, 32- or 64-bit ARM).
 2. Open it. If prompted, allow *Install unknown apps* for your browser or file manager.
 3. Play!
 

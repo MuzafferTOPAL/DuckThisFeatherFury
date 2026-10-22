@@ -48,6 +48,15 @@ for c in ORDER:
     if 'LVL' not in LANGS[c]:
         LANGS[c]['LVL'] = json.load(open(os.path.join(HERE, 'lvl_%s.json' % c), encoding='utf-8'))
 
+# Dil incelemesi (LQA) düzeltmeleri: fixes_lqa.json kaynak tabloların üzerine uygulanır
+_fx = os.path.join(HERE, 'fixes_lqa.json')
+if os.path.exists(_fx):
+    for c, parts in json.load(open(_fx, encoding='utf-8')).items():
+        for part, items in parts.items():
+            for k, v in items.items():
+                if part == 'U': LANGS[c]['U'][k] = v
+                else: LANGS[c][part][int(k)] = v
+
 ukeys = list(LANGS['en']['U'].keys())
 tables = {}
 bad = False

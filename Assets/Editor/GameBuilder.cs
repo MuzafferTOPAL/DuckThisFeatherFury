@@ -12,7 +12,7 @@ using UnityEngine;
 [InitializeOnLoad]
 public static class GameBuilder
 {
-    const int Version = 18;
+    const int Version = 19;
     const string VersionFile = "ProjectSettings/OrdekOyunuBuilder.txt";
     const string CmdFile = "ProjectSettings/ordek_cmd.txt";
     const string ScenePath = "Assets/Scenes/Game.unity";
@@ -453,8 +453,20 @@ public static class GameBuilder
         PlayerSettings.allowedAutorotateToLandscapeRight = true;
         PlayerSettings.SetApplicationIdentifier(UnityEditor.Build.NamedBuildTarget.Android, "com.duckthisgames.featherfury");
         PlayerSettings.SetScriptingBackend(UnityEditor.Build.NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
-        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
-        PlayerSettings.Android.bundleVersionCode = 3;
+        // Uyumluluk: 32 bit (ARMv7, ör. Android Go telefonlar) ve 64 bit ARM;
+        // Android 8.0 (API 26, Unity 6.6nın desteklediği en eski sürüm) ve üstü.
+        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
+        PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
+        PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
+        PlayerSettings.Android.bundleVersionCode = 4;
+        // Grafik: önce OpenGL ES 3 (her cihazda kararlı; bazı ucuz cihazlarda Vulkan sürücüleri çöküyor), yoksa Vulkan
+        PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.Android, false);
+        PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, new[] { UnityEngine.Rendering.GraphicsDeviceType.OpenGLES3, UnityEngine.Rendering.GraphicsDeviceType.Vulkan });
+        PlayerSettings.Android.optimizedFramePacing = true;
+        PlayerSettings.Android.forceInternetPermission = false;
+        PlayerSettings.Android.preferredInstallLocation = AndroidPreferredInstallLocation.Auto;
+        PlayerSettings.SetManagedStrippingLevel(UnityEditor.Build.NamedBuildTarget.Android, ManagedStrippingLevel.Low);
+        PlayerSettings.MTRendering = true;
 
         var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(IconPath);
         if (icon != null)

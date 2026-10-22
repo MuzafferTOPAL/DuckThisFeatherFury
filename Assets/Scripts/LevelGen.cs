@@ -35,7 +35,7 @@ public static class LevelGen
         public void PutFox(FoxKind k, float x, float y0) { l.Fox(k, x, y0); foxes++; }
     }
 
-    public static LevelDef Make(int index, int world, int slot, float d, List<BirdType> avail)
+    public static LevelDef Make(int index, int world, int slot, float d, List<BirdType> avail, BirdType? intro = null)
     {
         var c = new Ctx
         {
@@ -43,15 +43,21 @@ public static class LevelGen
             l = new LevelDef { index = index, theme = world, title = "GEN-" + (index + 1), generated = true },
             d = d,
         };
-        bool icy = world == 2 || world == 5 || world == 6;
+        int baseTheme = world < 10 ? world : new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 2, 4, 5, 6, 9 }[world - 10];
+        bool icy = baseTheme == 2 || baseTheme == 5 || baseTheme == 6;
         c.iceP = icy ? 0.28f : 0.1f;
         c.stoneP = Mathf.Clamp(0.08f + 0.014f * d, 0.08f, 0.55f);
         c.helmetP = Mathf.Clamp(0.02f + 0.017f * d, 0f, 0.6f);
         c.kitP = d < 5f ? 0.4f : d < 15f ? 0.2f : 0.08f;
         c.boss = slot == Levels.PerWorld - 1;
 
-        float maxW = 10f + Mathf.Min(2f, d / 12f);
-        int target = Mathf.Clamp(1 + Mathf.FloorToInt(d / 7f) + (c.R() < 0.4f ? 1 : 0), 1, d < 4f ? 2 : 4);
+        // Tilki sayısı level level dalgalanır (dalga), zorluk (dayanıklılık, taş, miğfer) hiç düşmez.
+        // Her 5. level biraz daha hafif bir "nefes" leveli, bölüm sonu (20.) en kalabalık olanı.
+        float wave = c.boss ? 1.3f : slot % 5 == 0 ? 0.7f : 0.75f + c.R() * 0.55f;
+        float maxW = 10f + Mathf.Min(2.5f, d / 10f);
+        int target = Mathf.RoundToInt((1.1f + d / 11f) * wave);
+        int minMods = d >= 36f ? 3 : d >= 16f ? 2 : 1;
+        target = Mathf.Clamp(target, minMods, d < 4f ? 2 : 5);
         float x = 2.5f;
         float end = x;
         var placed = new List<int>();
@@ -82,7 +88,7 @@ public static class LevelGen
         if (slot == 9 || slot == Levels.PerWorld - 1) c.l.Nest(end + 0.9f, -4f);
 
         c.l.maxX = Mathf.Max(10.5f, end + 1.7f);
-        c.l.birds = PickDucks(c, avail);
+        c.l.birds = PickDucks(c, avail, intro);
         return c.l;
     }
 
@@ -110,6 +116,8 @@ public static class LevelGen
         if (c.d >= 4f) pool.AddRange(new[] { 5, 6 });
         if (c.d >= 9f) pool.AddRange(new[] { 7, 9 });
         if (c.d >= 14f) pool.AddRange(new[] { 8, 7, 9 });
+        if (c.d >= 26f) pool.AddRange(new[] { 9, 6, 7, 5 });
+        if (c.d >= 40f) pool.AddRange(new[] { 9, 8, 7 });
         if (c.d >= 6f) pool.Remove(0);   // ileride tek katlı kule nadir
         int k = pool[c.rnd.Next(pool.Count)];
         if (placed.Count > 0 && placed[placed.Count - 1] == k) k = pool[c.rnd.Next(pool.Count)];
@@ -221,14 +229,15 @@ public static class LevelGen
         return y;
     }
 
-    static BirdType[] PickDucks(Ctx c, List<BirdType> avail)
+    static BirdType[] PickDucks(Ctx c, List<BirdType> avail, BirdType? intro)
     {
         // yedek ördek: başta bol, sonra 1; sadece son bölümün sonlarında 0
         // ileri bölümlerde tilkiler çok dayanıklı: yedek ördek azalmaz, aksine bir tane artar
-        int spare = c.d < 3f ? 2 : 1;
+        int spare = c.d < 6f ? 2 : 1;
         if (c.foxes >= 7) spare++;
         if (c.d >= 26f) spare++;
-        int n = Mathf.Clamp(Mathf.CeilToInt(c.foxes / 2.0f) + spare, 3, 6);
+        if (c.d >= 45f) spare++;
+        int n = Mathf.Clamp(Mathf.CeilToInt(c.foxes / 2.0f) + spare, 3, 7);
         var weights = new Dictionary<BirdType, float>();
         foreach (var t in avail)
         {
@@ -238,10 +247,15 @@ public static class LevelGen
             if (t == BirdType.Muscovy) w += c.stone * 0.35f;
             if (t == BirdType.Scoter) w += c.tnt * 0.3f + (c.boss ? 1.5f : 0f);
             if (t == BirdType.Shelduck) w += c.foxes * 0.1f;
+            if (t == BirdType.Pintail) w += c.wood * 0.15f;
+            if (t == BirdType.Eider) w += c.stone * 0.2f + c.foxes * 0.05f;
+            if (t == BirdType.Goldeneye) w += c.foxes * 0.12f;
             weights[t] = w;
         }
         var res = new BirdType[n];
-        for (int i = 0; i < n; i++)
+        int start = 0;
+        if (intro.HasValue) { res[0] = intro.Value; if (n > 2) res[1] = intro.Value; start = n > 2 ? 2 : 1; }
+        for (int i = start; i < n; i++)
         {
             float sum = 0f; foreach (var kv in weights) sum += kv.Value;
             float r = c.R() * sum;

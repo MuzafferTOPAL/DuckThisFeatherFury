@@ -4,10 +4,10 @@ using UnityEngine;
 // Karga yeteneği ve TNT sandıkları kullanır.
 public static class Explosion
 {
-    public static void Explode(Vector2 center, float radius, float force, float damage, GameObject ignore = null)
+    public static void Explode(Vector2 center, float radius, float force, float damage, GameObject ignore = null, bool shockwave = false)
     {
-        Fx.Boom(center, radius);
-        Sfx.Play(Sfx.Boom);
+        if (shockwave) Fx.Puff(center, radius * 0.6f, 14, new Color(1f, 1f, 1f, 0.7f));
+        else { Fx.Boom(center, radius); Sfx.Play(Sfx.Boom); }
         if (CameraRig.Instance != null) CameraRig.Instance.Shake(0.45f);
 
         var hits = Physics2D.OverlapCircleAll(center, radius);

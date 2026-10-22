@@ -4,14 +4,14 @@
 
 # DuckThis Feather Fury
 
-**A pixel-art physics slingshot game for Android, starring six kinds of ducks.**<br>
+**A pixel-art physics slingshot game for Android, starring nine kinds of ducks.**<br>
 *The foxes stole the eggs. Time to take them back.*
 
 [![Unity](https://img.shields.io/badge/Unity-6000.6.6f1-222?logo=unity&logoColor=white)](https://unity.com/)
 [![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)](#-download)
 [![Version](https://img.shields.io/badge/Version-1.0-f0a020)](CHANGELOG.md)
-[![Levels](https://img.shields.io/badge/Levels-200-d63c2e)](#-worlds)
-[![Languages](https://img.shields.io/badge/Languages-7-4a90e2)](#-localization)
+[![Levels](https://img.shields.io/badge/Levels-500-d63c2e)](#-worlds)
+[![Languages](https://img.shields.io/badge/Languages-30-4a90e2)](#-localization)
 
 [**Download**](#-download) · [**Game Manifest**](MANIFEST.md) · [**Changelog**](CHANGELOG.md) · [**Build from source**](#-build-from-source)
 
@@ -45,11 +45,11 @@ material is the key to three stars.
 **🎯 Physics-based gameplay**<br>
 Real rigid-body physics. Damage depends on impact speed, mass and material. TNT crates trigger chain explosions.
 
-**🦆 6 duck species**<br>
-Six ducks with unique abilities: flap, split, dive, ground-pound, egg-bomb and explode.
+**🦆 9 duck species**<br>
+Nine ducks with unique abilities: flap, split, dive, ground-pound, explode, egg-bomb, boomerang, shockwave and fox-seeking dive. You start with three; a new species joins every three worlds.
 
 **🥚 Golden Egg economy**<br>
-Rewards based on stars and destruction, plus a first-clear bonus.
+Every level pays out by the damage you deal: **10 Golden Eggs per 100 damage**, plus a first-clear bonus.
 
 </td>
 <td width="50%" valign="top">
@@ -57,14 +57,14 @@ Rewards based on stars and destruction, plus a first-clear bonus.
 **🛒 Shop and upgrades**<br>
 Damage (+15% per level), **Auto-Aim** (the duck homes in on foxes) and extra ducks for each species.
 
-**🌍 200 levels, 10 worlds**<br>
-Each world has 20 levels and its own theme. Difficulty climbs inside every world and steps up from world to world, and each world ends with a boss fortress. Worlds unlock in order.
+**🌍 500 levels, 25 worlds**<br>
+Each world has 20 levels, its own name and theme. Difficulty climbs from **1%** on level 1 to **15%** on level 15 and **75%** on level 100, then keeps creeping up. Fox counts rise and fall from level to level, and each world ends with a boss fortress.
 
 **🎵 Music & duck voices**<br>
 Three chiptune soundtracks, plus a unique voice, ability sound and squawk for every duck species.
 
-**🌐 7 languages**<br>
-Turkish, English, German, Spanish, French, Portuguese and Italian.
+**🌐 30 languages**<br>
+The 30 most spoken languages, including Chinese, Japanese, Korean, Hindi, Bengali, Arabic, Urdu and Persian (right-to-left), with real common duck names in every language.
 
 </td>
 </tr>
@@ -75,11 +75,14 @@ Turkish, English, German, Spanish, French, Portuguese and Italian.
 | | Duck | Ability (tap mid-flight) | Strong against | Unlocks |
 |:-:|---|---|:-:|:-:|
 | <img src="docs/media/ducks/duck.png" width="72"> | **Mallard** | Flaps upward, up to twice | – | Level 1 |
-| <img src="docs/media/ducks/mandarin.png" width="72"> | **Mandarin Duck** | Splits into three | 🧊 Ice | Level 4 |
-| <img src="docs/media/ducks/merganser.png" width="72"> | **Merganser** | Arrow-fast dive | 🪵 Wood | Level 6 |
-| <img src="docs/media/ducks/muscovy.png" width="72"> | **Muscovy Duck** | Heavy ground pound | 🪨 Stone | Level 11 |
-| <img src="docs/media/ducks/shelduck.png" width="72"> | **Ruddy Shelduck** | Drops an egg bomb and shoots back up | 💥 Splash | Level 13 |
-| <img src="docs/media/ducks/scoter.png" width="72"> | **Black Scoter** | Kaboom! Explodes on demand | 💣 Everything | Level 16 |
+| <img src="docs/media/ducks/mandarin.png" width="72"> | **Mandarin Duck** | Splits into three | 🧊 Ice | Level 1 |
+| <img src="docs/media/ducks/merganser.png" width="72"> | **Common Merganser** | Arrow-fast dive | 🪵 Wood | Level 1 |
+| <img src="docs/media/ducks/muscovy.png" width="72"> | **Muscovy Duck** | Heavy ground pound | 🪨 Stone | World 4 (level 61) |
+| <img src="docs/media/ducks/shelduck.png" width="72"> | **Ruddy Shelduck** | Drops an egg bomb and shoots back up | 💥 Splash | World 7 (level 121) |
+| <img src="docs/media/ducks/scoter.png" width="72"> | **Common Scoter** | Kaboom! Explodes on demand | 💣 Everything | World 10 (level 181) |
+| <img src="docs/media/ducks/pintail.png" width="72"> | **Northern Pintail** | Boomerang: turns back and hits from behind | 🪵 Wood | World 13 (level 241) |
+| <img src="docs/media/ducks/eider.png" width="72"> | **Common Eider** | Shockwave that pushes everything away | 🪨 Stone | World 16 (level 301) |
+| <img src="docs/media/ducks/goldeneye.png" width="72"> | **Common Goldeneye** | Locks on to the nearest fox | 🦊 Foxes | World 19 (level 361) |
 
 <div align="center">
 <img src="docs/media/gameplay-split.gif" alt="A Mandarin Duck splits into three and shatters an ice tower" width="70%">
@@ -102,23 +105,22 @@ and the **Fox King** (huge). They blink, panic when a duck is in the air, and fl
 
 | Source | Golden Eggs |
 |---|---|
-| Each star earned | **+10** |
-| Destruction rate (0–100%) | **up to +20** |
-| First time clearing a level | **+15** |
-| Breaking a **Golden Nest** 🪺 (once per nest) | **+3** |
+| Damage dealt in a level | **10 per 100 damage** |
+| First time clearing a level | **+20** |
+| Losing a level | half of the damage reward |
+| Breaking a **Golden Nest** 🪺 (once per nest) | **+25** |
 
 ### 🎁 Star gifts
 
 Each world hides **two gift ducks**: one at **20★** and one at **45★** of the world's 60 stars. Claim them on
 the level-select screen. Each gift is a random extra duck from the species you have met, so you get at
 most **1–2 free ducks per world**.
-| Losing a level | up to +8 (consolation) |
 
 | Upgrade (per duck) | Levels | Effect | Cost |
 |---|:-:|---|---|
-| **Damage** | 4 | +15% damage per level, including explosions and egg bombs | 40 · 80 · 140 · 220 |
-| **Auto-Aim** | 3 | Steers toward the nearest fox in flight (25° / 45° / 70° per second) | 60 · 120 · 200 |
-| **Extra Duck** | ∞ | Add a duck mid-level with **+**, or continue after losing | 20 – 35 |
+| **Damage** | 4 | +15% damage per level, including explosions and egg bombs | 250 · 500 · 900 · 1500 |
+| **Auto-Aim** | 3 | Steers toward the nearest fox in flight (25° / 45° / 70° per second) | 400 · 800 · 1400 |
+| **Extra Duck** | ∞ | Add a duck mid-level with **+**, or continue after losing. About one every 10–15 levels | 300 – 1000 by species |
 
 <div align="center">
 <img src="docs/media/shop.png" width="49%"> <img src="docs/media/add-duck.png" width="49%">
@@ -134,21 +136,24 @@ most **1–2 free ducks per world**.
 | <img src="docs/media/world-level31.png"> **7 · Blossom Valley** | <img src="docs/media/world-level40.png"> **8 · Fire Mountain** |
 | <img src="docs/media/world-swamp.png"> **9 · Misty Swamp** | <img src="docs/media/world-kingdom.png"> **10 · Fox Kingdom** |
 
+Worlds 11–25 bring night, crimson, golden-harvest, storm and dawn versions of these landscapes:
+Moonlit Lake, Crimson Woods, Frozen Night, Golden Harvest, Starry Dunes, Coral Cove, Lantern Night,
+Ember Wastes, Stormy Bog, Dawn Citadel, Thunder Peaks, Mirage Oasis, Sunken Lagoon, Twilight Grove and the
+Fox Throne.
+
 ### 📈 Difficulty curve
 
-The game has **10 worlds × 20 levels**. A world must be finished before the next one opens.
+The game has **25 worlds × 20 levels = 500 levels**. A world must be finished before the next one opens.
+Every level shows its difficulty on the intro card:
 
-Difficulty (**D**) rises by 5 points across each world. The next world starts a little below where the
-previous one ended, which gives you a breather:
+| Level | 1 | 15 | 50 | 100 | 200 | 300 | 500 |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Difficulty | 1% | 15% | 40% | 75% | 87% | 93% | 98% |
 
-| World | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
-|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| D (first → last level) | 0 → 5 | 4 → 9 | 8 → 13 | 12 → 17 | 16 → 21 | 20 → 25 | 24 → 29 | 28 → 33 | 32 → 37 | 36 → 41 |
-
-D controls fox health (×1 + 0.02·D, up to ×1.8) and block durability (×1 + 0.01·D, up to ×1.4). It also
-shapes each level: more structures and floors, more stone, more helmeted foxes and fewer spare ducks.
-Level 20 of every world is a **boss fortress**. Upgrades and extra ducks are tuned to keep up with the
-curve. See the [Game Manifest](MANIFEST.md#6-difficulty-curve) for details.
+Difficulty controls fox health and block durability. It also shapes each level: more structures and
+floors, more stone, more helmeted foxes and fewer spare ducks. The number of foxes rises and falls from
+level to level (every 5th level is a lighter "breather"), but the overall difficulty keeps climbing.
+Level 20 of every world is a **boss fortress**. See the [Game Manifest](MANIFEST.md#6-difficulty-curve).
 
 ## 📸 Screenshots
 
@@ -158,7 +163,10 @@ curve. See the [Game Manifest](MANIFEST.md#6-difficulty-curve) for details.
 | <img src="docs/media/level-select.png"><br>Level select | <img src="docs/media/new-duck.png"><br>New duck introduction |
 | <img src="docs/media/level-clear.png"><br>Level clear, with Golden Egg reward | <img src="docs/media/shop.png"><br>Shop |
 | <img src="docs/media/tier-intro.png"><br>New tier banner & Golden Nest tip | <img src="docs/media/add-duck.png"><br>Add a duck mid-level |
-| <img src="docs/media/pause.png"><br>Pause menu with *Restart level* | <img src="docs/media/level-select.png"><br>10 worlds, 20 levels each, with star gifts |
+| <img src="docs/media/pause.png"><br>Pause menu with *Restart level* | <img src="docs/media/level-select.png"><br>25 worlds, 20 levels each, with star gifts |
+| <img src="docs/media/lang/langs.png"><br>30 languages | <img src="docs/media/lang/m_hi.png"><br>Hindi |
+| <img src="docs/media/lang/m_ar.png"><br>Arabic (right-to-left) | <img src="docs/media/lang/pause_ja.png"><br>Japanese |
+| <img src="docs/media/lang/intro4.png"><br>Difficulty meter and new-duck card | <img src="docs/media/lang/end_ko.png"><br>Korean: damage → Golden Eggs, labelled buttons |
 
 ## 📥 Download
 
@@ -212,7 +220,10 @@ Assets/
 ├── Editor/
 │   └── GameBuilder.cs    one-click setup, editor menu, APK build
 ├── Resources/
-│   └── GameArt.asset     sprite & sound references (generated)
+│   ├── GameArt.asset     sprite & sound references (generated)
+│   ├── Loc/              one JSON string table per language
+│   └── LocAtlas/         pre-shaped text images for non-Latin scripts
+tools/loc/                translation tables + build.py (writes Loc/ and LocAtlas/)
 ├── Scenes/
 │   └── Game.unity        single scene, levels are built at runtime
 └── Scripts/
@@ -226,7 +237,8 @@ Assets/
     ├── Levels.cs         world/level layout, 40 hand-made levels
     ├── LevelGen.cs       procedural level generator (seeded, stability-tested)
     ├── LevelLoader.cs    level & theme building, difficulty scaling
-    ├── Loc.cs            localization (7 languages)
+    ├── Loc.cs            localization (30 languages, device-language detection)
+    ├── LocText.cs        draws scripts the pixel font lacks from pre-rendered text atlases
     ├── Music.cs          background music with cross-fades
     ├── PlayerProfile.cs  guest profile & save export / import (groundwork for accounts)
     └── …                 Slingshot, CameraRig, Fx, Sfx, Explosion, EggBomb, AutoTester
@@ -237,18 +249,24 @@ Want to add a level? Levels are plain C# in `Levels.cs`, built with small helper
 
 ## 🌐 Localization
 
-🇹🇷 Türkçe · 🇬🇧 English · 🇩🇪 Deutsch · 🇪🇸 Español · 🇫🇷 Français · 🇵🇹 Português · 🇮🇹 Italiano
+English · Türkçe · Deutsch · Español · Français · Português · Italiano · Polski · Bahasa Indonesia ·
+Filipino · Kiswahili · Hausa · Tiếng Việt · Русский · Українська · 简体中文 · 繁體中文 · 日本語 · 한국어 · हिन्दी ·
+বাংলা · मराठी · తెలుగు · தமிழ் · ગુજરાતી · ਪੰਜਾਬੀ · ไทย · العربية · اردو · فارسی
 
-The device language is detected automatically. You can switch languages from the main menu at any time.
+The device language is detected automatically, and the language button on the main menu opens a picker
+with all 30. Latin text uses the Jersey 10 pixel font. Scripts it does not cover (Cyrillic, Vietnamese,
+CJK, Indic, Thai and Arabic-script) are shaped with HarfBuzz at build time and drawn from text atlases, so
+conjuncts and right-to-left text render correctly on every phone. To change a translation, edit
+`tools/loc/l_*.py` and run `python3 tools/loc/build.py Assets`.
 
 ## 🗺 Roadmap
 
-- [x] 200 levels in 10 worlds with a stepped difficulty curve
+- [x] 500 levels in 25 named worlds with a continuous difficulty curve (1% → 75% → 90%+)
 - [x] Star gifts: 2 gift ducks per world
-- [x] 6 ducks with unique voices, 4 fox types
+- [x] 9 ducks with unique voices, 4 fox types
 - [x] Golden Egg economy, Golden Nests, shop and upgrades
 - [x] Background music (3 tracks)
-- [x] 7 languages
+- [x] 30 languages, incl. CJK, Indic and right-to-left scripts
 - [ ] Optional accounts (Google / email) with cloud save; playing as a guest stays possible
 - [ ] In-app Golden Egg packs (see the [plan](MANIFEST.md#12-accounts--purchases-planned))
 - [ ] Google Play release
@@ -257,9 +275,9 @@ The device language is detected automatically. You can switch languages from the
 
 **DuckThis Feather Fury** is a pixel-art, physics-based slingshot game for Android starring ducks.
 
-You face the foxes' wood, stone, ice and TNT forts across 200 levels and 10 worlds, with 6 duck species that
-each have their own ability. At the end of each level you earn **Golden Eggs** based on your stars and
-destruction. In the shop you can spend them on **Damage**, **Auto-Aim** and **Extra Duck** for each species.
+You face the foxes' wood, stone, ice and TNT forts across 500 levels and 25 worlds, with 9 duck species that
+each have their own ability. At the end of each level you earn **Golden Eggs** based on the damage you dealt
+(100 damage = 10 eggs). In the shop you can spend them on **Damage**, **Auto-Aim** and **Extra Duck** for each species.
 
 To open the project, use Unity 6000.6.6f1 and add the folder in Unity Hub. On first load everything is set
 up automatically.

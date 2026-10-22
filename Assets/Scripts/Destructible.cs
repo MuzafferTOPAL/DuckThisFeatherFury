@@ -62,6 +62,7 @@ public class Destructible : MonoBehaviour
     public void TakeDamage(float amount, Vector2 point, float impact)
     {
         if (dead || amount <= 0f) return;
+        if (GameManager.Instance != null) GameManager.Instance.AddDamage(Mathf.Min(amount, Mathf.Max(0f, health)));
         health -= amount;
         OnDamaged?.Invoke(amount);
 

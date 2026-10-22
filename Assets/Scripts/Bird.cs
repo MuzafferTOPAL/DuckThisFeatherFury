@@ -120,6 +120,7 @@ public class Bird : MonoBehaviour
         if (col != null) col.enabled = true;
         rb.linearVelocity = velocity;
         rb.angularVelocity = 0f;
+        launchTime = Time.time;
         CurrentState = State.Flying;
         aiming = false;
         flapsLeft = type == BirdType.Mallard ? 2 : 0;
@@ -271,14 +272,56 @@ public class Bird : MonoBehaviour
                 AbilityUsed = true;
                 Vector2 sv = rb.linearVelocity;
                 EggBomb.Drop((Vector2)transform.position + Vector2.down * 0.45f, new Vector2(sv.x * 0.3f, -9f), DamageMult);
-                rb.linearVelocity = new Vector2(sv.x * 1.1f + 1.5f, 9.5f);
+                rb.linearVelocity = new Vector2(Mathf.Clamp(sv.x * 0.9f + 1f, 2f, 12f), 8f);
                 flapAnimLeft = 0.5f;
                 squash = 0.3f;
                 Fx.Puff((Vector2)transform.position + Vector2.down * 0.4f, 0.5f, 5);
                 Sfx.Play(Sfx.Ability(type));
                 break;
+
+            case BirdType.Pintail:   // bumerang: 0.7 sn boyunca geri döner
+                if (AbilityUsed) return;
+                AbilityUsed = true;
+                boomerangT = 0.7f;
+                noHoming = true;
+                squash = 0.3f;
+                Fx.Puff(transform.position, 0.5f, 5);
+                Sfx.Play(Sfx.Ability(type));
+                break;
+
+            case BirdType.Eider:     // şok dalgası: çevredeki her şeyi iter
+                if (AbilityUsed) return;
+                AbilityUsed = true;
+                Sfx.Play(Sfx.Ability(type));
+                Explosion.Explode(transform.position, 3.8f, 24f, 8f * DamageMult, gameObject, true);
+                squash = -0.35f;
+                break;
+
+            case BirdType.Goldeneye: // kilitlenme: en yakın tilkiye dümdüz dalış
+                if (AbilityUsed) return;
+                AbilityUsed = true;
+                noHoming = true;
+                {
+                    Transform best = null; float bd = 16f;
+                    Vector2 p = transform.position;
+                    foreach (var f in FindObjectsByType<Fox>())
+                    {
+                        if (f == null) continue;
+                        float dd = Vector2.Distance(p, f.transform.position) - (f.transform.position.x > p.x ? 3f : 0f);
+                        if (dd < bd) { bd = dd; best = f.transform; }
+                    }
+                    Vector2 dir = best != null ? ((Vector2)best.position - p).normalized : rb.linearVelocity.normalized;
+                    rb.linearVelocity = dir * Mathf.Max(rb.linearVelocity.magnitude, 20f);
+                }
+                squash = 0.35f;
+                Fx.Stars(transform.position, 6);
+                Sfx.Play(Sfx.Ability(type));
+                break;
         }
     }
+
+    float boomerangT = -1f;
+    float launchTime = -10f;
 
     public void TestAbility()
     {
@@ -297,11 +340,16 @@ public class Bird : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (CurrentState != State.Flying) return;
+        // fırlatmanın ilk anlarında sapanın dibine / zemine sürtünme çarpma sayılmaz
+        if (Time.time - launchTime < 0.12f) return;
         float impact = collision.relativeVelocity.magnitude;
 
         if (!hasHit)
         {
             hasHit = true;
+            boomerangT = -1f;
+            rb.linearDamping = 0.35f;
+            rb.angularDamping = 2f;
             var rig = CameraRig.Instance;
             float shake = Mathf.Clamp(impact * 0.012f, 0.03f, 0.25f);
             if (type == BirdType.Muscovy && AbilityUsed) shake = 0.45f;
@@ -309,6 +357,12 @@ public class Bird : MonoBehaviour
             if (type == BirdType.Scoter && !AbilityUsed) autoExplodeTimer = 0.8f;
             if (!isClone && impact > 2f) Sfx.Play(Sfx.DuckHit(type), 0.75f);
         }
+
+        // aşırı sekmeyi kırp: çarpmadan sonra ördek, çarpma hızının yarısından hızlı yukarı fırlamasın
+        // (yalnızca bir yüzeye aşağı doğru çarpıp sektiğinde)
+        Vector2 v = rb.linearVelocity;
+        float maxUp = Mathf.Max(3f, impact * 0.5f);
+        if (collision.relativeVelocity.y > 1f && v.y > maxUp) rb.linearVelocity = new Vector2(v.x, maxUp);
 
         if (impact > 2.5f)
         {
@@ -325,6 +379,11 @@ public class Bird : MonoBehaviour
     // hız vektörünü yavaşça döndürür (yükseltme seviyesine göre 25 / 45 / 70 derece/sn).
     void FixedUpdate()
     {
+        if (boomerangT > 0f && CurrentState == State.Flying && !hasHit)
+        {
+            boomerangT -= Time.fixedDeltaTime;
+            rb.linearVelocity += new Vector2(-34f, 9f) * Time.fixedDeltaTime;
+        }
         if (aimRate <= 0f || CurrentState != State.Flying || hasHit || finished || noHoming) return;
         float dt = Time.fixedDeltaTime;
         flightTime += dt;

@@ -43,6 +43,21 @@ MonoBehaviour:
     up: {fileID: 21300000, guid: b5551e376e7a2414693c18718400a1db, type: 3}
     down: {fileID: 21300000, guid: 3f9f1dda44bf21442bd5ef08934b9c20, type: 3}
     hit: {fileID: 21300000, guid: 04176d5213499624fb6bd53066d388f8, type: 3}
+  - idle: {fileID: 21300000, guid: 56e15c3e5e978e9409f1346e08a2a1a5, type: 3}
+    blink: {fileID: 21300000, guid: 05152742219ef8c4b80cea491d58bd5f, type: 3}
+    up: {fileID: 21300000, guid: 6536631a62d1955409ba78d4982dc987, type: 3}
+    down: {fileID: 21300000, guid: 819ea24d449108b41b43ddd5bd31067b, type: 3}
+    hit: {fileID: 21300000, guid: aca8d5dab4079914088fcafe2c6b44ac, type: 3}
+  - idle: {fileID: 21300000, guid: fe7215de462d73e44b85b522f2870dda, type: 3}
+    blink: {fileID: 21300000, guid: 5fc31b7e78207dc42b7ab45fc3af7c75, type: 3}
+    up: {fileID: 21300000, guid: add78ce06aa07b84483e1349991a5c19, type: 3}
+    down: {fileID: 21300000, guid: 43d244ccc0d56e542b3c69af4337cfdc, type: 3}
+    hit: {fileID: 21300000, guid: c976946056a3d1244bbc2f80fba17164, type: 3}
+  - idle: {fileID: 21300000, guid: 55817ac8f7fd0cf46b92fa4e80b46488, type: 3}
+    blink: {fileID: 21300000, guid: dac4571cfa84cd34094010c4b78accf2, type: 3}
+    up: {fileID: 21300000, guid: 87774d65058914e4d8d8d2c2fa60e876, type: 3}
+    down: {fileID: 21300000, guid: 6293c4491fda5404c824858c89a96b51, type: 3}
+    hit: {fileID: 21300000, guid: 83e1e2bd7678b1146b068ba05005425f, type: 3}
   fox:
     idle: {fileID: 21300000, guid: d6ad34c177543b74d841e8a54ee99644, type: 3}
     blink: {fileID: 21300000, guid: 025fba8f7cfc89343a3a360c875b2d76, type: 3}
@@ -217,6 +232,231 @@ MonoBehaviour:
     decor2: {fileID: 21300000, guid: a551f38edc73e344481da4fb3da1a32b, type: 3}
     transitionColor: {r: 0.07, g: 0.07, b: 0.2, a: 1}
     stars: 1
+  - sky: {fileID: 21300000, guid: 75a6fe55331ae4245baab95283ccc112, type: 3}
+    far: {fileID: 21300000, guid: f107687893a0fab46800255eacb7f8ac, type: 3}
+    near: {fileID: 21300000, guid: 0ee5f255d671a494699c73177926e258, type: 3}
+    ground: {fileID: 21300000, guid: e4a52eee4a25bb443945a41db85975cf, type: 3}
+    water: {fileID: 21300000, guid: 1a480614f775eb94ca89857782870eda, type: 3}
+    dirt: {fileID: 21300000, guid: b5f8a90003696a848bb56956dfb90a9e, type: 3}
+    sun: {fileID: 21300000, guid: 6a9fc9960605de54abf62b83f723b881, type: 3}
+    cloudA: {fileID: 21300000, guid: 710daae108c70fd4a8de37d025a4e8b7, type: 3}
+    cloudB: {fileID: 21300000, guid: b35054d7919519d49ae53d6e1fe1f31d, type: 3}
+    bush: {fileID: 21300000, guid: 60799ad92b158964a8ccf176306f0d9d, type: 3}
+    decor0: {fileID: 21300000, guid: a740479ff0a7e974a94737fb72813fdc, type: 3}
+    decor1: {fileID: 21300000, guid: 28bb930a79ec550409e71084cde74843, type: 3}
+    decor2: {fileID: 21300000, guid: 3b2ea0e1b0489494db56887863570381, type: 3}
+    transitionColor: {r: 0.06, g: 0.08, b: 0.16, a: 1}
+    stars: 1
+  - sky: {fileID: 21300000, guid: cb8291b75482cb2408bcfc4fd6eb888b, type: 3}
+    far: {fileID: 21300000, guid: 08e8b9c83a6144d4f8eaadfb4f13f920, type: 3}
+    near: {fileID: 21300000, guid: 57c1d079e300f6a4db5f2b6a41a4c1cc, type: 3}
+    ground: {fileID: 21300000, guid: f7fe589a629fdb94c91ae6488e1ed91a, type: 3}
+    water: {fileID: 21300000, guid: 05eb71265c6d9f346a9763880a1a6ce4, type: 3}
+    dirt: {fileID: 21300000, guid: 670a259fb0814984f89550b9c08c2ecd, type: 3}
+    sun: {fileID: 21300000, guid: 56863d589a1d9284a8b698ba1fb03362, type: 3}
+    cloudA: {fileID: 21300000, guid: 6bc0eaf4b5574494eb94af692270f90e, type: 3}
+    cloudB: {fileID: 21300000, guid: 5c70dcc916eb65a46be0713847c4ddac, type: 3}
+    bush: {fileID: 21300000, guid: 14b46de4156f00141b1c8521e26e942e, type: 3}
+    decor0: {fileID: 21300000, guid: 4d2a9fc02c5ca41448bf2caffee1e45b, type: 3}
+    decor1: {fileID: 21300000, guid: 01c0e9d204d751940be078103745ea70, type: 3}
+    decor2: {fileID: 21300000, guid: fed313bac20a0754591578e211a27139, type: 3}
+    transitionColor: {r: 0.27, g: 0.11, b: 0.1, a: 1}
+    stars: 0
+  - sky: {fileID: 21300000, guid: 3119ccaaa311af54a9f0ffcdaa3fd002, type: 3}
+    far: {fileID: 21300000, guid: 999313165f314794c8850f4943f33646, type: 3}
+    near: {fileID: 21300000, guid: 087d39e7d1a1a0049b7ec16fbcda4976, type: 3}
+    ground: {fileID: 21300000, guid: ce5d043d9870a0340b8c1c47d17c3690, type: 3}
+    water: {fileID: 21300000, guid: aa2ca23a8d8ab294d9ed78c75535408c, type: 3}
+    dirt: {fileID: 21300000, guid: a153534328783ef439a106dbc1748574, type: 3}
+    sun: {fileID: 21300000, guid: 970ff5842b96d3f47bb22011438755ab, type: 3}
+    cloudA: {fileID: 21300000, guid: cabd7b3b86c7cc2468160676ec8bbc91, type: 3}
+    cloudB: {fileID: 21300000, guid: 172833a6c991fcb459ab423b9e789f00, type: 3}
+    bush: {fileID: 21300000, guid: cb4c55732ba0b3f46a20af953920a78c, type: 3}
+    decor0: {fileID: 21300000, guid: 1839b4b7c466ec6478846025e0bb05ed, type: 3}
+    decor1: {fileID: 21300000, guid: 4c81d1d49f4efe14e9023e1aecd02f41, type: 3}
+    decor2: {fileID: 21300000, guid: e584b94c44842454d97b56b63a7c6ab4, type: 3}
+    transitionColor: {r: 0.06, g: 0.08, b: 0.16, a: 1}
+    stars: 1
+  - sky: {fileID: 21300000, guid: bca44c7e6a491524b99b6fbec0684705, type: 3}
+    far: {fileID: 21300000, guid: e6416d8041b231442b257e0bc300eb0c, type: 3}
+    near: {fileID: 21300000, guid: f7ed1bc5b2a4a4a4689cedb0f400265a, type: 3}
+    ground: {fileID: 21300000, guid: 6bc01d8a743eabd438cabc0918eda6fc, type: 3}
+    water: {fileID: 21300000, guid: 7ae88fd8de004ea41805f8247f5f6b00, type: 3}
+    dirt: {fileID: 21300000, guid: afcefa6f8128349498338a8ab78d05e9, type: 3}
+    sun: {fileID: 21300000, guid: 2affb383dab6ae646a5d98a1b2ba9275, type: 3}
+    cloudA: {fileID: 21300000, guid: 1f96df797bf5cdf4f9cad18fa49e182f, type: 3}
+    cloudB: {fileID: 21300000, guid: 2142e6ee3b3fdd94a90751aedfe21056, type: 3}
+    bush: {fileID: 21300000, guid: 3fcb8bdc7020a9f4987f7c75e2c5316e, type: 3}
+    decor0: {fileID: 21300000, guid: 59a9cd3f8aa001d49bee8648429e0911, type: 3}
+    decor1: {fileID: 21300000, guid: 74379bbc6f68a7344811becb53d41906, type: 3}
+    decor2: {fileID: 21300000, guid: 446ca96be205f344ba4e1e9d782c147f, type: 3}
+    transitionColor: {r: 0.43, g: 0.35, b: 0.2, a: 1}
+    stars: 0
+  - sky: {fileID: 21300000, guid: 86e3079bfce90fc49a16a42a05bb2796, type: 3}
+    far: {fileID: 21300000, guid: 3fc5d7ce0c8ab844a9c2c88b206b8325, type: 3}
+    near: {fileID: 21300000, guid: fa205aa0a61d2074f875d5c3c569ed39, type: 3}
+    ground: {fileID: 21300000, guid: 0369c0caf1dbf0a4b80fa536411dc868, type: 3}
+    water: {fileID: 21300000, guid: cb520f8cb91710a47b26d2a26919d2ba, type: 3}
+    dirt: {fileID: 21300000, guid: 565da837a67d24d4bb7062741af779d9, type: 3}
+    sun: {fileID: 21300000, guid: 4835b441bf1e54a40b6259e2b334be6b, type: 3}
+    cloudA: {fileID: 21300000, guid: d4a2b186526c97d488ff17a7a27fc3db, type: 3}
+    cloudB: {fileID: 21300000, guid: b97abf6c61b643e43a6f90f9aebc76d0, type: 3}
+    bush: {fileID: 21300000, guid: 333e27e805a64b74982b5c1bedf0f69f, type: 3}
+    decor0: {fileID: 21300000, guid: aedf0dfb785edf44aaa2ea0e5a476356, type: 3}
+    decor1: {fileID: 21300000, guid: 2ed320c7ce83fe3468fd14f5fff003c0, type: 3}
+    decor2: {fileID: 21300000, guid: 424eff9343c1c5847ad30d955fd8a5a9, type: 3}
+    transitionColor: {r: 0.06, g: 0.08, b: 0.16, a: 1}
+    stars: 1
+  - sky: {fileID: 21300000, guid: 6b61841e7ea31f14d86cde3c822a5a39, type: 3}
+    far: {fileID: 21300000, guid: 2b52289eb138411468dedf924ef679b1, type: 3}
+    near: {fileID: 21300000, guid: c8d8ebcbc55800d4dbb18adaa1fb7728, type: 3}
+    ground: {fileID: 21300000, guid: ca5875e0c2e9ad04ea18775161017954, type: 3}
+    water: {fileID: 21300000, guid: fc1c4682b6ef61043b70ccb29673fe77, type: 3}
+    dirt: {fileID: 21300000, guid: 3a2172e7bb4a24444b8d6026cd94c972, type: 3}
+    sun: {fileID: 21300000, guid: 824f1a3194d8ec64a95e65215ea9590d, type: 3}
+    cloudA: {fileID: 21300000, guid: 512adf315c552a84fa2086d0542382a5, type: 3}
+    cloudB: {fileID: 21300000, guid: 5721c9a0543806844bf406a3cec025cc, type: 3}
+    bush: {fileID: 21300000, guid: aacf96ec87e882646b7ec54ce11ae017, type: 3}
+    decor0: {fileID: 21300000, guid: bdd7522a30322f642a76c003ccaa3f80, type: 3}
+    decor1: {fileID: 21300000, guid: 1253d5b4c4ee99e4487fcdcb8f7749de, type: 3}
+    decor2: {fileID: 21300000, guid: 192f48e5818ad6c45890e7ccb3212a49, type: 3}
+    transitionColor: {r: 0.29, g: 0.17, b: 0.19, a: 1}
+    stars: 0
+  - sky: {fileID: 21300000, guid: fe74addfdd18dea4caeec735dc877a60, type: 3}
+    far: {fileID: 21300000, guid: c42c0a607d6888642ab34f4b5a934dde, type: 3}
+    near: {fileID: 21300000, guid: 7bfaa8ca7ae3b9146a9fb997e3ef40c7, type: 3}
+    ground: {fileID: 21300000, guid: 936d74661f889fe43b72768b775e14a2, type: 3}
+    water: {fileID: 21300000, guid: d75ba7360cbfcf9469ed03ecb1517e23, type: 3}
+    dirt: {fileID: 21300000, guid: c308d22d914829844936e5cb548e0b0f, type: 3}
+    sun: {fileID: 21300000, guid: 3167e7fa9f4a2414292e441d12a9003f, type: 3}
+    cloudA: {fileID: 21300000, guid: 04dc75c75f2532a44a4cfe684deef729, type: 3}
+    cloudB: {fileID: 21300000, guid: 6193ddecdd618b94c9385283ec69a8cf, type: 3}
+    bush: {fileID: 21300000, guid: b4b5777a3908e0a48b90e260669cd492, type: 3}
+    decor0: {fileID: 21300000, guid: bd68097056c9e7b4db54c69d5b9647c9, type: 3}
+    decor1: {fileID: 21300000, guid: 25ec012ae791a144fb25afd1644b9731, type: 3}
+    decor2: {fileID: 21300000, guid: 194adbfd168850e4c986be6fe36790ac, type: 3}
+    transitionColor: {r: 0.06, g: 0.08, b: 0.16, a: 1}
+    stars: 1
+  - sky: {fileID: 21300000, guid: 634f294c99dc0434fadc6b2b960baceb, type: 3}
+    far: {fileID: 21300000, guid: 324f59afa5384af4da3b69ef1d4d53db, type: 3}
+    near: {fileID: 21300000, guid: 91b1028dbaf971e4e88611a0962ef283, type: 3}
+    ground: {fileID: 21300000, guid: fd71002cb8957df4f81dba21529c28ac, type: 3}
+    water: {fileID: 21300000, guid: a0f3f8e7d73f0d14ea17f07816d6ceb1, type: 3}
+    dirt: {fileID: 21300000, guid: dae957e14661e764c9956defff2186b8, type: 3}
+    sun: {fileID: 21300000, guid: 8f59aeb5ce599cf40b37b31d7ed40c09, type: 3}
+    cloudA: {fileID: 21300000, guid: 032d45104fb3f0d4aa62a1bfa9bbd111, type: 3}
+    cloudB: {fileID: 21300000, guid: c72723fe7a72d3347bc8e3c4fcb4a2ea, type: 3}
+    bush: {fileID: 21300000, guid: 795769696a2c6314b8120517374e6b2e, type: 3}
+    decor0: {fileID: 21300000, guid: 0459d89b89210164dbd3f74c876f0d8f, type: 3}
+    decor1: {fileID: 21300000, guid: 9d9313558151e2545bdd572d51fad2a8, type: 3}
+    decor2: {fileID: 21300000, guid: 318ae3f7b5da55843ae260722f9459fc, type: 3}
+    transitionColor: {r: 0.2, g: 0.04, b: 0.04, a: 1}
+    stars: 1
+  - sky: {fileID: 21300000, guid: 2bf2764d537fbaf4faf703f7be54a2b5, type: 3}
+    far: {fileID: 21300000, guid: f726959354788d64986628a4c9032c80, type: 3}
+    near: {fileID: 21300000, guid: cde379a972c62b84cb6ec5b795c6590c, type: 3}
+    ground: {fileID: 21300000, guid: 6b952656268e5db40a25745e81b20126, type: 3}
+    water: {fileID: 21300000, guid: 17a8d6fde0843db4ca670fff34a7d839, type: 3}
+    dirt: {fileID: 21300000, guid: 4982f41b4dfc64442bd77a21c24b43b5, type: 3}
+    sun: {fileID: 21300000, guid: 255daef8a5a14a14bb4f2e5ff569b219, type: 3}
+    cloudA: {fileID: 21300000, guid: 8dc622d21300eb84abfa680d8aed36b9, type: 3}
+    cloudB: {fileID: 21300000, guid: 2dd39c1b549993041a7ae4238a405607, type: 3}
+    bush: {fileID: 21300000, guid: 33fe34cb9b1b4a34785585a4927aea5a, type: 3}
+    decor0: {fileID: 21300000, guid: 665809bfde456ab4788e21584157213a, type: 3}
+    decor1: {fileID: 21300000, guid: ac83a413dc9578249bc9db5eb74b172d, type: 3}
+    decor2: {fileID: 21300000, guid: 2ab625d3ef6b04b4abf8c9b7d33b9602, type: 3}
+    transitionColor: {r: 0.17, g: 0.19, b: 0.21, a: 1}
+    stars: 1
+  - sky: {fileID: 21300000, guid: 000d4791f20a1864082961f950318d36, type: 3}
+    far: {fileID: 21300000, guid: 615e2a059f6534d4a84a381f88530913, type: 3}
+    near: {fileID: 21300000, guid: 2bf4aef5158cd2941b54ac427d4f5503, type: 3}
+    ground: {fileID: 21300000, guid: 154791d50611c4b488cc16cb2e488ad8, type: 3}
+    water: {fileID: 21300000, guid: 8a3789b4f31d33545b86b3552428550d, type: 3}
+    dirt: {fileID: 21300000, guid: 81b910c9c0612e745ba954999fd748ca, type: 3}
+    sun: {fileID: 21300000, guid: 12760c841cfe9994e829b103bcbfd048, type: 3}
+    cloudA: {fileID: 21300000, guid: 6ef21ecf1c7bf0c43a4f11382bccda09, type: 3}
+    cloudB: {fileID: 21300000, guid: fba7f410383da074f8b9bdc14269b2e4, type: 3}
+    bush: {fileID: 21300000, guid: a8672698c1cd2604fb352dd01ee9b292, type: 3}
+    decor0: {fileID: 21300000, guid: 8bae6a4794ea037468848585f4586687, type: 3}
+    decor1: {fileID: 21300000, guid: b30b29b626a8a0349a626c43415eaf31, type: 3}
+    decor2: {fileID: 21300000, guid: 3c92b0a4d955fe2468a9fab380716da7, type: 3}
+    transitionColor: {r: 0.34, g: 0.29, b: 0.35, a: 1}
+    stars: 0
+  - sky: {fileID: 21300000, guid: 3ee57c95ef0111f4fbbd884fa144825b, type: 3}
+    far: {fileID: 21300000, guid: 27052487b8e69344aa1a118318334688, type: 3}
+    near: {fileID: 21300000, guid: b5f95e4ebb36c584e9266bfcf6ad3020, type: 3}
+    ground: {fileID: 21300000, guid: 7df9d104593b6f94393526c56a51e30d, type: 3}
+    water: {fileID: 21300000, guid: c4d0c76f88cad7e4cad0dcfc24b4294f, type: 3}
+    dirt: {fileID: 21300000, guid: ec7daa7f95dcc734884fcb6dd75b5aad, type: 3}
+    sun: {fileID: 21300000, guid: 94946e9cd1722db4491c04f9079cfa32, type: 3}
+    cloudA: {fileID: 21300000, guid: 2abe930e84ccbc740a1508699ac0d2af, type: 3}
+    cloudB: {fileID: 21300000, guid: e7fe358396390c24caa72262e3a19d82, type: 3}
+    bush: {fileID: 21300000, guid: 8cc802ceaf157b5409f83ac188216560, type: 3}
+    decor0: {fileID: 21300000, guid: 49ab0266604abd5419ddcf9d3715e14e, type: 3}
+    decor1: {fileID: 21300000, guid: cc1286f9e25fe004e90a02581b022b74, type: 3}
+    decor2: {fileID: 21300000, guid: 747c9bd5cd6abea46befe8dc14021c25, type: 3}
+    transitionColor: {r: 0.17, g: 0.19, b: 0.21, a: 1}
+    stars: 0
+  - sky: {fileID: 21300000, guid: 4b8ce8dd7c6dbe646911e20859220bcf, type: 3}
+    far: {fileID: 21300000, guid: 4fd9f9bfeb4b9954ca17f7594a27018f, type: 3}
+    near: {fileID: 21300000, guid: 4b891a3aac4ed4247946abe2a49d9555, type: 3}
+    ground: {fileID: 21300000, guid: 7538b050757106a4db06c798ff361d99, type: 3}
+    water: {fileID: 21300000, guid: bafaf70c767a2bb4782b4531e752b473, type: 3}
+    dirt: {fileID: 21300000, guid: 9e8a4f18685ba47499ce88aa656cf3dd, type: 3}
+    sun: {fileID: 21300000, guid: 8088fa9d8fe9c16458edad4ba4d49444, type: 3}
+    cloudA: {fileID: 21300000, guid: d3cb9757f1a634849aaf79b22bcc5ea7, type: 3}
+    cloudB: {fileID: 21300000, guid: ad7c4cc9c3a39fa46a403335ea54ea2c, type: 3}
+    bush: {fileID: 21300000, guid: c40cce7efa5398b4685ecedcb4f11328, type: 3}
+    decor0: {fileID: 21300000, guid: 7a9b2d9b42526724e808217ff7c4ee0e, type: 3}
+    decor1: {fileID: 21300000, guid: 6749794fa7e29404892780f68807136e, type: 3}
+    decor2: {fileID: 21300000, guid: 991612891f8dd20418d023df5a9b5622, type: 3}
+    transitionColor: {r: 0.34, g: 0.29, b: 0.35, a: 1}
+    stars: 0
+  - sky: {fileID: 21300000, guid: 781f84b5cf47d834eba7ce2477ddbfea, type: 3}
+    far: {fileID: 21300000, guid: ebb660ea31d32ca418105e943d2e65ac, type: 3}
+    near: {fileID: 21300000, guid: b581629989724944fa1db3589a32196d, type: 3}
+    ground: {fileID: 21300000, guid: 324888b813f663b499c6700fa8ab17da, type: 3}
+    water: {fileID: 21300000, guid: 6c366314cdad64949ac61072fa37d5f5, type: 3}
+    dirt: {fileID: 21300000, guid: b7a63bbb31eba9e45bead12433bde9a4, type: 3}
+    sun: {fileID: 21300000, guid: f28fdd889be494242938f8c9934766bd, type: 3}
+    cloudA: {fileID: 21300000, guid: 32f8c3ad1f83df74c8ac1fc99f0c3ad6, type: 3}
+    cloudB: {fileID: 21300000, guid: cffc70d60b90c2549bfae4fd3a754edf, type: 3}
+    bush: {fileID: 21300000, guid: eabd3582cf5816b46b00237b16849100, type: 3}
+    decor0: {fileID: 21300000, guid: 0f2a2e00e7309b34fa6b496eea19e2ef, type: 3}
+    decor1: {fileID: 21300000, guid: 531b1f1b8ab282f409f7c66afa4299d9, type: 3}
+    decor2: {fileID: 21300000, guid: b43c2216d8f56fd439d138c73d3f01d3, type: 3}
+    transitionColor: {r: 0.14, g: 0.35, b: 0.4, a: 1}
+    stars: 0
+  - sky: {fileID: 21300000, guid: 01bea6a576e4c374693f1da5b611ee8b, type: 3}
+    far: {fileID: 21300000, guid: f3694d7943c5623458ff6deb732ade07, type: 3}
+    near: {fileID: 21300000, guid: c2ab990de3caae6498124e83cdf3a1f7, type: 3}
+    ground: {fileID: 21300000, guid: 3cb24915282dfeb429dae83a33f10852, type: 3}
+    water: {fileID: 21300000, guid: e82d71e4242f7214e84bb4bfae29858c, type: 3}
+    dirt: {fileID: 21300000, guid: a7d42766f7066f744af140ab0f188808, type: 3}
+    sun: {fileID: 21300000, guid: 5458e36457441e64591789edd81bf062, type: 3}
+    cloudA: {fileID: 21300000, guid: e04fb80c22243414585353059d97471c, type: 3}
+    cloudB: {fileID: 21300000, guid: 3ff2bd7d9263c8443876bcadc74a89dd, type: 3}
+    bush: {fileID: 21300000, guid: 652f2525a16a1db49a328f81fd30bf55, type: 3}
+    decor0: {fileID: 21300000, guid: ccf885ed325dd7143bb2cbfc6bb9e8b8, type: 3}
+    decor1: {fileID: 21300000, guid: 72aa53d2c3cb32a4a87abfd45afb15c1, type: 3}
+    decor2: {fileID: 21300000, guid: 46f24cba434470d42935cacadc62f409, type: 3}
+    transitionColor: {r: 0.29, g: 0.17, b: 0.19, a: 1}
+    stars: 0
+  - sky: {fileID: 21300000, guid: 255d4e0044adc5b45802b887243b46b3, type: 3}
+    far: {fileID: 21300000, guid: 761f04632f517d94c8683e2e1800efec, type: 3}
+    near: {fileID: 21300000, guid: aa487984251f2ce408b414bc1ffa3536, type: 3}
+    ground: {fileID: 21300000, guid: 712083f4ac4250944abd1596b8be226e, type: 3}
+    water: {fileID: 21300000, guid: f366fb1f12fe1a043a296f039cfb3512, type: 3}
+    dirt: {fileID: 21300000, guid: 555d41821dfc75c49a029e9baea89b40, type: 3}
+    sun: {fileID: 21300000, guid: 7abdb73afff8f444799b4c65a8485dc2, type: 3}
+    cloudA: {fileID: 21300000, guid: ca34609100f8005469480cf665573d69, type: 3}
+    cloudB: {fileID: 21300000, guid: bb4b45bfe62f03b48991fe00bf6eb3dc, type: 3}
+    bush: {fileID: 21300000, guid: 5ee54dcb3d6fe954da21e82e5d3f88eb, type: 3}
+    decor0: {fileID: 21300000, guid: a823e8fd793ca7c4d961fe3024055fec, type: 3}
+    decor1: {fileID: 21300000, guid: 5af2573ac8356be43b2e845ce213b036, type: 3}
+    decor2: {fileID: 21300000, guid: 6f85424adece3f04994b0b1bb18ca4fd, type: 3}
+    transitionColor: {r: 0.14, g: 0.06, b: 0.13, a: 1}
+    stars: 0
   starPx: {fileID: 21300000, guid: 5b73f53eaae4ad847b2b3ffb1dac7c8f, type: 3}
   fxDot: {fileID: 21300000, guid: 00ffbfef05e98774a9577838a0ab2c14, type: 3}
   fxPuff: {fileID: 21300000, guid: 81f3fd25530695f4fa8039bbc83d9c5a, type: 3}
@@ -253,6 +493,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 6690983b994475b45a0f811b16979934, type: 3}
   - {fileID: 8300000, guid: 9d0fb39e5301aa94ebb58c9a3f1ba0d6, type: 3}
   - {fileID: 8300000, guid: 8f4b54635e19574469b9dce82352eea5, type: 3}
+  - {fileID: 8300000, guid: 6e9cfbdfc5a509f47b8dda93a14d4adf, type: 3}
+  - {fileID: 8300000, guid: cd4d5485d29d9b14a8be1af03c1f7b4b, type: 3}
+  - {fileID: 8300000, guid: 5a9d1f39e2809944a916957bcb239ae3, type: 3}
   duckAbility:
   - {fileID: 8300000, guid: 8810539900dedd94a98a8327f1b590d5, type: 3}
   - {fileID: 8300000, guid: c4fc173d8dd570f48b66b0a05a5d41b3, type: 3}
@@ -260,6 +503,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5c6b3c0f349e507409e31cbda08079dc, type: 3}
   - {fileID: 8300000, guid: ec079577f8f6eba498a8d3e374dd3730, type: 3}
   - {fileID: 8300000, guid: 5d48e8025f49c3d428289a99853d67cf, type: 3}
+  - {fileID: 8300000, guid: 6b4b287d22ce7d044a658a6d97bb784a, type: 3}
+  - {fileID: 8300000, guid: 683350274655a824ca2cb71c1538b479, type: 3}
+  - {fileID: 8300000, guid: 677af09e7d2f78f48bd64a45af9a6bf1, type: 3}
   duckHit:
   - {fileID: 8300000, guid: fe94bc2d722fe434d98aebb843104a0b, type: 3}
   - {fileID: 8300000, guid: 91116c1ae3ceb4541acc75ced418fdf0, type: 3}
@@ -267,6 +513,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: b2e5020fb2c88ce47ba5e74141458b89, type: 3}
   - {fileID: 8300000, guid: 03303bb47e6cd1141a2edcd24b1827f6, type: 3}
   - {fileID: 8300000, guid: a17b0d6806ad84a44bbbb3bbdbb29c3a, type: 3}
+  - {fileID: 8300000, guid: 926d2af006dfd7f47b9e0a9aeb315132, type: 3}
+  - {fileID: 8300000, guid: 0882af4490664814282dc89d7a3e2c5c, type: 3}
+  - {fileID: 8300000, guid: 4902e56bd6b602d46bf298bd5d4d0471, type: 3}
   musicMenu: {fileID: 8300000, guid: 71dd0e1670e08974cab2d25bf8d74298, type: 3}
   musicWorld: {fileID: 8300000, guid: 4e3e01f222ef03041a2e2d2a0857477a, type: 3}
   musicWorld2: {fileID: 8300000, guid: 21acfb0c69794a34baf23804c44a96fe, type: 3}

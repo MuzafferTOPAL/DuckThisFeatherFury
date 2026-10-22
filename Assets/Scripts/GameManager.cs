@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
     public int DestroyedScore { get; private set; }
     public float Destruction => LevelLoader.PotentialScore > 0 ? Mathf.Clamp01(DestroyedScore / (float)LevelLoader.PotentialScore) : 0f;
     public int EggsEarned { get; private set; }
+    public float DamageHp { get; private set; }          // bu levelde verilen iç hasar
+    public int DamagePoints => Mathf.RoundToInt(DamageHp * Economy.DamagePointsPerHp);
     public bool FirstClear { get; private set; }
     GState shopReturn = GState.Menu;
 
@@ -239,7 +241,7 @@ public class GameManager : MonoBehaviour
             case GState.Shop: Music.Play(Music.Track.Menu); break;
             case GState.Transition: break;   // geçiş bitince değişir
             default:
-                Music.Play(LevelLoader.Tier(LevelIndex) < 5 ? Music.Track.WorldA : Music.Track.WorldB);
+                Music.Play(LevelLoader.Tier(LevelIndex) < 12 ? Music.Track.WorldA : Music.Track.WorldB);
                 break;
         }
         Music.SetDuck(Paused || State == GState.Lost);
@@ -263,6 +265,7 @@ public class GameManager : MonoBehaviour
         NewRecord = false;
         DestroyedScore = 0;
         EggsEarned = 0;
+        DamageHp = 0f;
         NestEggs = 0;
         FirstClear = false;
 
@@ -378,7 +381,7 @@ public class GameManager : MonoBehaviour
         if (State == GState.Playing && EnemiesLeft > 0)
         {
             Stars = 0;
-            int lose = Economy.LoseReward(Destruction);
+            int lose = Economy.LoseReward(DamagePoints);
             Economy.Eggs += lose;
             EggsEarned = lose + NestEggs;
             SetState(GState.Lost);
@@ -419,7 +422,7 @@ public class GameManager : MonoBehaviour
         Stars = Score >= ThreeStar ? 3 : Score >= TwoStar ? 2 : 1;
         NewRecord = Score > Levels.Best(LevelIndex);
         FirstClear = Levels.Stars(LevelIndex) == 0;
-        int win = Economy.WinReward(Stars, Destruction, FirstClear);
+        int win = Economy.WinReward(DamagePoints, FirstClear);
         Economy.Eggs += win;
         EggsEarned = win + NestEggs;
         Levels.Save(LevelIndex, Stars, Score);
@@ -443,6 +446,11 @@ public class GameManager : MonoBehaviour
         Hud.Popup(pos + Vector3.up * 0.5f, "+" + eggs + " " + Loc.T("egg_short"), new Color(1f, 0.85f, 0.2f), 60);
         Sfx.Play(Sfx.Star, 1f, false);
         Fx.Stars(pos, 8);
+    }
+
+    public void AddDamage(float hp)
+    {
+        if (State == GState.Playing || State == GState.Won) DamageHp += hp;
     }
 
     public void BlockDestroyed(int value)

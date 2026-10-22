@@ -62,14 +62,12 @@ public class LevelDef
 
 public static class Levels
 {
-    // 10 bölüm (sahne) x 20 level = 200 level. Bir bölüm bitmeden sonraki açılmaz.
+    // 25 bölüm (sahne) x 20 level = 500 level. Bir bölüm bitmeden sonraki açılmaz.
     public const int PerWorld = 20;
-    public const int WorldCount = 10;
+    public const int WorldCount = 25;
     public static int Worlds => WorldCount;
     public const int Count = PerWorld * WorldCount;
-
-    // El yapımı 40 levelin (eski 8 dünya x 5) her bölümdeki yerleri; geri kalanlar üretilir.
-    static readonly int[] HandSlots = { 0, 3, 6, 11, 19 };
+    public const int HandCount = 40;   // ilk 2 bölüm: elle tasarlanmış 40 level
 
     static List<LevelDef> all;
     public static IReadOnlyList<LevelDef> All
@@ -96,33 +94,65 @@ public static class Levels
         return l;
     }
 
+    // Henüz açılmamış ördek türünü o anda kullanılabilen bir türle değiştir
+    static BirdType Substitute(BirdType t)
+    {
+        switch (t)
+        {
+            case BirdType.Muscovy: return BirdType.Mallard;
+            case BirdType.Shelduck: return BirdType.Mandarin;
+            case BirdType.Scoter: return BirdType.Merganser;
+            default: return BirdType.Mallard;
+        }
+    }
+
     static void Build()
     {
         BuildHandmade();
         all = new List<LevelDef>(Count);
-        var avail = new List<BirdType>();
-        for (int w = 0; w < WorldCount; w++)
+        for (int index = 0; index < Count; index++)
         {
-            for (int s = 0; s < PerWorld; s++)
+            int w = index / PerWorld, s = index % PerWorld;
+            var avail = new List<BirdType>();
+            for (int t = 0; t < BirdInfo.Count; t++)
+                if (BirdInfo.Available((BirdType)t, index)) avail.Add((BirdType)t);
+
+            // bu bölümde yeni açılan tür (bölümün ilk levelinde tanıtılır)
+            BirdType? intro = null;
+            if (s == 0)
+                for (int t = 0; t < BirdInfo.Count; t++)
+                    if (BirdInfo.UnlockLevel((BirdType)t) == index && index > 0) intro = (BirdType)t;
+
+            LevelDef l;
+            if (index < HandCount)
             {
-                int index = w * PerWorld + s;
-                int j = System.Array.IndexOf(HandSlots, s);
-                LevelDef l;
-                if (w < 8 && j >= 0)
+                l = hand[index];
+                l.index = index;
+                l.theme = w;
+                bool changed = false;
+                for (int k = 0; k < l.birds.Length; k++)
+                    if (!avail.Contains(l.birds[k])) { l.birds[k] = Substitute(l.birds[k]); changed = true; }
+                if (changed)   // yerine konan tür o yapıya daha zayıf: bir ördek fazladan
                 {
-                    l = hand[w * 5 + j];
-                    l.index = index;
-                    l.theme = w;
+                    var list = new List<BirdType>(l.birds) { avail[index % avail.Count] };
+                    l.birds = list.ToArray();
                 }
-                else
+                // ilk bölüm (%1-%11 zorluk) çok rahat olsun: bir yedek yeşilbaş; 2. bölümde en az 4 ördek
+                if (index < PerWorld || (index < PerWorld * 2 && l.birds.Length < 4))
                 {
-                    if (avail.Count == 0) avail.Add(BirdType.Mallard);
-                    l = LevelGen.Make(index, w, s, LevelLoader.Difficulty(index), avail);
+                    var list = new List<BirdType>(l.birds) { BirdType.Mallard };
+                    l.birds = list.ToArray();
                 }
-                l.world = w; l.slot = s;
-                if (l.newBird.HasValue && !avail.Contains(l.newBird.Value)) avail.Add(l.newBird.Value);
-                all.Add(l);
+                if (l.newBird.HasValue && !BirdInfo.Available(l.newBird.Value, index) ) l.newBird = null;
+                if (l.newBird.HasValue && BirdInfo.UnlockLevel(l.newBird.Value) > 0) l.newBird = null;
             }
+            else
+            {
+                l = LevelGen.Make(index, w, s, LevelLoader.Difficulty(index), avail, intro);
+            }
+            if (intro.HasValue) l.newBird = intro;
+            l.world = w; l.slot = s;
+            all.Add(l);
         }
         // Altın yuva ipucu: oyuncunun karşılaşacağı ilk yuvalı levelde gösterilir
         bool tipped = false;
@@ -133,21 +163,30 @@ public static class Levels
             foreach (var p in l.pieces) if (p.nest) hasNest = true;
             if (hasNest && !tipped) { l.tip = "tip_nest"; tipped = true; }
         }
+        all[0].tip = all[0].tip ?? "tip_pull";
+        if (all[1].tip == null) all[1].tip = "tip_tap";
     }
 
-    // Level düzeni değişti (40 → 200 level): eski level ilerlemesi yeni sırayla uyuşmaz, bir kez sıfırlanır.
-    // Altın yumurta, yükseltmeler ve ekstra ördekler korunur.
+    // Level düzeni değişti (200 → 500 level, yeni zorluk eğrisi): eski level ilerlemesi bir kez sıfırlanır.
+    // Altın yumurta (yeni ekonomiye göre x10), yükseltmeler ve ekstra ördekler korunur.
     public static void MigrateIfNeeded()
     {
-        if (PlayerPrefs.GetInt("level_layout", 1) >= 2) return;
-        for (int i = 0; i < 40; i++)
+        int v = PlayerPrefs.GetInt("level_layout", 1);
+        if (v >= 3) return;
+        for (int i = 0; i < 200; i++)
         {
             PlayerPrefs.DeleteKey("stars_" + i);
             PlayerPrefs.DeleteKey("best_" + i);
             for (int n = 0; n < 4; n++) PlayerPrefs.DeleteKey("nest_" + i + "_" + n);
         }
+        for (int w = 0; w < 10; w++) for (int k = 0; k < 2; k++) PlayerPrefs.DeleteKey("gift_" + w + "_" + k);
         PlayerPrefs.DeleteKey("last_level");
-        PlayerPrefs.SetInt("level_layout", 2);
+        if (PlayerPrefs.GetInt("econ_v2", 0) == 0)
+        {
+            PlayerPrefs.SetInt("eggs", PlayerPrefs.GetInt("eggs", 0) * 10);
+            PlayerPrefs.SetInt("econ_v2", 1);
+        }
+        PlayerPrefs.SetInt("level_layout", 3);
         PlayerPrefs.Save();
     }
 

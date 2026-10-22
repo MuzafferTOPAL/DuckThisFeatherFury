@@ -120,29 +120,35 @@ public class Hud : MonoBehaviour
         Text(new Rect(0, 215 + Mathf.Sin(t * 2f + 0.6f) * 4f, vw, 100), Loc.T("title2"), 92, new Color(1f, 0.55f, 0.2f), TextAnchor.MiddleCenter, 1f, 7);
         Text(new Rect(0, 312, vw, 50), Loc.T("subtitle"), 42, Cream, TextAnchor.MiddleCenter);
 
-        // kuş geçidi (6 ördek)
-        float bx = vw / 2 - 450;
-        for (int i = 0; i < 6; i++)
+        if (langPicker) { Dim(0.45f); DrawLangPicker(art); return; }
+
+        // kuş geçidi (tüm ördekler)
+        int nb = Mathf.Min(art.birds.Length, BirdInfo.Count);
+        float step = Mathf.Min(150f, 1300f / nb), bx = vw / 2 - step * nb / 2;
+        for (int i = 0; i < nb; i++)
         {
             var b = art.birds[i];
             var sp = Mathf.FloorToInt(t * 6 + i) % 2 == 0 ? b.up : b.down;
             float h = 100 + Mathf.Sin(t * 3 + i) * 10;
-            SpriteTex(new Rect(bx + i * 150, 380 + Mathf.Sin(t * 2.5f + i * 1.3f) * 12f, 140, h), sp);
+            SpriteTex(new Rect(bx + i * step, 380 + Mathf.Sin(t * 2.5f + i * 1.3f) * 12f, step - 10, h), sp);
         }
 
         if (Button(new Rect(vw / 2 - 170, 535, 340, 150), art.btnGreen, null, Loc.T("play"), 80)) gm.OpenLevelSelect();
         Text(new Rect(0, 695, vw, 56), "★ " + Levels.TotalStars() + " / " + (Levels.Count * 3), 46, Gold, TextAnchor.MiddleCenter);
         if (Button(new Rect(vw / 2 - 170, 765, 340, 120), art.btnOrange, null, Loc.T("shop"), 64)) gm.OpenShop();
         EggPill(new Rect(vw - 320 - 340, 30, 340, 110));
-        if (Button(new Rect(vw - 290, 24, 120, 126), Music.Muted ? art.btnGrey : art.btnGreen, null, Music.Muted ? Loc.T("music_off") : Loc.T("music_on"), 30))
+        if (ToggleButton(new Rect(vw - 290, 24, 120, 126), !Music.Muted, art.btnGreen, Loc.T("music")))
         {
             Music.Muted = !Music.Muted;
             Sfx.Play(Sfx.Click);
         }
-
-        if (Button(new Rect(vw - 160, 24, 120, 126), Sfx.Muted ? art.btnGrey : art.btnBlue, null, Sfx.Muted ? Loc.T("sound_off") : Loc.T("sound_on"), 30))
+        if (ToggleButton(new Rect(vw - 160, 24, 120, 126), !Sfx.Muted, art.btnBlue, Loc.T("sound")))
             Sfx.Muted = !Sfx.Muted;
-        if (Button(new Rect(40, 24, 300, 126), art.btnOrange, null, Loc.Names[Loc.Lang], 40)) { Sfx.Play(Sfx.Click); Loc.Next(); }
+        // dil butonu: seçili dilin kendi adı + altında "DİL"
+        Rect lr = new Rect(40, 24, 320, 126);
+        if (Button(lr, art.btnOrange, null, null, 0)) { Sfx.Play(Sfx.Click); langPicker = true; }
+        Text(new Rect(lr.x + 10, lr.y + 8, lr.width - 20, 72), Loc.Names[Loc.Lang], 44, Color.white, TextAnchor.MiddleCenter, 1f, 4, "_names:" + Loc.Code);
+        Text(new Rect(lr.x + 10, lr.y + 72, lr.width - 20, 40), Loc.T("language"), 28, Cream, TextAnchor.MiddleCenter, 1f, 3);
         if (Button(new Rect(vw / 2 - 130, 905, 260, 100), art.btnGrey, null, Loc.T("quit"), 52)) { Sfx.Play(Sfx.Click); confirmQuit = true; }
     }
 
@@ -165,21 +171,29 @@ public class Hud : MonoBehaviour
         int w = Mathf.Clamp(gm.SelectWorld, 0, nw - 1);
         Ribbon(new Rect(vw / 2 - 560, 70, 1120, 170), Loc.T("world") + " " + (w + 1) + ": " + Loc.World(w), 64);
 
-        // bölüm sekmeleri (önceki bölüm bitmeden sonraki açılmaz)
-        float tabW = 124, tabG = 12, tabX0 = panel.center.x - (nw * tabW + (nw - 1) * tabG) / 2;
+        // bölüm seçimi: oklar + 25 küçük bölüm sekmesi (önceki bölüm bitmeden sonraki açılmaz)
+        Rect prev = new Rect(panel.x + 40, panel.y + 118, 120, 104), next = new Rect(panel.xMax - 160, panel.y + 118, 120, 104);
+        if (Button(prev, w > 0 ? art.btnBlue : art.btnGrey, null, "<", 76) && w > 0) { gm.SelectWorld = w - 1; Sfx.Play(Sfx.Click); }
+        bool nextOpen = w < nw - 1 && Levels.Unlocked((w + 1) * Levels.PerWorld);
+        if (Button(next, nextOpen ? art.btnBlue : art.btnGrey, w < nw - 1 && !nextOpen ? art.iconLock : null, nextOpen || w == nw - 1 ? ">" : "", 76))
+        {
+            Sfx.Play(Sfx.Click);
+            if (nextOpen) gm.SelectWorld = w + 1; else if (w < nw - 1) lockMsgT = Time.unscaledTime;
+        }
+        float tabW = 40, tabG = 5, tabX0 = panel.center.x - (nw * tabW + (nw - 1) * tabG) / 2;
         for (int i = 0; i < nw; i++)
         {
             bool open = Levels.Unlocked(i * Levels.PerWorld);
-            Rect r = new Rect(tabX0 + i * (tabW + tabG), panel.y + 125, tabW, 100);
+            Rect r = new Rect(tabX0 + i * (tabW + tabG), panel.y + 136, tabW, 68);
             var tex = i == w ? art.btnOrange : open ? art.btnBlue : art.btnGrey;
-            if (Button(r, tex, open ? null : art.iconLock, open ? (i + 1).ToString() : "", 60))
+            if (Button(r, tex, null, (i + 1).ToString(), 30))
             {
                 Sfx.Play(Sfx.Click);
                 if (open) gm.SelectWorld = i;
                 else lockMsgT = Time.unscaledTime;
             }
             if (open && Economy.AnyGiftReady(i))
-                Tex(new Rect(r.xMax - 40, r.y - 18 + Mathf.Sin(Time.unscaledTime * 6f) * 4f, 48, 48), art.iconGift);
+                Tex(new Rect(r.center.x - 16, r.y - 30 + Mathf.Sin(Time.unscaledTime * 6f) * 3f, 32, 32), art.iconGift);
         }
 
         // 20 level: 2 sıra x 10
@@ -240,7 +254,7 @@ public class Hud : MonoBehaviour
             Text(new Rect(panel.x, panel.y + 222, panel.width, 44), string.Format(Loc.T("locked_world"), need), 38, new Color(0.85f, 0.25f, 0.15f), TextAnchor.MiddleCenter, 1f, 0);
         }
 
-        if (Button(new Rect(panel.x + 40, panel.yMax - 150, 120, 126), art.btnBlue, art.iconMenu, null, 0)) gm.OpenMenu();
+        if (IconButton(new Rect(panel.x + 40, panel.yMax - 160, 150, 112), art.btnBlue, art.iconHome, Loc.T("main_menu"))) gm.OpenMenu();
         if (Button(new Rect(panel.xMax - 380, panel.yMax - 132, 340, 104), art.btnOrange, null, Loc.T("shop"), 56)) gm.OpenShop();
         EggPill(new Rect(vw - 30 - 340, 30, 340, 110));
         Text(new Rect(30, 40, 480, 70), "★ " + Levels.TotalStars() + " / " + (Levels.Count * 3), 50, Gold, TextAnchor.MiddleLeft);
@@ -281,9 +295,8 @@ public class Hud : MonoBehaviour
         Dim(0.35f);
         float k = EaseBack(Mathf.Clamp01(gm.StateTime / 0.35f));
         bool hasNew = lvl.newBird.HasValue;
-        bool tierUp = lvl.index > 0 && lvl.index % Levels.PerWorld == 0;
         bool hasTip = !string.IsNullOrEmpty(lvl.tip);
-        float ph = (hasNew ? 720 : 470) + (tierUp ? 70 : 0) + (hasTip ? 110 : 0);
+        float ph = (hasNew ? 720 : 470) + 64 + (hasTip ? 110 : 0);
         Rect panel = Centered(1100 * k, ph * k, 30);
         Panel(panel);
         if (k < 1f) return;
@@ -313,17 +326,24 @@ public class Hud : MonoBehaviour
             y += 130;
         }
 
-        if (tierUp)
         {
-            int tier = LevelLoader.Tier(lvl.index) + 1;
-            int pct = Mathf.RoundToInt((LevelLoader.FoxHealthMult(lvl.index) - 1f) * 100f);
-            Text(new Rect(panel.x + 30, y + 4, panel.width - 60, 56), string.Format(Loc.T("tier_up"), tier, pct), 40, new Color(0.8f, 0.25f, 0.15f), TextAnchor.MiddleCenter, 1f, 0);
-            y += 70;
+            // zorluk göstergesi: 1. level %1, 15. level %15, 100. level %75 ...
+            int pct = Mathf.Max(1, Mathf.RoundToInt(LevelLoader.Percent(lvl.index)));
+            Rect bar = new Rect(panel.center.x + 20, y + 16, 300, 30);
+            Text(new Rect(panel.x + 30, y, panel.width / 2 - 20, 60), Loc.T("difficulty") + "  " + Loc.Pct(pct), 42, DiffColor(pct), TextAnchor.MiddleRight, 1f, 0);
+            var old = GUI.color;
+            GUI.color = Ink; GUI.DrawTexture(Px(bar), Texture2D.whiteTexture);
+            GUI.color = new Color(0.75f, 0.66f, 0.55f); GUI.DrawTexture(Px(new Rect(bar.x + 4, bar.y + 4, bar.width - 8, bar.height - 8)), Texture2D.whiteTexture);
+            GUI.color = DiffColor(pct); GUI.DrawTexture(Px(new Rect(bar.x + 4, bar.y + 4, (bar.width - 8) * pct / 100f, bar.height - 8)), Texture2D.whiteTexture);
+            GUI.color = old;
+            y += 64;
         }
         if (hasTip)
         {
-            SpriteTex(new Rect(panel.x + 70, y + 8, 120, 92), art.nestGold);
-            Text(new Rect(panel.x + 210, y + 10, panel.width - 260, 90), Loc.T(lvl.tip), 38, new Color(0.3f, 0.2f, 0.12f), TextAnchor.MiddleLeft, 1f, 0);
+            if (lvl.tip == "tip_nest") SpriteTex(new Rect(panel.x + 70, y + 8, 120, 92), art.nestGold);
+            else SpriteTex(new Rect(panel.x + 70, y + 8, 120, 92), art.Bird(lvl.birds.Length > 0 ? lvl.birds[0] : BirdType.Mallard).up);
+            string tip = lvl.tip == "tip_nest" ? string.Format(Loc.T(lvl.tip), Economy.NestReward) : Loc.T(lvl.tip);
+            Text(new Rect(panel.x + 210, y + 10, panel.width - 260, 90), tip, 38, new Color(0.3f, 0.2f, 0.12f), TextAnchor.MiddleLeft, 1f, 0);
             y += 110;
         }
 
@@ -345,10 +365,13 @@ public class Hud : MonoBehaviour
         if (playing)
         {
             if (Button(PauseRect, art.btnBlue, art.iconPause, null, 0) && !gm.Paused) { Sfx.Play(Sfx.Click); gm.SetPaused(true); }
+            UnderLabel(PauseRect, Loc.T("pause"));
             if (Button(RestartRect, art.btnOrange, art.iconRestart, null, 0)) gm.Restart();
+            UnderLabel(RestartRect, Loc.T("restart"));
             if (!gm.Paused)
             {
                 if (Button(PlusRect, art.btnGreen, art.iconPlus, null, 0)) OpenPicker();
+                UnderLabel(PlusRect, Loc.T("add_btn"));
                 int ex = Economy.TotalExtras();
                 if (ex > 0) Text(new Rect(PlusRect.xMax - 50, PlusRect.y - 6, 60, 50), ex.ToString(), 40, Gold, TextAnchor.MiddleCenter);
             }
@@ -368,11 +391,11 @@ public class Hud : MonoBehaviour
 
         // kalan kuşlar (sol üstte küçük ikonlar)
         float x = 34;
-        if (gm.OnSling != null) { SpriteTex(new Rect(x, 150, 64, 50), art.Bird(gm.OnSling.type).idle); x += 72; }
+        if (gm.OnSling != null) { SpriteTex(new Rect(x, 186, 64, 50), art.Bird(gm.OnSling.type).idle); x += 72; }
         foreach (var b in gm.Queue)
         {
             if (b == null) continue;
-            SpriteTex(new Rect(x, 150, 64, 50), art.Bird(b.type).idle);
+            SpriteTex(new Rect(x, 186, 64, 50), art.Bird(b.type).idle);
             x += 72;
         }
     }
@@ -476,9 +499,9 @@ public class Hud : MonoBehaviour
             Text(new Rect(panel.center.x - 200, panel.y + 584, 460, 50), Loc.T("gift_ready"), 38, new Color(0.85f, 0.35f, 0.1f), TextAnchor.MiddleLeft, 1f, 0);
         }
 
-        // yıkım oranı + kazanılan altın yumurta
+        // verilen hasar + kazanılan altın yumurta (100 hasar = 10 altın)
         float ly = panel.y + 528;
-        Text(new Rect(panel.x, ly, panel.width / 2 - 10, 60), Loc.T("destruction") + " " + (Loc.Lang == 0 ? "%" + Mathf.RoundToInt(gm.Destruction * 100f) : Mathf.RoundToInt(gm.Destruction * 100f) + "%"), 44, Brown, TextAnchor.MiddleRight, 1f, 0);
+        Text(new Rect(panel.x, ly, panel.width / 2 - 10, 60), Loc.T("damage_dealt") + " " + gm.DamagePoints.ToString("N0"), 44, Brown, TextAnchor.MiddleRight, 1f, 0);
         Tex(new Rect(panel.center.x + 20, ly, 56, 60), art.uiEgg);
         Text(new Rect(panel.center.x + 86, ly, panel.width / 2 - 100, 60), "+" + gm.EggsEarned + (gm.FirstClear ? "  (" + Loc.T("first_clear") + ")" : ""), 48, Gold, TextAnchor.MiddleLeft, 1f, 4);
 
@@ -486,15 +509,15 @@ public class Hud : MonoBehaviour
         float bs = 150, by = panel.yMax - bs * 0.6f;
         if (won)
         {
-            if (Button(new Rect(panel.center.x - bs * 1.5f - 40, by, bs, bs * 1.05f), art.btnBlue, art.iconMenu, null, 0)) gm.BackToSelect();
-            if (Button(new Rect(panel.center.x - bs * 0.5f, by, bs, bs * 1.05f), art.btnOrange, art.iconRestart, null, 0)) gm.Restart();
-            if (Button(new Rect(panel.center.x + bs * 0.5f + 40, by, bs, bs * 1.05f), art.btnGreen, art.iconNext, null, 0)) gm.NextLevel();
+            if (IconButton(new Rect(panel.center.x - bs * 1.5f - 40, by, bs, bs * 1.05f), art.btnBlue, art.iconMenu, Loc.T("levels"))) gm.BackToSelect();
+            if (IconButton(new Rect(panel.center.x - bs * 0.5f, by, bs, bs * 1.05f), art.btnOrange, art.iconRestart, Loc.T("restart"))) gm.Restart();
+            if (IconButton(new Rect(panel.center.x + bs * 0.5f + 40, by, bs, bs * 1.05f), art.btnGreen, art.iconNext, Loc.T("next"))) gm.NextLevel();
         }
         else
         {
             float x0 = panel.center.x - (bs * 2 + 320 + 60) / 2;
-            if (Button(new Rect(x0, by, bs, bs * 1.05f), art.btnBlue, art.iconMenu, null, 0)) gm.BackToSelect();
-            if (Button(new Rect(x0 + bs + 30, by, bs, bs * 1.05f), art.btnOrange, art.iconRestart, null, 0)) gm.Restart();
+            if (IconButton(new Rect(x0, by, bs, bs * 1.05f), art.btnBlue, art.iconMenu, Loc.T("levels"))) gm.BackToSelect();
+            if (IconButton(new Rect(x0 + bs + 30, by, bs, bs * 1.05f), art.btnOrange, art.iconRestart, Loc.T("restart"))) gm.Restart();
             if (Button(new Rect(x0 + bs * 2 + 60, by, 320, bs * 1.05f), art.btnGreen, null, "+ " + Loc.T("continue"), 46)) OpenPicker();
         }
     }
@@ -542,8 +565,9 @@ public class Hud : MonoBehaviour
         EggPill(new Rect(vw - 30 - 340, 30, 340, 110));
 
         // ördek sekmeleri
-        float tw = 200, tg = 20, tx0 = panel.center.x - (tw * 6 + tg * 5) / 2;
-        for (int i = 0; i < 6; i++)
+        int nt = BirdInfo.Count;
+        float tg = 12, tw = Mathf.Min(200f, (panel.width - 60 - tg * (nt - 1)) / nt), tx0 = panel.center.x - (tw * nt + tg * (nt - 1)) / 2;
+        for (int i = 0; i < nt; i++)
         {
             var bt = (BirdType)i;
             bool open = Economy.TypeUnlocked(bt);
@@ -552,12 +576,12 @@ public class Hud : MonoBehaviour
             if (Button(r, bg, null, null, 0)) { shopSel = i; Sfx.Play(Sfx.Click); }
             var old = GUI.color;
             if (!open) GUI.color = new Color(0.15f, 0.15f, 0.2f, 0.85f);
-            SpriteTex(new Rect(r.x + 30, r.y + 18, r.width - 60, r.height - 50), art.Bird(bt).idle);
+            SpriteTex(new Rect(r.x + 20, r.y + 18, r.width - 40, r.height - 50), art.Bird(bt).idle);
             GUI.color = old;
             if (!open) Tex(new Rect(r.center.x - 30, r.y + 40, 60, 60), art.iconLock);
         }
 
-        var t = (BirdType)Mathf.Clamp(shopSel, 0, 5);
+        var t = (BirdType)Mathf.Clamp(shopSel, 0, BirdInfo.Count - 1);
         bool unlocked = Economy.TypeUnlocked(t);
         float y0 = panel.y + 320;
 
@@ -611,7 +635,7 @@ public class Hud : MonoBehaviour
         if (shopMsgT > 0f && Time.unscaledTime - shopMsgT < 1.4f)
             Text(new Rect(panel.x, panel.yMax - 120, panel.width, 70), Loc.T("no_eggs"), 52, new Color(0.95f, 0.3f, 0.2f), TextAnchor.MiddleCenter, 1f, 4);
 
-        if (Button(new Rect(panel.x + 40, panel.yMax - 150, 120, 126), art.btnBlue, art.iconMenu, null, 0)) gm.CloseShop();
+        if (IconButton(new Rect(panel.x + 40, panel.yMax - 160, 150, 112), art.btnBlue, art.iconHome, Loc.T("back"))) gm.CloseShop();
     }
 
     void Pip(Rect r, bool on, Color c)
@@ -670,14 +694,14 @@ public class Hud : MonoBehaviour
     void DrawPicker(GameManager gm, GameArt art)
     {
         Dim(0.55f);
-        Rect panel = Centered(1320, 660, 30);
+        var types = new List<BirdType>();
+        for (int i = 0; i < BirdInfo.Count; i++) if (Economy.TypeUnlocked((BirdType)i)) types.Add((BirdType)i);
+        float cg = 14, cw = Mathf.Min(196f, (Mathf.Min(1640f, vw - 60) - 60 - cg * (types.Count - 1)) / types.Count);
+        Rect panel = Centered(Mathf.Max(1320f, types.Count * (cw + cg) + 80), 660, 30);
         Panel(panel);
         Ribbon(new Rect(vw / 2 - 420, panel.y - 70, 840, 150), Loc.T("add_duck"), 64);
         EggPill(new Rect(panel.xMax - 370, panel.yMax - 132, 330, 100));
-
-        var types = new List<BirdType>();
-        for (int i = 0; i < 6; i++) if (Economy.TypeUnlocked((BirdType)i)) types.Add((BirdType)i);
-        float cw = 196, cg = 16, x0 = panel.center.x - (types.Count * cw + (types.Count - 1) * cg) / 2;
+        float x0 = panel.center.x - (types.Count * cw + (types.Count - 1) * cg) / 2;
         for (int i = 0; i < types.Count; i++)
         {
             var t = types[i];
@@ -702,7 +726,7 @@ public class Hud : MonoBehaviour
         if (shopMsgT > 0f && Time.unscaledTime - shopMsgT < 1.4f)
             Text(new Rect(panel.x, panel.y + 465, panel.width, 60), Loc.T("no_eggs"), 48, new Color(0.95f, 0.3f, 0.2f), TextAnchor.MiddleCenter, 1f, 4);
 
-        if (picker && Button(new Rect(panel.center.x - 80, panel.yMax - 140, 160, 126), art.btnOrange, null, "X", 72)) { Sfx.Play(Sfx.Click); ClosePicker(gm); }
+        if (picker && Button(new Rect(panel.center.x - 130, panel.yMax - 130, 260, 108), art.btnOrange, null, Loc.T("close"), 50)) { Sfx.Play(Sfx.Click); ClosePicker(gm); }
     }
 
     // ================================================================== GEÇİŞ EFEKTLERİ
@@ -836,7 +860,78 @@ public class Hud : MonoBehaviour
         return GUI.Button(p, GUIContent.none, GUIStyle.none);
     }
 
-    void Text(Rect r, string text, int size, Color color, TextAnchor anchor, float alpha = 1f, int outline = 4)
+    // ------------------------------------------------------------------ yazılı butonlar
+    // İkonlu buton + altında ne işe yaradığını söyleyen küçük etiket
+    bool IconButton(Rect r, Texture2D bg, Texture2D icon, string label)
+    {
+        bool c = Button(r, bg, icon, null, 0);
+        UnderLabel(r, label);
+        return c;
+    }
+
+    void UnderLabel(Rect r, string text)
+    {
+        Text(new Rect(r.x - 40, r.yMax + 1, r.width + 80, 34), text, 26, Cream, TextAnchor.MiddleCenter, 1f, 3);
+    }
+
+    // Açık/kapalı buton: üstte adı (SES / MÜZİK), altta durumu (AÇIK / KAPALI)
+    bool ToggleButton(Rect r, bool on, Texture2D bgOn, string name)
+    {
+        bool c = Button(r, on ? bgOn : GameArt.I.btnGrey, null, null, 0);
+        Text(new Rect(r.x + 4, r.y + 14, r.width - 8, 44), name, 30, Color.white, TextAnchor.MiddleCenter, 1f, 3);
+        Text(new Rect(r.x + 4, r.y + 58, r.width - 8, 48), on ? Loc.T("on") : Loc.T("off"), 38, on ? Gold : Cream, TextAnchor.MiddleCenter, 1f, 3);
+        return c;
+    }
+
+    static Color DiffColor(int pct)
+    {
+        Color g = new Color(0.35f, 0.75f, 0.25f), y = new Color(0.95f, 0.7f, 0.15f), r = new Color(0.9f, 0.22f, 0.15f);
+        return pct < 50 ? Color.Lerp(g, y, pct / 50f) : Color.Lerp(y, r, (pct - 50) / 50f);
+    }
+
+    // ================================================================== DİL SEÇİCİ
+    bool langPicker;
+    public void OpenLangPicker() { langPicker = true; }
+
+    void DrawLangPicker(GameArt art)
+    {
+        float pw = Mathf.Min(1660f, vw - 40f);
+        Rect panel = Centered(pw, 900, 30);
+        Panel(panel);
+        Ribbon(new Rect(vw / 2 - 420, panel.y - 70, 840, 150), Loc.T("choose_lang"), 62);
+        int cols = 5, n = Loc.Codes.Length;
+        float gap = 14, cw = (panel.width - 80 - gap * (cols - 1)) / cols, ch = 96;
+        for (int i = 0; i < n; i++)
+        {
+            int row = i / cols, col = i % cols;
+            Rect r = new Rect(panel.x + 40 + col * (cw + gap), panel.y + 104 + row * (ch + 12), cw, ch);
+            bool cur = Loc.Codes[i] == Loc.Code;
+            if (Button(r, cur ? art.btnOrange : art.btnBlue, null, null, 0))
+            {
+                Sfx.Play(Sfx.Click);
+                Loc.Set(Loc.Codes[i]);
+                langPicker = false;
+            }
+            Text(new Rect(r.x + 10, r.y + 2, r.width - 20, r.height * 0.86f), Loc.Names[i], 42, Color.white, TextAnchor.MiddleCenter, 1f, 4, "_names:" + Loc.Codes[i]);
+        }
+        if (Button(new Rect(panel.center.x - 130, panel.yMax - 118, 260, 100), art.btnGrey, null, Loc.T("close"), 48))
+        {
+            Sfx.Play(Sfx.Click);
+            langPicker = false;
+        }
+    }
+
+    // ================================================================== yazı
+    // Fontta olmayan yazılar (Çince, Hintçe, Arapça...) LocText ile atlas görsellerinden çizilir.
+    void Text(Rect r, string text, int size, Color color, TextAnchor anchor, float alpha = 1f, int outline = 4, string lang = null)
+    {
+        if (string.IsNullOrEmpty(text)) return;
+        var items = LocText.Layout(text, lang);
+        if (items == null) PlainText(r, text, size, color, anchor, alpha, outline);
+        else RichText(r, items, size, color, anchor, alpha, outline);
+    }
+
+    void PlainText(Rect r, string text, int size, Color color, TextAnchor anchor, float alpha, int outline)
     {
         // Yazı boyutları 4 piksellik adımlara yuvarlanır: her karede farklı boyut istemek
         // dinamik font atlasını sürekli yeniden kurdurup harflerin kaybolmasına yol açıyordu.
@@ -862,6 +957,94 @@ public class Hud : MonoBehaviour
         color.a = alpha;
         label.normal.textColor = color;
         GUI.Label(p, text, label);
+    }
+
+    readonly List<float> itemW = new List<float>();
+
+    float Measure(List<LocText.Item> items, int fs)
+    {
+        itemW.Clear();
+        label.fontSize = fs;
+        float total = 0f, sp = fs * 0.3f;
+        for (int i = 0; i < items.Count; i++)
+        {
+            var it = items[i];
+            float w;
+            switch (it.kind)
+            {
+                case LocText.Kind.Font: w = label.CalcSize(new GUIContent(it.text)).x; break;
+                case LocText.Kind.Atlas: w = it.w * fs * LocText.AtlasPerFontPx; break;
+                default: w = fs * 0.8f; break;
+            }
+            itemW.Add(w);
+            total += w + (i > 0 && it.space ? sp : 0f);
+        }
+        return total;
+    }
+
+    void RichText(Rect r, List<LocText.Item> items, int size, Color color, TextAnchor anchor, float alpha, int outline)
+    {
+        Rect p = Px(r);
+        int fs = QuantSize(size * s);
+        float total = Measure(items, fs);
+        for (int pass = 0; pass < 2 && p.width > 4f && total > p.width && fs > 6; pass++)
+        {
+            fs = QuantSize(fs * p.width / total, true);
+            total = Measure(items, fs);
+        }
+        int h = (int)anchor % 3, v = (int)anchor / 3;
+        float x0 = h == 0 ? p.x : h == 1 ? p.x + (p.width - total) / 2f : p.xMax - total;
+        float cy = v == 0 ? p.y + fs * 0.6f : v == 1 ? p.center.y : p.yMax - fs * 0.6f;
+
+        label.alignment = TextAnchor.MiddleLeft;
+        foreach (var it in items)
+            if (it.kind == LocText.Kind.Font) label.font.RequestCharactersInTexture(it.text, fs);
+
+        if (outline > 0)
+        {
+            float o = Mathf.Max(1f, outline * s);
+            var ink = new Color(Ink.r, Ink.g, Ink.b, alpha);
+            for (int i = -1; i <= 1; i++)
+                for (int j = -1; j <= 1; j++)
+                    if (i != 0 || j != 0) DrawItems(items, x0 + i * o, cy + j * o, fs, ink, false);
+            DrawItems(items, x0, cy + o * 2f, fs, ink, false);
+        }
+        color.a = alpha;
+        DrawItems(items, x0, cy, fs, color, true);
+    }
+
+    void DrawItems(List<LocText.Item> items, float x, float cy, int fs, Color c, bool main)
+    {
+        var prev = GUI.color;
+        float sp = fs * 0.3f, k = fs * LocText.AtlasPerFontPx;
+        label.fontSize = fs;
+        for (int i = 0; i < items.Count; i++)
+        {
+            var it = items[i];
+            if (i > 0 && it.space) x += sp;
+            float w = itemW[i];
+            switch (it.kind)
+            {
+                case LocText.Kind.Font:
+                    label.normal.textColor = c;
+                    GUI.Label(new Rect(x, cy - fs, w + fs, fs * 2f), it.text, label);
+                    break;
+                case LocText.Kind.Atlas:
+                    GUI.color = new Color(prev.r * c.r, prev.g * c.g, prev.b * c.b, prev.a * c.a);
+                    GUI.DrawTextureWithTexCoords(new Rect(x, cy - LocText.AtlasMid * k, w, it.h * k), it.atlas.tex, it.uv);
+                    GUI.color = prev;
+                    break;
+                default:
+                    if (main)
+                    {
+                        GUI.color = new Color(prev.r, prev.g, prev.b, prev.a * c.a);
+                        GUI.DrawTexture(new Rect(x, cy - w * 0.52f, w, w), GameArt.I.uiStar, ScaleMode.ScaleToFit);
+                        GUI.color = prev;
+                    }
+                    break;
+            }
+            x += w;
+        }
     }
 
     static int QuantSize(float px, bool down = false)

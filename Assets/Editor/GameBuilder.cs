@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using System.IO;
 using UnityEditor;
@@ -11,7 +12,7 @@ using UnityEngine;
 [InitializeOnLoad]
 public static class GameBuilder
 {
-    const int Version = 17;
+    const int Version = 18;
     const string VersionFile = "ProjectSettings/OrdekOyunuBuilder.txt";
     const string CmdFile = "ProjectSettings/ordek_cmd.txt";
     const string ScenePath = "Assets/Scenes/Game.unity";
@@ -173,7 +174,7 @@ public static class GameBuilder
                         PlayerPrefs.Save();
                     }
                     break;
-                case "lang": Loc.Lang = int.Parse(parts[1]); break;
+                case "lang": { int li; if (int.TryParse(parts[1], out li)) Loc.Set(Loc.Codes[Mathf.Clamp(li, 0, Loc.Codes.Length - 1)]); else Loc.Set(parts[1]); } break;
                 case "aimshot":
                     if (GameManager.Instance != null)
                         GameManager.Instance.AutoLaunch(AutoTester.AimAtFox(GameManager.Instance, parts.Length > 1 ? int.Parse(parts[1]) : 0, out _));
@@ -239,6 +240,7 @@ public static class GameBuilder
                         else if (parts[1] == "skip") gm.FinishSplash();
                         else if (parts[1] == "extra") gm.UseExtraBird((BirdType)int.Parse(parts[2]));
                         else if (parts[1] == "picker" && Hud.Instance != null) Hud.Instance.OpenPicker();
+                        else if (parts[1] == "langs" && Hud.Instance != null) { gm.OpenMenu(); Hud.Instance.OpenLangPicker(); }
                     }
                     break;
             }
@@ -343,9 +345,9 @@ public static class GameBuilder
             AssetDatabase.CreateAsset(art, ArtAssetPath);
         }
 
-        string[] birdNames = { "duck", "mandarin", "merganser", "muscovy", "scoter", "shelduck" };
-        art.birds = new GameArt.BirdArt[6];
-        for (int i = 0; i < 6; i++)
+        string[] birdNames = { "duck", "mandarin", "merganser", "muscovy", "scoter", "shelduck", "pintail", "eider", "goldeneye" };
+        art.birds = new GameArt.BirdArt[birdNames.Length];
+        for (int i = 0; i < birdNames.Length; i++)
         {
             string b = "bird_" + birdNames[i] + "_";
             art.birds[i] = new GameArt.BirdArt { idle = Sp(b + "idle"), blink = Sp(b + "blink"), up = Sp(b + "up"), down = Sp(b + "down"), hit = Sp(b + "hit") };
@@ -363,10 +365,17 @@ public static class GameBuilder
             new Color(0.14f, 0.24f, 0.36f), new Color(0.09f, 0.06f, 0.17f),
             new Color(0.36f, 0.17f, 0.08f), new Color(0.03f, 0.27f, 0.38f),
             new Color(0.32f, 0.2f, 0.36f), new Color(0.13f, 0.03f, 0.04f),
-            new Color(0.08f, 0.16f, 0.13f), new Color(0.07f, 0.07f, 0.2f)
+            new Color(0.08f, 0.16f, 0.13f), new Color(0.07f, 0.07f, 0.2f),
+            // 11-25. bölümler (temel temaların gece / kızıl / altın / fırtına / şafak çeşitlemeleri)
+            new Color(0.06f, 0.08f, 0.16f), new Color(0.27f, 0.11f, 0.10f), new Color(0.06f, 0.08f, 0.16f),
+            new Color(0.43f, 0.35f, 0.20f), new Color(0.06f, 0.08f, 0.16f), new Color(0.29f, 0.17f, 0.19f),
+            new Color(0.06f, 0.08f, 0.16f), new Color(0.20f, 0.04f, 0.04f), new Color(0.17f, 0.19f, 0.21f),
+            new Color(0.34f, 0.29f, 0.35f), new Color(0.17f, 0.19f, 0.21f), new Color(0.34f, 0.29f, 0.35f),
+            new Color(0.14f, 0.35f, 0.40f), new Color(0.29f, 0.17f, 0.19f), new Color(0.14f, 0.06f, 0.13f)
         };
-        art.themes = new GameArt.ThemeArt[10];
-        for (int i = 0; i < 10; i++)
+        var starry = new HashSet<int> { 3, 7, 8, 9, 10, 12, 14, 16, 17, 18 };
+        art.themes = new GameArt.ThemeArt[trans.Length];
+        for (int i = 0; i < trans.Length; i++)
         {
             art.themes[i] = new GameArt.ThemeArt
             {
@@ -374,7 +383,7 @@ public static class GameBuilder
                 water = Sp("water_" + i), dirt = Sp("dirt_" + i), sun = Sp("sun_" + i),
                 cloudA = Sp("cloudA_" + i), cloudB = Sp("cloudB_" + i), bush = Sp("bush_" + i),
                 decor0 = Sp("decor0_" + i), decor1 = Sp("decor1_" + i), decor2 = Sp("decor2_" + i),
-                transitionColor = trans[i], stars = i == 3 || i == 7 || i == 8 || i == 9
+                transitionColor = trans[i], stars = starry.Contains(i)
             };
         }
         art.starPx = Sp("star_px");
@@ -395,9 +404,9 @@ public static class GameBuilder
         art.sIce = Au("sfx_ice"); art.sBoom = Au("sfx_boom"); art.sFox = Au("sfx_fox"); art.sClick = Au("sfx_click");
         art.sStar = Au("sfx_star"); art.sStretch = Au("sfx_stretch"); art.sWin = Au("sfx_win"); art.sLose = Au("sfx_lose");
         art.sWhoosh = Au("sfx_whoosh");
-        string[] duckNames = { "duck", "mandarin", "merganser", "muscovy", "scoter", "shelduck" };   // BirdType sırası
-        art.duckVoice = new AudioClip[6]; art.duckAbility = new AudioClip[6]; art.duckHit = new AudioClip[6];
-        for (int i = 0; i < 6; i++)
+        string[] duckNames = birdNames;   // BirdType sırası
+        art.duckVoice = new AudioClip[duckNames.Length]; art.duckAbility = new AudioClip[duckNames.Length]; art.duckHit = new AudioClip[duckNames.Length];
+        for (int i = 0; i < duckNames.Length; i++)
         {
             art.duckVoice[i] = Au("duck_voice_" + duckNames[i]);
             art.duckAbility[i] = Au("duck_ability_" + duckNames[i]);

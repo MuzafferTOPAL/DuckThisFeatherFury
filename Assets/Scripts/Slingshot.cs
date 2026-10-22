@@ -23,7 +23,9 @@ public class Slingshot : MonoBehaviour
     Camera cam;
     SpriteRenderer[] dots;
     Vector2 pouchPos, pouchVel;
-    const int DotCount = 18;
+    const int DotCount = 26;
+    bool relative;          // ekranın herhangi bir yerinden çekme
+    Vector2 dragStart;
 
     // ---------------------------------------------------------------- kurulum
     public static Slingshot Create(Vector2 basePos, float groundY)
@@ -129,18 +131,27 @@ public class Slingshot : MonoBehaviour
     {
         Vector2 world = ScreenToWorld(GameInput.Position);
 
-        if (GameInput.PressedThisFrame && !GameInput.OverUI &&
-            Vector2.Distance(world, current.transform.position) < grabRadius)
+        // Ördeğe yakın dokunuş: doğrudan çekme. Ekranın sol yarısında başka bir yere dokunuş: göreli çekme
+        // (parmağın ördeği kapatmaması için, nereden başlanırsa oradan geri çekilir).
+        if (GameInput.PressedThisFrame && !GameInput.OverUI)
         {
-            dragging = true;
-            current.SetAiming(true);
-            Sfx.Play(Sfx.Stretch, 0.8f);
+            bool near = Vector2.Distance(world, current.transform.position) < grabRadius * 1.4f;
+            bool leftSide = GameInput.Position.x < Screen.width * 0.55f;
+            if (near || leftSide)
+            {
+                dragging = true;
+                relative = !near;
+                dragStart = world;
+                current.SetAiming(true);
+                Sfx.Play(Sfx.Stretch, 0.8f);
+            }
         }
 
         if (dragging && GameInput.IsPressed)
         {
             Vector2 lp = launchPoint.position;
-            Vector2 offset = Vector2.ClampMagnitude(world - lp, maxPull);
+            Vector2 raw = relative ? (world - dragStart) * 1.1f : world - lp;
+            Vector2 offset = Vector2.ClampMagnitude(raw, maxPull);
             Vector2 p = lp + offset;
             if (p.y < minPullY) { p.y = minPullY; offset = p - lp; }
             current.transform.position = p;
@@ -155,7 +166,7 @@ public class Slingshot : MonoBehaviour
             current.SetAiming(false);
 
             Vector2 offset = (Vector2)current.transform.position - (Vector2)launchPoint.position;
-            if (offset.magnitude < 0.3f)
+            if (offset.magnitude < 0.35f)   // az çekip bırakmak = vazgeçmek
             {
                 current.transform.position = launchPoint.position;
                 return;
@@ -177,7 +188,9 @@ public class Slingshot : MonoBehaviour
         current = null;
         dragging = false;
         HideDots();
-        b.transform.position = (Vector2)launchPoint.position - velocity / launchPower;
+        Vector2 p = (Vector2)launchPoint.position - velocity / launchPower;
+        if (p.y < minPullY) p.y = minPullY;   // oyuncunun çekişi gibi: zeminin içine girmesin
+        b.transform.position = p;
         b.Launch(velocity);
         pouchVel = velocity * 0.9f;
         OnLaunched?.Invoke(b);
@@ -238,11 +251,13 @@ public class Slingshot : MonoBehaviour
         var art = GameArt.I;
         if (art == null || current == null) return;
         Vector2 g = Physics2D.gravity * current.GravityScale;
-        int visible = Mathf.RoundToInt(Mathf.Lerp(6, DotCount, power));
+        int visible = Mathf.RoundToInt(Mathf.Lerp(8, DotCount, power));
+        // güç göstergesi: noktalar zayıfta beyaz, güçlüde turuncu
+        Color tint = Color.Lerp(Color.white, new Color(1f, 0.6f, 0.25f), Mathf.InverseLerp(0.6f, 1f, power));
         bool hitGround = false;
         for (int i = 0; i < dots.Length; i++)
         {
-            float t = (i + 1) * 0.065f;
+            float t = (i + 1) * 0.06f;
             Vector2 p = start + velocity * t + 0.5f * g * t * t;
             if (p.y <= groundY) hitGround = true;
             bool on = i < visible && !hitGround;
@@ -253,7 +268,7 @@ public class Slingshot : MonoBehaviour
             dots[i].transform.position = p;
             float s = Mathf.Lerp(1.1f, 0.5f, k);
             dots[i].transform.localScale = new Vector3(s, s, 1f);
-            dots[i].color = new Color(1f, 1f, 1f, Mathf.Lerp(1f, 0.4f, k));
+            dots[i].color = new Color(tint.r, tint.g, tint.b, Mathf.Lerp(1f, 0.35f, k));
         }
     }
 

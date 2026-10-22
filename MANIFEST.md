@@ -11,13 +11,13 @@
 | **Title** | DuckThis Feather Fury |
 | **Developer** | DuckThisGames |
 | **Genre** | Physics puzzle, slingshot |
-| **Content** | 200 levels · 10 worlds × 20 · 6 ducks |
+| **Content** | 500 levels · 25 worlds × 20 · 9 ducks |
 | **Platform** | Android (phone, landscape) |
 | **Engine** | Unity 6000.6.6f1 |
 | **Version** | 1.0 |
 | **Package** | `com.duckthisgames.featherfury` |
 | **Art style** | 16 px pixel art |
-| **Languages** | TR · EN · DE · ES · FR · PT · IT |
+| **Languages** | 30 (EN, TR, DE, ES, FR, PT, IT, PL, ID, FIL, SW, HA, VI, RU, UK, ZH-Hans, ZH-Hant, JA, KO, HI, BN, MR, TE, TA, GU, PA, TH, AR, UR, FA) |
 
 </div>
 
@@ -67,10 +67,19 @@ style.
 |---|---|---|---|
 | **Mallard** | Flap upward (×2) | – | Starter duck. Corrects bad aim. |
 | **Mandarin Duck** | Splits into 3 ducks (±9°) | Ice ×2.5 | Light (mass 0.9). Wide coverage. |
-| **Merganser** | Dive at ≥ 21 u/s | Wood ×2.2 | Pierces wooden structures. |
+| **Common Merganser** | Dive at ≥ 21 u/s | Wood ×2.2 | Pierces wooden structures. |
 | **Muscovy Duck** | Ground pound (−22 u/s, mass ×2.5) | Stone ×2.2 | Heaviest duck (mass 4). |
 | **Ruddy Shelduck** | Drops an egg bomb and rockets upward | – | Egg: radius 2.2, damage 20. |
-| **Black Scoter** | Explodes | – | Radius 3, damage 28. Auto-explodes 0.8 s after its first hit. |
+| **Common Scoter** | Explodes | – | Radius 3, damage 28. Auto-explodes 0.8 s after its first hit. |
+| **Northern Pintail** | Boomerang: turns back and hits from behind | Wood ×1.4, Fox ×1.2 | For targets hidden behind walls. |
+| **Common Eider** | Shockwave (radius 3.8) that shoves blocks and foxes | Stone ×1.5 | Heavy (mass 3.5). |
+| **Common Goldeneye** | Locks on to the nearest fox and dives (≥ 20 u/s) | Fox ×1.8 | Fox hunter. |
+
+You start with **Mallard, Mandarin Duck and Common Merganser**. A new species joins every three worlds:
+Muscovy (world 4), Ruddy Shelduck (7), Common Scoter (10), Northern Pintail (13), Common Eider (16) and
+Common Goldeneye (19). Each species is introduced with its own card on the first level of that world.
+After its first hit a duck gets light drag and its upward rebound is capped, so it no longer bounces
+unpredictably.
 
 ### 4.2 Foxes
 
@@ -85,37 +94,31 @@ style.
 
 ## 5. World & levels
 
-The game has **10 worlds** with **20 levels** each, for **200 levels** in total. Worlds unlock in order: you
-can't enter world N+1 before finishing world N. Inside a world, levels unlock one by one.
+The game has **25 worlds** with **20 levels** each, for **500 levels** in total. Worlds unlock in order: you
+can't enter world N+1 before finishing world N. Inside a world, levels unlock one by one. Every world has
+its own name and theme:
 
-| World | Theme | Levels | Introduces |
-|---|---|:-:|---|
-| 1 | Lakeside | 1–20 | Mallard (1), Mandarin Duck (12) |
-| 2 | Autumn Forest | 21–40 | Merganser (21) |
-| 3 | Snowy Peaks | 41–60 | Muscovy Duck (41), Ruddy Shelduck (47) |
-| 4 | Sunset Farm | 61–80 | Black Scoter (61) |
-| 5 | Desert Canyon | 81–100 | Golden Nests |
-| 6 | Tropical Beach | 101–120 | |
-| 7 | Blossom Valley | 121–140 | |
-| 8 | Fire Mountain | 141–160 | |
-| 9 | Misty Swamp | 161–180 | |
-| 10 | Fox Kingdom | 181–200 | Final boss |
+| | | | | |
+|---|---|---|---|---|
+| 1 Lakeside | 2 Autumn Forest | 3 Snowy Peaks | 4 Sunset Farm | 5 Desert Canyon |
+| 6 Tropical Beach | 7 Blossom Valley | 8 Fire Mountain | 9 Misty Swamp | 10 Fox Kingdom |
+| 11 Moonlit Lake | 12 Crimson Woods | 13 Frozen Night | 14 Golden Harvest | 15 Starry Dunes |
+| 16 Coral Cove | 17 Lantern Night | 18 Ember Wastes | 19 Stormy Bog | 20 Dawn Citadel |
+| 21 Thunder Peaks | 22 Mirage Oasis | 23 Sunken Lagoon | 24 Twilight Grove | 25 Fox Throne |
 
-**Hand-made and generated levels.** In worlds 1–8, the 40 hand-designed levels sit at fixed slots: levels
-1, 4, 7, 12 and 20 of each world. Duck introductions and boss levels are hand-made. All other levels come
-from a **seeded procedural generator** (`LevelGen.cs`), so level *N* always has the same layout.
+Worlds 11–25 are night, crimson, golden, storm, dusk and dawn variants of the first ten landscapes.
+
+**Hand-made and generated levels.** The first 40 levels (worlds 1–2) are hand-designed and named. All
+other levels come from a **seeded procedural generator** (`LevelGen.cs`), so level *N* always has the same
+layout. Ducks that are not yet unlocked are swapped for an available counter-duck (with one spare).
 
 The generator assembles forts from modules that are proven to stand: towers of 1–3 floors, stone
 pedestals, a wall with a frame, a boulder shelf, a bridge, twin towers, a pyramid and a boss bunker.
-Difficulty (§ 6) controls:
-- the number and size of modules
-- the share of stone and ice
-- the share of helmeted foxes, TNT placement and spare ducks
+Difficulty (§ 6) controls the number and size of modules, the share of stone and ice, helmeted foxes, TNT
+placement and spare ducks. The fox count follows a wave: boss levels ×1.3, every 5th level ×0.7
+(a breather), the rest 0.75–1.3.
 
-The duck line-up is weighted toward the counters for that fort: Muscovy for stone, Mandarin for ice,
-Merganser for wood and Scoter for bosses and TNT.
-
-**Every one of the 200 levels is checked by the AutoTester**: it must stand still with no shot fired.
+**Every one of the 500 levels is checked by the AutoTester**: it must stand still with no shot fired.
 
 ### Materials
 
@@ -132,34 +135,28 @@ Blocks get a 0.8 s spawn grace period so structures settle safely.
 
 ## 6. Difficulty curve
 
-Difficulty **D** rises by **5 points across each world**. Each new world starts **1 point below** where
-the previous one ended, so a new world opens with a short breather:
+Each level has a difficulty percentage, shown with a meter on the level's intro card:
 
 ```
-D = 4 × (world − 1) + 5 × (level in world − 1) / 19
-
-World 1:  0 ──────────▶ 5
-World 2:       4 ──────────▶ 9
-World 3:            8 ──────────▶ 13
-  ...
-World 10:                                36 ──────────▶ 41
+P(n) = n                              for n ≤ 15      (level 1 = 1%, level 15 = 15%)
+P(n) = 15 + (n − 15) · 60 / 85        for n ≤ 100     (level 100 = 75%)
+P(n) = 75 + 25 · (1 − e^(−(n−100)/150))  after that   (level 200 ≈ 87%, 300 ≈ 93%, 500 ≈ 98%)
 ```
 
-| Effect | Formula | D = 0 | D = 20 | D = 41 |
+Internally D = 0.6 · P drives:
+
+| Effect | Formula | Level 1 | Level 100 | Level 500 |
 |---|---|:-:|:-:|:-:|
-| Fox health | × (1 + 0.02·D) | ×1.00 | ×1.40 | ×1.82 |
-| Block durability | × (1 + 0.01·D) | ×1.00 | ×1.20 | ×1.41 |
-| Helmeted fox chance | 2% + 1.7%·D | 2% | 36% | 60% |
-| Stone share | 8% + 1.4%·D | 8% | 36% | 55% |
-| Spare ducks | | 2 | 1 | 2 |
+| Fox health | × (1 + 0.02·D) | ×1.01 | ×1.90 | ×2.18 |
+| Block durability | × (1 + 0.01·D) | ×1.01 | ×1.45 | ×1.59 |
+| Structure modules | 1 → 5 | 1 | 3–5 | 3–5 |
 
-The first level of every world shows a **"World N: foxes are X% tougher!"** banner. Level 20 of every world
-is a **boss fortress**. Upgrades (Damage up to ×1.6, Auto-Aim), Golden Nests and extra ducks are there so
-committed players can keep pace, while players who skip the shop feel the climb.
+Fox counts go up and down from level to level, but the difficulty itself never drops. Level 20 of every
+world is a **boss fortress**. World 1 gets one spare Mallard on every level so new players settle in.
 
-**Balancing:** the AutoTester can run with an *expected upgrade profile*: the Damage and Auto-Aim levels a
-player could afford with the eggs they have earned by that world. Late worlds are tuned so they stay
-winnable under that profile.
+**Balancing:** the AutoTester plays every level with an *expected upgrade profile* (the Damage and
+Auto-Aim levels a player could afford by that world). With a random-aim bot: world 1–2 ≈ 60% wins,
+level 100 ≈ 30%, level 400 ≈ 45% (more species and upgrades). A human aims far better than the bot.
 
 ### Star gifts 🎁
 
@@ -181,21 +178,24 @@ The foxes stole the eggs, so recovering them *is* the currency.
 
 | Event | Reward |
 |---|---|
-| Win | `stars × 10 + round(destruction % × 20)` |
-| First clear of a level | `+15` |
-| Loss | `round(destruction % × 8)` |
+| Win | **10 eggs per 100 damage dealt** (damage points = HP removed × 5) |
+| First clear of a level | `+20` |
+| Loss | half of the damage reward |
+| Golden Nest (once per nest) | `+25` |
 
-A perfect first clear pays **65 eggs**. 200 levels pay roughly 10,000 eggs on a first playthrough, plus about **80** from Golden Nests.
+A typical early level pays 30–90 eggs, a late level 100–200.
 
 ### Spending (per duck species)
 
 | Item | Levels | Effect | Cost |
 |---|:-:|---|---|
-| Damage | 4 | +15% per level (×1.6 at max). Applies to impacts, explosions and egg bombs. | 40 / 80 / 140 / 220 |
-| Auto-Aim | 3 | After 0.25 s of flight and before the first hit, the duck steers toward the nearest fox ahead (within 13 units) at 25° / 45° / 70° per second. | 60 / 120 / 200 |
-| Extra Duck | ∞ | Adds one duck to the queue mid-level, or continues the level after losing. | 20–35 |
+| Damage | 4 | +15% per level (×1.6 at max). Applies to impacts, explosions and egg bombs. | 250 / 500 / 900 / 1500 |
+| Auto-Aim | 3 | After 0.25 s of flight and before the first hit, the duck steers toward the nearest fox ahead (within 13 units) at 25° / 45° / 70° per second. | 400 / 800 / 1400 |
+| Extra Duck | ∞ | Adds one duck to the queue mid-level, or continues the level after losing. | Mallard 300, Mandarin 350, Merganser 400, Muscovy 500, Shelduck 550, Scoter 650, Pintail 750, Eider 850, Goldeneye 1000 |
 
-Fully upgrading one duck costs **1,860** eggs, so players have to make meaningful choices.
+An extra duck costs roughly **10–15 levels** of income, and fully upgrading one duck costs **5,750** eggs, so
+the shop is a long-term goal. Saves from the old economy are converted once (eggs ×10, level progress reset
+for the new 500-level layout; upgrades and extra ducks are kept).
 
 ## 8. User interface
 
@@ -251,7 +251,7 @@ transitions.
 | Level data | Plain C# (`Levels.cs`), built at runtime by `LevelLoader` |
 | Persistence | `PlayerPrefs` (stars, best scores, eggs, upgrades, inventory, language) |
 | Build | IL2CPP, ARM64, minimum API 26 (Android 8.0), landscape auto-rotate |
-| Tooling | `GameBuilder` one-click setup; `AutoTester` checks all 200 levels automatically (stability mode and play mode) for stability and winnability checks |
+| Tooling | `GameBuilder` one-click setup; `AutoTester` checks all 500 levels automatically (stability mode and play mode) for stability and winnability checks |
 
 ## 11. Quality bar
 
@@ -297,7 +297,7 @@ These are **not in the game yet**; this section is the agreed direction so the c
 
 | Version | Goals |
 |---|---|
-| **1.0** ✅ | 200 levels in 10 worlds, stepped difficulty curve, 6 ducks with unique voices, Golden Eggs & Nests, shop, background music, 7 languages |
+| **1.0** ✅ | 500 levels in 25 worlds, continuous difficulty curve, 9 ducks with unique voices, damage-based Golden Egg economy, shop, background music, 30 languages, labelled buttons |
 | Next | Optional Google / email accounts with cloud save, then in-app egg packs; daily challenges; Google Play release |
 
 ---

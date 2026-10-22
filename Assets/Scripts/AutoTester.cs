@@ -75,7 +75,7 @@ public class AutoTester : MonoBehaviour
             string stab = (foxes1 == foxes0 && pieces1 == pieces0) ? "SAĞLAM" : $"SORUN (tilki {foxes0}->{foxes1}, blok {pieces0}->{pieces1})";
 
             // 2) oynanış
-            int wins = 0, bestStars = 0, bestScore = 0, minShots = 99;
+            int wins = 0, bestStars = 0, bestScore = 0, minShots = 99, dmgSum = 0, eggSum = 0;
             for (int t = 0; t < trials; t++)
             {
                 gm.DebugStart(i, true);
@@ -100,6 +100,7 @@ public class AutoTester : MonoBehaviour
                 }
                 while (gm.State == GameManager.GState.Won && !gm.EndShown) yield return null;
                 bool won = gm.State == GameManager.GState.Won;
+                dmgSum += gm.DamagePoints; eggSum += gm.EggsEarned;
                 if (won)
                 {
                     wins++;
@@ -111,7 +112,7 @@ public class AutoTester : MonoBehaviour
             }
             totalWins += wins;
             var def = Levels.Get(i);
-            Line($"Level {i + 1,3} D{LevelLoader.Difficulty(i),4:0.0} {def.title,-18} | {stab,-30} | kazanma {wins}/{trials} | en iyi {bestStars}★ {bestScore} | min atış {(minShots == 99 ? "-" : minShots.ToString())}/{def.birds.Length} | 2★≥{gm.TwoStar} 3★≥{gm.ThreeStar}");
+            Line($"Level {i + 1,3} D{LevelLoader.Difficulty(i),4:0.0} {def.title,-18} | {stab,-30} | kazanma {wins}/{trials} | en iyi {bestStars}★ {bestScore} | min atış {(minShots == 99 ? "-" : minShots.ToString())}/{def.birds.Length} | 2★≥{gm.TwoStar} 3★≥{gm.ThreeStar} | hasar~{(trials > 0 ? dmgSum / trials : 0)} altın~{(trials > 0 ? eggSum / trials : 0)}");
         }
         Time.timeScale = 1f;
         Line($"=== Bitti: toplam {totalWins}/{totalTrials} kazanma ===");
@@ -153,6 +154,9 @@ public class AutoTester : MonoBehaviour
                 case BirdType.Muscovy: use = Mathf.Abs(dx) < 0.6f; break;
                 case BirdType.Scoter: use = Vector2.Distance(p, target) < 1.4f; break;
                 case BirdType.Shelduck: use = Mathf.Abs(dx) < 0.9f; break;
+                case BirdType.Pintail: use = dx < -1.2f; break;
+                case BirdType.Eider: use = Vector2.Distance(p, target) < 1.8f; break;
+                case BirdType.Goldeneye: use = t > 0.35f; break;
             }
             if (use) { bird.TestAbility(); if (bird.type != BirdType.Mallard) break; t += 0.3f; }
             t += Time.deltaTime;

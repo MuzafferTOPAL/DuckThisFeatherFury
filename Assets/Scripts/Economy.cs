@@ -1,17 +1,24 @@
 using UnityEngine;
 
 // Altın Yumurta ekonomisi: tilkilerden geri alınan altın yumurtalar para birimidir.
-// Bölüm sonunda yıldıza ve yıkım oranına göre kazanılır; dükkânda her ördek türü için
-// Hasar ve Otomatik Nişan yükseltmeleri ile ekstra ördek alınır. Hepsi PlayerPrefs'te saklanır.
+// Her level sonunda verilen HASARA göre kazanılır: 100 hasar = 10 altın yumurta.
+// Ekstra ördek türüne göre 300-1000 yumurta (ortalama 10-15 levelde bir ördek).
+// Dükkânda her tür için Hasar ve Otomatik Nişan yükseltmeleri de var. Hepsi PlayerPrefs'te.
 public static class Economy
 {
     public const int MaxDamage = 4;
     public const int MaxAim = 3;
-    public const int TypeCount = 6;
+    public const int TypeCount = BirdInfo.Count;
 
-    static readonly int[] DamageCosts = { 40, 80, 140, 220 };
-    static readonly int[] AimCosts = { 60, 120, 200 };
-    static readonly int[] ExtraCosts = { 20, 25, 25, 30, 35, 30 };   // BirdType sırasıyla
+    static readonly int[] DamageCosts = { 250, 500, 900, 1500 };
+    static readonly int[] AimCosts = { 400, 800, 1400 };
+    //                                  Yeşilbaş Mandarin Tarakdiş Misk  KaraÖ. Angut Kılkuyruk Pufla Altıngöz
+    static readonly int[] ExtraCosts = { 300,    350,     400,     500,  650,   550,  750,      850,  1000 };
+
+    // Hasar puanı: oyuncuya gösterilen hasar (iç hasar x5). 100 hasar = 10 yumurta.
+    public const float DamagePointsPerHp = 5f;
+    public const int NestReward = 25;
+    public static int DamageReward(int damagePoints) => damagePoints / 10;
 
     public static int Eggs
     {
@@ -80,24 +87,12 @@ public static class Economy
         return true;
     }
 
-    // Bölüm sonu ödülü: yıldız x10 + yıkım oranı x20 + ilk geçiş bonusu 15
-    public static int WinReward(int stars, float destruction, bool firstClear)
-        => stars * 10 + Mathf.RoundToInt(Mathf.Clamp01(destruction) * 20f) + (firstClear ? 15 : 0);
+    // Level sonu ödülü: verilen hasar / 10, ilk geçişte +20. Kaybedince hasarın yarısı kadar.
+    public static int WinReward(int damagePoints, bool firstClear) => DamageReward(damagePoints) + (firstClear ? 20 : 0);
+    public static int LoseReward(int damagePoints) => DamageReward(damagePoints) / 2;
 
-    // Kaybedince küçük teselli: yıkım oranı x8
-    public static int LoseReward(float destruction) => Mathf.RoundToInt(Mathf.Clamp01(destruction) * 8f);
-
-    // Bir ördek türü hangi bölümde tanıtılıyor (dükkânda kilit için)
-    public static int IntroLevel(BirdType t)
-    {
-        if (t == BirdType.Mallard) return 0;
-        for (int i = 0; i < Levels.Count; i++)
-        {
-            var d = Levels.Get(i);
-            if (d.newBird.HasValue && d.newBird.Value == t) return i;
-        }
-        return 0;
-    }
+    // Bir ördek türü hangi levelde açılıyor (dükkânda kilit için)
+    public static int IntroLevel(BirdType t) => BirdInfo.UnlockLevel(t);
 
     public static bool TypeUnlocked(BirdType t) => Levels.Unlocked(IntroLevel(t));
 

@@ -14,15 +14,18 @@ public static class LevelLoader
     public static int EnemyCount { get; private set; }
     public static int PotentialScore { get; private set; }
 
-    // Zorluk eğrisi (D): her bölüm (20 level) kendi içinde 5 puan yükselir, bir sonraki bölüm
-    // öncekinin bitişinden biraz geride başlar (nefes payı):
-    //   1. bölüm: 0 → 5    2. bölüm: 4 → 9    3. bölüm: 8 → 13   ...   10. bölüm: 36 → 41
-    // D; tilki/blok dayanıklılığını ve üretilen levellerin yapısını (modül, kat, taş, miğfer, yedek ördek) belirler.
-    public static float Difficulty(int index)
+    // Zorluk yüzdesi (oyuncuya gösterilen): level 1'de %1, level 15'te %15, level 100'de %75,
+    // sonra yavaşlayarak level 500'de ~%98. Hiç düşmez; tilki SAYISI level level dalgalanır (LevelGen),
+    // ama dayanıklılık, taş oranı, miğferli tilki ve yapı karmaşıklığı sürekli artar.
+    public static float Percent(int index)
     {
-        int w = index / Levels.PerWorld, s = index % Levels.PerWorld;
-        return 4f * w + 5f * s / (Levels.PerWorld - 1);
+        float n = index + 1;
+        if (n <= 15f) return n;
+        if (n <= 100f) return 15f + (n - 15f) * 60f / 85f;
+        return 75f + 25f * (1f - Mathf.Exp(-(n - 100f) / 150f));
     }
+    // İç zorluk değeri D (0..60): yapı üreticisi ve dayanıklılık çarpanları bunu kullanır
+    public static float Difficulty(int index) => Percent(index) * 0.6f;
     public static int Tier(int index) => Mathf.Clamp(index / Levels.PerWorld, 0, Levels.WorldCount - 1);
     public static float FoxHealthMult(int index) => 1f + 0.02f * Difficulty(index);
     public static float BlockHealthMult(int index) => 1f + 0.01f * Difficulty(index);
@@ -85,7 +88,7 @@ public static class LevelLoader
         bc.density = 0.8f;
         d.ResetHealth(3f);
         d.scoreValue = 1000;
-        if (!collected) { d.bonusEggs = 3; d.bonusKey = key; }
+        if (!collected) { d.bonusEggs = Economy.NestReward; d.bonusKey = key; }
         return d.scoreValue;
     }
 

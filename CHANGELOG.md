@@ -2,6 +2,30 @@
 
 ## 1.0
 
+### 500 levels, 9 ducks, 30 languages
+
+- **25 worlds × 20 levels = 500 levels**, each world with its own name and theme (15 new worlds, from
+  Moonlit Lake to the Fox Throne).
+- **New difficulty curve:** 1% on level 1, 15% on level 15, 75% on level 100, ~98% on level 500. Shown with
+  a meter on every level's intro card. Fox counts rise and fall, difficulty keeps climbing.
+- **3 new ducks:** Northern Pintail (boomerang), Common Eider (shockwave) and Common Goldeneye (fox-seeking
+  dive), each with its own voice and sounds. You start with 3 species; a new one joins every 3 worlds.
+- **30 languages**, including Chinese, Japanese, Korean, Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati,
+  Punjabi, Thai, Arabic, Urdu and Persian. Non-Latin scripts are shaped at build time and drawn from text
+  atlases (correct conjuncts and right-to-left order). New language picker; device language detected.
+- **Correct duck names** in every language (e.g. Turkish *Yeşilbaş Ördek*, *Büyük Tarakdiş*, *Angut*).
+- **Labelled buttons:** pause, restart, add duck, levels, next, home, back, sound and music now say what
+  they do.
+- **New economy:** 10 Golden Eggs per 100 damage, +20 first clear, half pay on a loss. Upgrades and extra
+  ducks cost more (extra duck 300–1000 by species). Old saves are converted once.
+- **Slingshot:** pull from anywhere on the left side of the screen (your finger no longer hides the duck),
+  longer aim preview that turns orange at full power, small pulls cancel.
+- **Fix:** ducks bounced unpredictably after a hit. They now get light drag after the first impact and
+  their upward rebound is capped. Grazing the ground at launch no longer counts as a hit.
+- First world is more forgiving (one spare Mallard per level).
+- All 500 levels pass the stability test.
+
+
 ### 200 levels
 
 - **10 worlds × 20 levels = 200 levels.** Worlds unlock in order. New worlds: Misty Swamp and Fox Kingdom.

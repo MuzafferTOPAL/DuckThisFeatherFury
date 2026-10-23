@@ -4,7 +4,7 @@
 
 # DuckThis Feather Fury
 
-<img src="docs/media/duckthis_logo.png" alt="DuckThisGames" width="180">
+<img src="docs/media/game_logo.png" alt="DuckThis Feather Fury" width="520">
 
 **A pixel-art physics slingshot game for Android, starring nine kinds of ducks.**<br>
 *The foxes stole the eggs. Time to take them back.*

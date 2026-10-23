@@ -2,6 +2,13 @@
 
 ## 1.0
 
+### New game logo & icon
+
+- Pixel-art game logo (angry Mallard, scared fox, golden egg, "DUCKTHIS / FEATHER FURY") on the main menu.
+- Opening screen: the badge logo grows from small to full size in ~2 s, with "MADE BY DUCKTHISGAMES" (3 s total).
+- New pixel-art app icon (legacy, round and adaptive layers). Logo generator: `tools/make_logo.py`.
+
+
 ### DuckThisGames branding
 
 - New DuckThisGames logo on the opening screen (white background, pop-in animation) and as the app icon

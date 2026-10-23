@@ -117,9 +117,19 @@ public class Hud : MonoBehaviour
         Dim(0.25f);
         if (confirmQuit) { Dim(0.4f); DrawQuitConfirm(gm, art); return; }
         float t = Time.unscaledTime;
-        Text(new Rect(0, 60 + Mathf.Sin(t * 2f) * 6f, vw, 170), Loc.T("title"), 170, Gold, TextAnchor.MiddleCenter, 1f, 10);
-        Text(new Rect(0, 215 + Mathf.Sin(t * 2f + 0.6f) * 4f, vw, 100), Loc.T("title2"), 92, new Color(1f, 0.55f, 0.2f), TextAnchor.MiddleCenter, 1f, 7);
-        Text(new Rect(0, 312, vw, 50), Loc.T("subtitle"), 42, Cream, TextAnchor.MiddleCenter);
+        // oyun logosu (pixel-art): hafifçe süzülür
+        if (gameLogo == null) gameLogo = Resources.Load<Texture2D>("Logo/game_logo");
+        if (gameLogo != null)
+        {
+            float lh = 330f, lw = lh * gameLogo.width / gameLogo.height;
+            GUI.DrawTexture(Px(new Rect(vw / 2 - lw / 2, 8 + Mathf.Sin(t * 2f) * 5f, lw, lh)), gameLogo, ScaleMode.ScaleToFit);
+        }
+        else
+        {
+            Text(new Rect(0, 60, vw, 170), Loc.T("title"), 170, Gold, TextAnchor.MiddleCenter, 1f, 10);
+            Text(new Rect(0, 215, vw, 100), Loc.T("title2"), 92, new Color(1f, 0.55f, 0.2f), TextAnchor.MiddleCenter, 1f, 7);
+        }
+        Text(new Rect(0, 340, vw, 46), Loc.T("subtitle"), 40, Cream, TextAnchor.MiddleCenter);
 
         if (langPicker) { Dim(0.45f); DrawLangPicker(art); return; }
 
@@ -130,8 +140,8 @@ public class Hud : MonoBehaviour
         {
             var b = art.birds[i];
             var sp = Mathf.FloorToInt(t * 6 + i) % 2 == 0 ? b.up : b.down;
-            float h = 100 + Mathf.Sin(t * 3 + i) * 10;
-            SpriteTex(new Rect(bx + i * step, 380 + Mathf.Sin(t * 2.5f + i * 1.3f) * 12f, step - 10, h), sp);
+            float h = 90 + Mathf.Sin(t * 3 + i) * 8;
+            SpriteTex(new Rect(bx + i * step, 398 + Mathf.Sin(t * 2.5f + i * 1.3f) * 10f, step - 10, h), sp);
         }
 
         if (Button(new Rect(vw / 2 - 170, 535, 340, 150), art.btnGreen, null, Loc.T("play"), 80)) gm.OpenLevelSelect();
@@ -526,29 +536,32 @@ public class Hud : MonoBehaviour
     readonly bool[] starPlayed = new bool[3];
 
     // ================================================================== AÇILIŞ (DuckThisGames)
-    Texture2D splashLogo;
+    Texture2D gameLogo, gameLogoBadge;
     void DrawSplash(GameManager gm, GameArt art)
     {
+        // Açılış: oyun logosu ~2 sn'de küçükten büyüğe gelir, altında "MADE BY DUCKTHISGAMES"
         float t = gm.StateTime;
-        float Dur = gm.SplashHold ? 9999f : 2.8f;
+        float Dur = gm.SplashHold ? 9999f : 3f;
         if (t >= Dur) { gm.FinishSplash(); return; }
-        float bgA = t > Dur - 0.4f ? (Dur - t) / 0.4f : 1f;
-        float a = Mathf.Clamp01(t / 0.45f) * (t > Dur - 0.6f ? Mathf.Clamp01((Dur - 0.2f - t) / 0.4f) : 1f);
+        float bgA = t > Dur - 0.35f ? (Dur - t) / 0.35f : 1f;
 
         var old = GUI.color;
-        GUI.color = new Color(1f, 1f, 1f, bgA);   // logonun zemini beyaz
+        GUI.color = new Color(0.27f, 0.59f, 0.86f, bgA);   // oyunun gökyüzü mavisi
         GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
 
-        // DuckThisGames logosu: hafif büyüyerek belirir ve nefes alır gibi sallanır
-        if (splashLogo == null) splashLogo = Resources.Load<Texture2D>("Logo/duckthis_logo");
-        if (splashLogo != null)
+        if (gameLogoBadge == null) gameLogoBadge = Resources.Load<Texture2D>("Logo/game_logo_badge");
+        if (gameLogoBadge != null)
         {
-            float pop = t < 0.45f ? EaseBack(t / 0.45f) : 1f + Mathf.Sin((t - 0.45f) * 3f) * 0.015f;
-            float size = 860f * pop;
-            GUI.color = new Color(1f, 1f, 1f, a);
-            GUI.DrawTexture(Px(new Rect(vw / 2 - size / 2, RefH / 2 - size / 2, size, size)), splashLogo, ScaleMode.ScaleToFit);
+            float g = Mathf.Clamp01(t / 2f);
+            float k = 0.12f + 0.88f * (1f - Mathf.Pow(1f - g, 3f));                 // küçükten büyüğe (yumuşak yavaşlama)
+            if (g >= 1f) k = 1f + Mathf.Sin((t - 2f) * 6f) * 0.012f;               // sonra hafif nefes
+            float lh = 700f * k, lw = lh * gameLogoBadge.width / gameLogoBadge.height;
+            GUI.color = new Color(1f, 1f, 1f, bgA);
+            GUI.DrawTexture(Px(new Rect(vw / 2 - lw / 2, 440 - lh / 2, lw, lh)), gameLogoBadge, ScaleMode.ScaleToFit);
         }
         GUI.color = old;
+        float ta = Mathf.Clamp01((t - 0.9f) / 0.5f) * bgA;
+        Text(new Rect(0, 815, vw, 90), "MADE BY DUCKTHISGAMES", 68, Color.white, TextAnchor.MiddleCenter, ta, 6);
 
         if (t > 0.5f && Event.current.type == EventType.MouseUp) { gm.FinishSplash(); Event.current.Use(); }
     }

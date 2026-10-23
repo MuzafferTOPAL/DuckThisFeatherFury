@@ -57,11 +57,15 @@ public static class LevelGen
         int minMods = ds >= 36f ? 3 : ds >= 16f ? 2 : 1;
         target = Mathf.Clamp(target, minMods, ds < 4f ? 2 : 5);
 
-        // gereken ördek sayısı sınırı aşıyorsa daha küçük bir kale kur (en kötü ihtimalle tek modül)
+        // Gökdelen: zorluktan bağımsız olarak her bölümün 4., 11. ve 18. levelinde 3-8 katlı yüksek bir kule
+        int tall = (slot == 3 || slot == 10 || slot == 17) ? 3 + new System.Random(index * 31 + 7).Next(6) : 0;
+        if (tall > 0) cap = Mathf.Max(cap, 6);
+
+        // gereken ördek sayısı sınırı aşıyorsa daha küçük bir kale kur (en kötü ihtimalle yalnızca kule)
         LevelDef l = null;
         for (int t = target; t >= 1; t--)
         {
-            l = Generate(index, world, slot, ds, avail, intro, t, cap, out int need);
+            l = Generate(index, world, slot, ds, avail, intro, t, cap, out int need, tall);
             if (need <= cap) break;
         }
         // patron: her zaman bir yedek ördek daha (patrona karşı en etkili tür)
@@ -74,7 +78,7 @@ public static class LevelGen
         return l;
     }
 
-    static LevelDef Generate(int index, int world, int slot, float d, List<BirdType> avail, BirdType? intro, int target, int cap, out int need)
+    static LevelDef Generate(int index, int world, int slot, float d, List<BirdType> avail, BirdType? intro, int target, int cap, out int need, int tall = 0)
     {
         var c = new Ctx
         {
@@ -95,8 +99,17 @@ public static class LevelGen
         float x = 2.5f;
         float end = x;
         var placed = new List<int>();
+        int m0 = 0;
+        if (tall > 0)
+        {
+            TallTower(c, x, tall);
+            placed.Add(10);
+            end = x + 2.4f;
+            x = end + 1.2f + c.R() * 0.8f;
+            m0 = 1;
+        }
 
-        for (int m = 0; m < target; m++)
+        for (int m = m0; m < target; m++)
         {
             bool last = m == target - 1;
             int kind = (c.boss && last) ? 8 : PickModule(c, placed);
@@ -245,6 +258,26 @@ public static class LevelGen
                 }
                 break;
         }
+    }
+
+    // Gökdelen: 3-8 katlı kule. Alt katlar taş/tahta (buz yok), tilkiler iki katta bir ve en tepede.
+    // Ördekle tabanını yıkmak ya da tepeden aşağı vurmak gerekir; TNT bazen tabanda.
+    static float TallTower(Ctx c, float x, int floors)
+    {
+        float y = -4f;
+        for (int f = 0; f < floors; f++)
+        {
+            bool low = f < (floors + 1) / 2;
+            var cm = low ? (c.R() < 0.5f ? S : W) : c.Mat();
+            var bm = low ? W : c.Mat(true);
+            if (cm == S) c.stone++; else if (cm == W) c.wood++;
+            float t = c.l.Frame(cm, bm, x, x + 2.4f, y, 1.3f);
+            if (f % 2 == 0) c.PutFox(f == 0 ? c.Fox() : (c.R() < 0.5f ? K : c.Fox()), x + 1.2f, y);
+            y = t;
+        }
+        c.PutFox(c.Fox(), x + 1.2f, y);
+        if (c.R() < 0.35f) { c.l.Tnt(x + 3.2f, -4f); c.tnt++; }
+        return y;
     }
 
     // Çerçeveleri üst üste dizer, her katta bir tilki; üstteki kenarı döndürür

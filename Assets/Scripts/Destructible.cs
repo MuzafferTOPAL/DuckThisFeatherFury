@@ -41,7 +41,9 @@ public class Destructible : MonoBehaviour
     {
         if (spawnGrace > 0f) spawnGrace -= Time.deltaTime;
         chipCooldown -= Time.deltaTime;
-        if (!dead && (transform.position.y < -15f || Mathf.Abs(transform.position.x) > 70f)) Die(false);
+        if (!dead && (transform.position.y < -15f || Mathf.Abs(transform.position.x) > 70f)) Die(isEnemy);
+        // Ekranın dışına itilen / zeminden düşen tilki elenmiş sayılır (yoksa görünmeyen bir tilki levelin bitmesini engelliyordu)
+        if (!dead && isEnemy && (transform.position.x > LevelLoader.FieldMaxX + 1.2f || transform.position.y < LevelLoader.GroundY - 2.5f)) Die(true);
     }
 
     void OnCollisionEnter2D(Collision2D collision)

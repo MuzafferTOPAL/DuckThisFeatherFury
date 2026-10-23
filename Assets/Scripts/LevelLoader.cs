@@ -12,6 +12,8 @@ public static class LevelLoader
     static int builtTheme = -1;
 
     public static int EnemyCount { get; private set; }
+    public static float FieldMaxX { get; private set; } = 11f;   // oyun alanının sağ sınırı (bunu geçen tilki elenir)
+    public static float FieldTop { get; private set; } = 0f;     // en yüksek yapının tepesi (kamera yüksekliği için)
     public static int PotentialScore { get; private set; }
 
     // Zorluk yüzdesi (oyuncuya gösterilen): level 1'de %1, level 15'te %15, level 100'de %75,
@@ -46,6 +48,10 @@ public static class LevelLoader
         BuildBackground(def.theme, cam);
 
         levelRoot = new GameObject("Bolum_" + (def.index + 1));
+        FieldMaxX = def.maxX;
+        FieldTop = GroundY;
+        foreach (var p in def.pieces) FieldTop = Mathf.Max(FieldTop, p.center.y + p.size.y * 0.5f);
+        foreach (var f in def.foxes) FieldTop = Mathf.Max(FieldTop, f.bottom.y + 1.2f);
         EnemyCount = 0;
         PotentialScore = 0;
         blockMul = BlockHealthMult(def.index);

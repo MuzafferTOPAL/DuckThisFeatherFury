@@ -2,6 +2,14 @@
 
 ## 1.0
 
+### Fixes: hidden foxes, tall towers
+
+- **Fix:** a fox pushed off the right edge of the level (or below the ground) stayed alive off-screen, so the level
+  could never be finished (e.g. L13). Such foxes are now counted as defeated.
+- **Skyscrapers:** levels 4, 11 and 18 of every generated world have a 3–8 floor tower, independent of difficulty.
+  The camera now zooms out to fit tall structures. All 500 levels still pass the stability test.
+
+
 ### New game logo & icon
 
 - Pixel-art game logo (angry Mallard, scared fox, golden egg, "DUCKTHIS / FEATHER FURY") on the main menu.

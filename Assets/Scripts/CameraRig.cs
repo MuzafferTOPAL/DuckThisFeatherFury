@@ -31,8 +31,10 @@ public class CameraRig : MonoBehaviour
         BaseView(out curPos, out curSize);
     }
 
-    public void Configure(float levelMinX, float levelMaxX, Vector2 focus, bool playIntro)
+    float topY = 0f;
+    public void Configure(float levelMinX, float levelMaxX, Vector2 focus, bool playIntro, float levelTop = 0f)
     {
+        topY = levelTop;
         minX = levelMinX;
         maxX = levelMaxX;
         introFocus = focus;
@@ -66,7 +68,9 @@ public class CameraRig : MonoBehaviour
     void BaseView(out Vector3 pos, out float size)
     {
         float width = maxX - minX;
-        size = Mathf.Clamp(width * 0.5f / cam.aspect, minSize, maxSize);
+        // yüksek kuleler de görünsün: tepe noktası + 1.6 birim pay ekranın içinde kalsın
+        float needH = (topY + 1.6f) - (groundY - bottomMargin);
+        size = Mathf.Clamp(Mathf.Max(width * 0.5f / cam.aspect, needH * 0.5f), minSize, maxSize);
         pos = new Vector3((minX + maxX) * 0.5f, groundY - bottomMargin + size, -10f);
     }
 

@@ -2,6 +2,19 @@
 
 ## 1.0
 
+### Balance pass (playtested 2 × 1500 bot games)
+
+- Gentler transition into generated levels (L41–100), first level of each world and levels 17–19 lighter,
+  at most 4 seven-duck forts per world and never more than 2 in a row, a light level after two hard ones.
+- At least 4 ducks per generated level (fixes unwinnable L43/L99); extra duck for L13, L18, L40 and every boss.
+- Late game keeps getting harder: fox/block toughness grows after L100; gold per damage tapers from L161
+  (×1) to L400+ (×0.65). 2★/3★ thresholds lowered on big levels.
+- Bot win rate 41.9% → 49.3%, zero-win levels 188 → 145 (before the last rule fixes). Reports:
+  `docs/balance/ZORLUK_RAPORU.md`, `docs/balance/ZORLUK_RAPORU_v2.md`.
+- Language pass 2: 63 more fixes; natural duck names in every language (TR: YEŞİL BAŞLI ÖRDEK,
+  ANGIT ÖRDEĞİ, KILKUYRUK ÖRDEK …). Report: `tools/loc/review/REPORT_v2.md`.
+
+
 ### Compatibility & performance
 
 - **Runs on 32-bit phones too:** the APK now contains ARMv7 and ARM64 code (many budget / Android Go

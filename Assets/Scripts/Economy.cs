@@ -88,8 +88,11 @@ public static class Economy
     }
 
     // Level sonu ödülü: verilen hasar / 10, ilk geçişte +20. Kaybedince hasarın yarısı kadar.
-    public static int WinReward(int damagePoints, bool firstClear) => DamageReward(damagePoints) + (firstClear ? 20 : 0);
-    public static int LoseReward(int damagePoints) => DamageReward(damagePoints) / 2;
+    // Geç oyunda hasar çok büyüdüğü için altın oranı 9. bölümden sonra kademeli azalır (L161: x1 → L400+: x0.65)
+    public static float GoldMult(int levelIndex) => Mathf.Lerp(1f, 0.65f, Mathf.InverseLerp(160f, 400f, levelIndex));
+    public static int WinReward(int damagePoints, bool firstClear, int levelIndex = 0) =>
+        Mathf.RoundToInt(DamageReward(damagePoints) * GoldMult(levelIndex)) + (firstClear ? 20 : 0);
+    public static int LoseReward(int damagePoints, int levelIndex = 0) => Mathf.RoundToInt(DamageReward(damagePoints) * GoldMult(levelIndex)) / 2;
 
     // Bir ördek türü hangi levelde açılıyor (dükkânda kilit için)
     public static int IntroLevel(BirdType t) => BirdInfo.UnlockLevel(t);

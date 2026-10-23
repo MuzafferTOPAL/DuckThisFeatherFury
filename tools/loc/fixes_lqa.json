@@ -3,18 +3,27 @@
   "U": {
    "shop": "MAĞAZA",
    "restart": "TEKRAR",
-   "no_eggs": "YETERLİ YUMURTA YOK!"
+   "no_eggs": "YETERLİ YUMURTA YOK!",
+   "add_btn": "+ ÖRDEK"
   },
   "LVL": {
    "6": "AHŞAP KULE",
    "13": "YUVARLANAN KAYALAR"
+  },
+  "DUCKS": {
+   "2": "TARAKDİŞ ÖRDEK",
+   "5": "ANGIT ÖRDEĞİ",
+   "6": "KILKUYRUK ÖRDEK",
+   "7": "PUFLA ÖRDEĞİ",
+   "8": "ALTINGÖZ ÖRDEK"
   }
  },
  "de": {
   "U": {
    "shop": "SHOP",
    "add_btn": "+ ENTE",
-   "owned": "IM BESITZ"
+   "owned": "IM BESITZ",
+   "foxes_won": "DIE FÜCHSE HABEN GEWONNEN!"
   }
  },
  "es": {
@@ -22,7 +31,8 @@
    "ok": "OK",
    "no_eggs": "¡HUEVOS INSUFICIENTES!",
    "first_clear": "BONUS PRIMERA VICTORIA",
-   "aim_d": "EN VUELO, SE DIRIGE A LOS ZORROS"
+   "aim_d": "EN VUELO, SE DIRIGE A LOS ZORROS",
+   "add_btn": "+ PATO"
   },
   "ABIL": {
    "3": "TOCA EN VUELO: ¡GOLPE AL SUELO! APLASTA LA PIEDRA"
@@ -69,20 +79,26 @@
  },
  "id": {
   "DUCKS": {
-   "2": "MERGANSER BESAR",
-   "6": "BEBEK EKOR LANCIP"
+   "2": "BEBEK MERGANSER",
+   "6": "BEBEK EKOR LANCIP",
+   "5": "BEBEK MERAH BATA"
   },
   "W": {
    "3": "LADANG SENJA"
+  },
+  "U": {
+   "add_btn": "+ BEBEK"
   }
  },
  "sw": {
   "U": {
    "unlock_at": "KITAFUNGUKA KWENYE KIWANGO {0}",
-   "max": "UPEO"
+   "max": "UPEO",
+   "add_btn": "+ BATA"
   },
   "DUCKS": {
-   "0": "BATA KICHWA-KIJANI"
+   "0": "BATA KICHWA-KIJANI",
+   "3": "BATA MUSCOVY"
   },
   "ABIL": {
    "0": "GUSA AKIRUKA: HUPIGA MABAWA JUU (MARA 2)",
@@ -98,7 +114,8 @@
  },
  "ha": {
   "U": {
-   "play": "FARA WASA"
+   "play": "FARA WASA",
+   "add_btn": "+ AGWAGWA"
   },
   "DUCKS": {
    "5": "JAR AGWAGWA"
@@ -121,6 +138,9 @@
   },
   "LVL": {
    "10": "ТЯЖЕЛОВЕС"
+  },
+  "DUCKS": {
+   "7": "ГАГА"
   }
  },
  "uk": {
@@ -133,16 +153,30 @@
   "LVL": {
    "10": "ВАЖКОВАГОВИК",
    "16": "СТОДОЛА"
+  },
+  "DUCKS": {
+   "2": "ВЕЛИКИЙ КРОХАЛЬ",
+   "7": "ГАГА"
   }
  },
  "zh-Hans": {
   "LVL": {
    "0": "第一击"
+  },
+  "DUCKS": {
+   "2": "秋沙鸭",
+   "7": "绒鸭"
   }
  },
  "zh-Hant": {
   "LVL": {
    "0": "第一擊"
+  },
+  "DUCKS": {
+   "2": "秋沙鴨",
+   "3": "番鴨",
+   "5": "赤麻鴨",
+   "7": "絨鴨"
   }
  },
  "ko": {
@@ -153,26 +187,48 @@
  },
  "te": {
   "U": {
-   "no": "లేదు"
+   "no": "లేదు",
+   "add_btn": "+ బాతు"
+  },
+  "DUCKS": {
+   "2": "మెర్గాన్సర్ బాతు",
+   "4": "నల్ల సముద్రపు బాతు"
   }
  },
  "ta": {
   "U": {
    "on": "ஆன்",
-   "off": "ஆஃப்"
+   "off": "ஆஃப்",
+   "add_btn": "+ வாத்து"
   },
   "LVL": {
    "37": "லாவா பாலம்"
+  },
+  "DUCKS": {
+   "2": "மெர்கன்சர் வாத்து",
+   "4": "கருப்பு கடல் வாத்து"
   }
  },
  "gu": {
   "U": {
    "subtitle": "શિયાળ ઈંડાં ચોરી ગયાં!"
+  },
+  "DUCKS": {
+   "0": "નીલશિર બતક",
+   "2": "મર્ગેન્સર બતક",
+   "4": "કાળું દરિયાઈ બતક",
+   "6": "સીંખપર બતક"
   }
  },
  "pa": {
   "U": {
    "max": "ਅਧਿਕਤਮ"
+  },
+  "DUCKS": {
+   "0": "ਨੀਲਸਿਰ ਬੱਤਖ",
+   "2": "ਮਰਗੈਂਸਰ ਬੱਤਖ",
+   "4": "ਕਾਲੀ ਸਮੁੰਦਰੀ ਬੱਤਖ",
+   "6": "ਸੀਂਖਪਰ ਬੱਤਖ"
   }
  },
  "ar": {
@@ -181,6 +237,10 @@
    "owned": "لديك",
    "max": "الحد الأقصى",
    "tip_nest": "جديد: العش الذهبي! حطّمه لتحصل على بيض ذهبي +{0} (مرة لكل عش)"
+  },
+  "DUCKS": {
+   "6": "بط البلبول",
+   "8": "البط الذهبي العين"
   }
  },
  "fa": {
@@ -189,6 +249,66 @@
   },
   "LVL": {
    "5": "شیرجه‌ی اردک‌ماهی‌خوار"
+  },
+  "U": {
+   "add_btn": "+ اردک"
+  }
+ },
+ "en": {
+  "DUCKS": {
+   "6": "PINTAIL DUCK",
+   "7": "EIDER DUCK",
+   "8": "GOLDENEYE DUCK"
+  }
+ },
+ "fil": {
+  "U": {
+   "add_btn": "+ PATO"
+  },
+  "DUCKS": {
+   "0": "PATONG MALLARD",
+   "2": "PATONG MERGANSER",
+   "4": "ITIM NA PATONG DAGAT",
+   "5": "PULANG PATO"
+  }
+ },
+ "hi": {
+  "U": {
+   "add_btn": "+ बत्तख"
+  },
+  "DUCKS": {
+   "0": "नीलसिर बत्तख",
+   "2": "मर्गैंसर बत्तख",
+   "4": "काली समुद्री बत्तख",
+   "6": "सींखपर बत्तख"
+  }
+ },
+ "bn": {
+  "DUCKS": {
+   "0": "নীলশির হাঁস",
+   "2": "মার্গেঞ্জার হাঁস",
+   "4": "কালো সামুদ্রিক হাঁস"
+  }
+ },
+ "mr": {
+  "DUCKS": {
+   "2": "मर्गंसर बदक",
+   "4": "काळे समुद्री बदक"
+  }
+ },
+ "th": {
+  "U": {
+   "pause": "หยุด"
+  }
+ },
+ "ur": {
+  "U": {
+   "add_btn": "+ بطخ"
+  },
+  "DUCKS": {
+   "0": "نیل سر بطخ",
+   "2": "مرگنزر بطخ",
+   "6": "سیخ پر بطخ"
   }
  }
 }

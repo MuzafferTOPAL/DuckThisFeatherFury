@@ -35,7 +35,46 @@ public static class LevelGen
         public void PutFox(FoxKind k, float x, float y0) { l.Fox(k, x, y0); foxes++; }
     }
 
-    public static LevelDef Make(int index, int world, int slot, float d, List<BirdType> avail, BirdType? intro = null)
+    // maxDucks: bu levelde izin verilen en fazla ördek (dev kale sınırı, Levels belirler; patronda +1)
+    // light: önceki iki level zordu → bu level "nefes" leveli olsun
+    public static LevelDef Make(int index, int world, int slot, float d, List<BirdType> avail, BirdType? intro = null,
+                                int maxDucks = 7, bool light = false)
+    {
+        // Prosedürel üretimin ilk bölümlerinde (L41-100) yapı biraz daha hafif başlar, L100'de tam değere ulaşır:
+        // el yapımı levellerden prosedürel levellere geçişte ani sıçrama olmasın.
+        float ds = d * Mathf.Lerp(0.72f, 1f, Mathf.InverseLerp(40f, 100f, index));
+        bool boss = slot == Levels.PerWorld - 1;
+        int cap = boss ? maxDucks + 1 : maxDucks;
+
+        // tilki dalgası: bölümün ilk leveli ve patrondan önceki 2 level hafif; her 5. level nefes leveli
+        var wr = new System.Random(index * 7919 + 1013);
+        float wave = boss ? 1.25f
+                   : slot == 0 ? 0.55f
+                   : light || slot % 5 == 0 ? 0.7f
+                   : slot >= 16 ? 0.75f + (float)wr.NextDouble() * 0.25f
+                   : 0.75f + (float)wr.NextDouble() * 0.55f;
+        int target = Mathf.RoundToInt((1.1f + ds / 11f) * wave);
+        int minMods = ds >= 36f ? 3 : ds >= 16f ? 2 : 1;
+        target = Mathf.Clamp(target, minMods, ds < 4f ? 2 : 5);
+
+        // gereken ördek sayısı sınırı aşıyorsa daha küçük bir kale kur (en kötü ihtimalle tek modül)
+        LevelDef l = null;
+        for (int t = target; t >= 1; t--)
+        {
+            l = Generate(index, world, slot, ds, avail, intro, t, cap, out int need);
+            if (need <= cap) break;
+        }
+        // patron: her zaman bir yedek ördek daha (patrona karşı en etkili tür)
+        if (boss)
+        {
+            var list = new List<BirdType>(l.birds);
+            list.Add(avail.Contains(BirdType.Scoter) ? BirdType.Scoter : avail.Contains(BirdType.Muscovy) ? BirdType.Muscovy : BirdType.Mallard);
+            l.birds = list.ToArray();
+        }
+        return l;
+    }
+
+    static LevelDef Generate(int index, int world, int slot, float d, List<BirdType> avail, BirdType? intro, int target, int cap, out int need)
     {
         var c = new Ctx
         {
@@ -50,14 +89,9 @@ public static class LevelGen
         c.helmetP = Mathf.Clamp(0.02f + 0.017f * d, 0f, 0.6f);
         c.kitP = d < 5f ? 0.4f : d < 15f ? 0.2f : 0.08f;
         c.boss = slot == Levels.PerWorld - 1;
+        c.R();   // dalga için ayrılan sayı (eski tohum sırası korunsun)
 
-        // Tilki sayısı level level dalgalanır (dalga), zorluk (dayanıklılık, taş, miğfer) hiç düşmez.
-        // Her 5. level biraz daha hafif bir "nefes" leveli, bölüm sonu (20.) en kalabalık olanı.
-        float wave = c.boss ? 1.3f : slot % 5 == 0 ? 0.7f : 0.75f + c.R() * 0.55f;
         float maxW = 10f + Mathf.Min(2.5f, d / 10f);
-        int target = Mathf.RoundToInt((1.1f + d / 11f) * wave);
-        int minMods = d >= 36f ? 3 : d >= 16f ? 2 : 1;
-        target = Mathf.Clamp(target, minMods, d < 4f ? 2 : 5);
         float x = 2.5f;
         float end = x;
         var placed = new List<int>();
@@ -88,7 +122,7 @@ public static class LevelGen
         if (slot == 9 || slot == Levels.PerWorld - 1) c.l.Nest(end + 0.9f, -4f);
 
         c.l.maxX = Mathf.Max(10.5f, end + 1.7f);
-        c.l.birds = PickDucks(c, avail, intro);
+        c.l.birds = PickDucks(c, avail, intro, cap, out need);
         return c.l;
     }
 
@@ -229,7 +263,7 @@ public static class LevelGen
         return y;
     }
 
-    static BirdType[] PickDucks(Ctx c, List<BirdType> avail, BirdType? intro)
+    static BirdType[] PickDucks(Ctx c, List<BirdType> avail, BirdType? intro, int cap, out int need)
     {
         // yedek ördek: başta bol, sonra 1; sadece son bölümün sonlarında 0
         // ileri bölümlerde tilkiler çok dayanıklı: yedek ördek azalmaz, aksine bir tane artar
@@ -237,7 +271,9 @@ public static class LevelGen
         if (c.foxes >= 7) spare++;
         if (c.d >= 26f) spare++;
         if (c.d >= 45f) spare++;
-        int n = Mathf.Clamp(Mathf.CeilToInt(c.foxes / 2.0f) + spare, 3, 7);
+        // en az 4 ördek; az tilkili ama korunaklı levellerde tilki sayısı + 1 (L43/L99 gibi duvarlar olmasın)
+        need = Mathf.Max(Mathf.CeilToInt(c.foxes / 2.0f) + spare, Mathf.Min(c.foxes + 1, 5), 4);
+        int n = Mathf.Min(need, cap);
         var weights = new Dictionary<BirdType, float>();
         foreach (var t in avail)
         {

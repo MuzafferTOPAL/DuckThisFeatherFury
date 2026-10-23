@@ -27,8 +27,10 @@ public static class LevelLoader
     // İç zorluk değeri D (0..60): yapı üreticisi ve dayanıklılık çarpanları bunu kullanır
     public static float Difficulty(int index) => Percent(index) * 0.6f;
     public static int Tier(int index) => Mathf.Clamp(index / Levels.PerWorld, 0, Levels.WorldCount - 1);
-    public static float FoxHealthMult(int index) => 1f + 0.02f * Difficulty(index);
-    public static float BlockHealthMult(int index) => 1f + 0.01f * Difficulty(index);
+    // L100 sonrası ek dayanıklılık: oyuncunun yükseltmeleri ve yeni ördekleri büyüdükçe zorluk düz kalmasın
+    static float Late(int index) => Mathf.Max(0f, index - 100);
+    public static float FoxHealthMult(int index) => 1f + 0.02f * Difficulty(index) + 0.0015f * Late(index);
+    public static float BlockHealthMult(int index) => 1f + 0.01f * Difficulty(index) + 0.0006f * Late(index);
     static float blockMul = 1f;
 
     public static void Clear()

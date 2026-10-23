@@ -293,8 +293,9 @@ public class GameManager : MonoBehaviour
         foreach (var f in Level.foxes)
             enemyScore += f.kind == FoxKind.Kit ? 3000 : f.kind == FoxKind.Helmet ? 7000 : f.kind == FoxKind.Boss ? 15000 : 5000;
         int n = Level.birds.Length;
-        TwoStar = Round(enemyScore + LevelLoader.PotentialScore * 0.25f + 10000 * Mathf.Max(0, n - 3));
-        ThreeStar = Round(enemyScore + LevelLoader.PotentialScore * 0.45f + 10000 * Mathf.Max(1, n - 2));
+        // (büyük kalelerde ve patronlarda 2★/3★ eşikleri ~%15 daha erişilebilir)
+        TwoStar = Round(enemyScore + LevelLoader.PotentialScore * 0.22f + 10000 * Mathf.Max(0, n - 4));
+        ThreeStar = Round(enemyScore + LevelLoader.PotentialScore * 0.42f + 10000 * Mathf.Max(1, n - 3));
 
         // kuş sırası
         float x = LevelLoader.SlingX - 2.1f;
@@ -400,7 +401,7 @@ public class GameManager : MonoBehaviour
         if (State == GState.Playing && EnemiesLeft > 0)
         {
             Stars = 0;
-            int lose = Economy.LoseReward(DamagePoints);
+            int lose = Economy.LoseReward(DamagePoints, LevelIndex);
             Economy.Eggs += lose;
             EggsEarned = lose + NestEggs;
             SetState(GState.Lost);
@@ -441,7 +442,7 @@ public class GameManager : MonoBehaviour
         Stars = Score >= ThreeStar ? 3 : Score >= TwoStar ? 2 : 1;
         NewRecord = Score > Levels.Best(LevelIndex);
         FirstClear = Levels.Stars(LevelIndex) == 0;
-        int win = Economy.WinReward(DamagePoints, FirstClear);
+        int win = Economy.WinReward(DamagePoints, FirstClear, LevelIndex);
         Economy.Eggs += win;
         EggsEarned = win + NestEggs;
         Levels.Save(LevelIndex, Stars, Score);

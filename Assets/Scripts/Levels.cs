@@ -110,9 +110,11 @@ public static class Levels
     {
         BuildHandmade();
         all = new List<LevelDef>(Count);
+        int bigInWorld = 0, bigStreak = 0, hardStreak = 0;
         for (int index = 0; index < Count; index++)
         {
             int w = index / PerWorld, s = index % PerWorld;
+            if (s == 0) { bigInWorld = 0; bigStreak = 0; hardStreak = 0; }
             var avail = new List<BirdType>();
             for (int t = 0; t < BirdInfo.Count; t++)
                 if (BirdInfo.Available((BirdType)t, index)) avail.Add((BirdType)t);
@@ -138,6 +140,12 @@ public static class Levels
                     l.birds = list.ToArray();
                 }
                 // ilk bölüm (%1-%11 zorluk) çok rahat olsun: bir yedek yeşilbaş; 2. bölümde en az 4 ördek
+                // test raporu: L13 (Kale Duvarı), L18 (Piramit) ve L40 (patron) duvar oluyordu → birer ördek daha
+                if (index == 12 || index == 17 || index == 39)
+                {
+                    var list = new List<BirdType>(l.birds) { avail.Contains(BirdType.Merganser) ? BirdType.Merganser : BirdType.Mallard };
+                    l.birds = list.ToArray();
+                }
                 if (index < PerWorld || (index < PerWorld * 2 && l.birds.Length < 4))
                 {
                     var list = new List<BirdType>(l.birds) { BirdType.Mallard };
@@ -148,7 +156,17 @@ public static class Levels
             }
             else
             {
-                l = LevelGen.Make(index, w, s, LevelLoader.Difficulty(index), avail, intro);
+                // dev kale (7 ördek) sınırı: bölümde en fazla 4, art arda en fazla 2; iki zor levelden sonra nefes leveli
+                // bölüm açılışı ve iki zor levelden sonraki level gerçekten hafif: en fazla 5 ördeklik kale
+                int maxDucks = (s == 0 || hardStreak >= 2) ? 5 : (bigInWorld >= 4 || bigStreak >= 2) ? 6 : 7;
+                l = LevelGen.Make(index, w, s, LevelLoader.Difficulty(index), avail, intro, maxDucks, hardStreak >= 2);
+                if (s != PerWorld - 1)
+                {
+                    bool big = l.birds.Length >= 7, hard = l.birds.Length >= 6;
+                    bigStreak = big ? bigStreak + 1 : 0;
+                    if (big) bigInWorld++;
+                    hardStreak = hard ? hardStreak + 1 : 0;
+                }
             }
             if (intro.HasValue) l.newBird = intro;
             l.world = w; l.slot = s;

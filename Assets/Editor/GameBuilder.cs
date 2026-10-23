@@ -12,7 +12,7 @@ using UnityEngine;
 [InitializeOnLoad]
 public static class GameBuilder
 {
-    const int Version = 19;
+    const int Version = 20;
     const string VersionFile = "ProjectSettings/OrdekOyunuBuilder.txt";
     const string CmdFile = "ProjectSettings/ordek_cmd.txt";
     const string ScenePath = "Assets/Scenes/Game.unity";
@@ -20,6 +20,9 @@ public static class GameBuilder
     const string SoundDir = "Assets/Art/Sounds";
     const string FontPath = "Assets/Art/Fonts/Jersey10-Regular.ttf";
     const string IconPath = "Assets/Art/icon.png";
+    const string IconFgPath = "Assets/Art/icon_fg.png";       // Android uyarlanabilir ikon ön katmanı
+    const string IconBgPath = "Assets/Art/icon_bg.png";       // Android uyarlanabilir ikon arka katmanı (beyaz)
+    const string LogoPath = "Assets/Resources/Logo/duckthis_logo.png";
     const string ArtAssetPath = "Assets/Resources/GameArt.asset";
     const string ApkPath = "Builds/DuckThis_FeatherFury.apk";
 
@@ -238,6 +241,7 @@ public static class GameBuilder
                         else if (parts[1] == "resume") gm.SetPaused(false);
                         else if (parts[1] == "shop") gm.OpenShop();
                         else if (parts[1] == "skip") gm.FinishSplash();
+                        else if (parts[1] == "splash") gm.ShowSplash(true);
                         else if (parts[1] == "extra") gm.UseExtraBird((BirdType)int.Parse(parts[2]));
                         else if (parts[1] == "picker" && Hud.Instance != null) Hud.Instance.OpenPicker();
                         else if (parts[1] == "langs" && Hud.Instance != null) { gm.OpenMenu(); Hud.Instance.OpenLangPicker(); }
@@ -309,13 +313,18 @@ public static class GameBuilder
                 fi.SaveAndReimport();
             }
 
-            var ii = AssetImporter.GetAtPath(IconPath) as TextureImporter;
-            if (ii != null)
+            // ikon ve DuckThisGames logosu: yumuşak (bilinear) filtre, sıkıştırmasız
+            foreach (var path in new[] { IconPath, IconFgPath, IconBgPath, LogoPath })
             {
+                var ii = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (ii == null) continue;
                 ii.textureType = TextureImporterType.Default;
-                ii.filterMode = FilterMode.Point;
-                ii.mipmapEnabled = false;
+                ii.filterMode = FilterMode.Bilinear;
+                ii.mipmapEnabled = path == LogoPath;
+                ii.npotScale = TextureImporterNPOTScale.None;
+                ii.alphaIsTransparency = true;
                 ii.textureCompression = TextureImporterCompression.Uncompressed;
+                ii.maxTextureSize = 1024;
                 ii.SaveAndReimport();
             }
         }
@@ -453,9 +462,9 @@ public static class GameBuilder
         PlayerSettings.allowedAutorotateToLandscapeRight = true;
         PlayerSettings.SetApplicationIdentifier(UnityEditor.Build.NamedBuildTarget.Android, "com.duckthisgames.featherfury");
         PlayerSettings.SetScriptingBackend(UnityEditor.Build.NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
-        // Uyumluluk: 32 bit (ARMv7, ör. Android Go telefonlar) ve 64 bit ARM;
+        // Uyumluluk: 32 bit (ARMv7, ör. Android Go telefonlar), 64 bit ARM ve x86-64 (Chromebook / emülatör);
         // Android 8.0 (API 26, Unity 6.6nın desteklediği en eski sürüm) ve üstü.
-        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
+        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64 | AndroidArchitecture.X86_64;
         PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
         PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
         PlayerSettings.Android.bundleVersionCode = 4;
@@ -468,9 +477,30 @@ public static class GameBuilder
         PlayerSettings.SetManagedStrippingLevel(UnityEditor.Build.NamedBuildTarget.Android, ManagedStrippingLevel.Low);
         PlayerSettings.MTRendering = true;
 
+        // Unity açılış ekranı ve "Made with Unity" logosu kapalı: oyun doğrudan DuckThisGames logosuyla açılır
+        PlayerSettings.SplashScreen.show = false;
+        PlayerSettings.SplashScreen.showUnityLogo = false;
+        PlayerSettings.SplashScreen.backgroundColor = Color.white;
+
+        // Uygulama ikonu: DuckThisGames logosu (genel + Android eski, yuvarlak ve uyarlanabilir ikonlar)
         var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(IconPath);
+        var fg = AssetDatabase.LoadAssetAtPath<Texture2D>(IconFgPath);
+        var bg = AssetDatabase.LoadAssetAtPath<Texture2D>(IconBgPath);
         if (icon != null)
+        {
             PlayerSettings.SetIcons(UnityEditor.Build.NamedBuildTarget.Unknown, new[] { icon }, IconKind.Any);
+            var android = UnityEditor.Build.NamedBuildTarget.Android;
+            foreach (var kind in PlayerSettings.GetSupportedIconKinds(android))
+            {
+                var icons = PlayerSettings.GetPlatformIcons(android, kind);
+                foreach (var pi in icons)
+                {
+                    if (pi.maxLayerCount >= 2 && fg != null && bg != null) pi.SetTextures(bg, fg);
+                    else pi.SetTexture(icon);
+                }
+                PlayerSettings.SetPlatformIcons(android, kind, icons);
+            }
+        }
     }
 
     static void EnsureFolder(string path)

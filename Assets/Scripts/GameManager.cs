@@ -119,7 +119,9 @@ public class GameManager : MonoBehaviour
     // ================================================================== menü akışı (Hud çağırır)
     public void OpenLevelSelect() { Sfx.Play(Sfx.Click); SetState(GState.LevelSelect); }
     public void OpenMenu() { Sfx.Play(Sfx.Click); SetPaused(false); SetState(GState.Menu); }
-    public void FinishSplash() { if (State == GState.Splash) SetState(GState.Menu); }
+    public void FinishSplash() { SplashHold = false; if (State == GState.Splash) SetState(GState.Menu); }
+    public bool SplashHold;   // test/ekran görüntüsü için: açılış ekranı kendiliğinden kapanmasın
+    public void ShowSplash(bool hold = false) { SplashHold = hold; SetState(GState.Splash); }
 
     public void OpenShop()
     {

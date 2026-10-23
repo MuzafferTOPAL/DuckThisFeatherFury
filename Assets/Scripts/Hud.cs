@@ -526,29 +526,29 @@ public class Hud : MonoBehaviour
     readonly bool[] starPlayed = new bool[3];
 
     // ================================================================== AÇILIŞ (DuckThisGames)
+    Texture2D splashLogo;
     void DrawSplash(GameManager gm, GameArt art)
     {
         float t = gm.StateTime;
-        const float Dur = 2.8f;
+        float Dur = gm.SplashHold ? 9999f : 2.8f;
         if (t >= Dur) { gm.FinishSplash(); return; }
         float bgA = t > Dur - 0.4f ? (Dur - t) / 0.4f : 1f;
         float a = Mathf.Clamp01(t / 0.45f) * (t > Dur - 0.6f ? Mathf.Clamp01((Dur - 0.2f - t) / 0.4f) : 1f);
 
         var old = GUI.color;
-        GUI.color = new Color(0.08f, 0.06f, 0.11f, bgA);
+        GUI.color = new Color(1f, 1f, 1f, bgA);   // logonun zemini beyaz
         GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
 
-        // zıplayan, kanat çırpan ördek
-        var b = art.Bird(BirdType.Mallard);
-        var sp = Mathf.FloorToInt(Time.unscaledTime * 7f) % 2 == 0 ? b.up : b.down;
-        float bob = Mathf.Sin(Time.unscaledTime * 4f) * 10f;
-        GUI.color = new Color(1f, 1f, 1f, a);
-        SpriteTex(new Rect(vw / 2 - 150, 230 + bob, 300, 230), sp);
+        // DuckThisGames logosu: hafif büyüyerek belirir ve nefes alır gibi sallanır
+        if (splashLogo == null) splashLogo = Resources.Load<Texture2D>("Logo/duckthis_logo");
+        if (splashLogo != null)
+        {
+            float pop = t < 0.45f ? EaseBack(t / 0.45f) : 1f + Mathf.Sin((t - 0.45f) * 3f) * 0.015f;
+            float size = 860f * pop;
+            GUI.color = new Color(1f, 1f, 1f, a);
+            GUI.DrawTexture(Px(new Rect(vw / 2 - size / 2, RefH / 2 - size / 2, size, size)), splashLogo, ScaleMode.ScaleToFit);
+        }
         GUI.color = old;
-
-        Text(new Rect(0, 480, vw, 150), "DUCKTHIS", 150, Gold, TextAnchor.MiddleCenter, a, 9);
-        Text(new Rect(0, 610, vw, 90), "GAMES", 84, Cream, TextAnchor.MiddleCenter, a, 6);
-        Text(new Rect(0, 760, vw, 60), Loc.T("dev_by"), 44, new Color(0.75f, 0.72f, 0.8f), TextAnchor.MiddleCenter, a, 0);
 
         if (t > 0.5f && Event.current.type == EventType.MouseUp) { gm.FinishSplash(); Event.current.Use(); }
     }

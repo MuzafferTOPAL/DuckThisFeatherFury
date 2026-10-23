@@ -2,6 +2,13 @@
 
 ## 1.0
 
+### DuckThisGames branding
+
+- New DuckThisGames logo on the opening screen (white background, pop-in animation) and as the app icon
+  (legacy, round and adaptive Android icons).
+- Unity splash screen and "Made with Unity" logo turned off: the game opens straight on the DuckThisGames logo.
+
+
 ### Balance pass (playtested 2 × 1500 bot games)
 
 - Gentler transition into generated levels (L41–100), first level of each world and levels 17–19 lighter,

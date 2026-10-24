@@ -58,7 +58,7 @@ public static class LevelGen
         target = Mathf.Clamp(target, minMods, ds < 4f ? 2 : 5);
 
         // Gökdelen: zorluktan bağımsız olarak her bölümün 4., 11. ve 18. levelinde 3-8 katlı yüksek bir kule
-        int tall = (slot == 3 || slot == 10 || slot == 17) ? 3 + new System.Random(index * 31 + 7).Next(6) : 0;
+        int tall = (slot == 3 || slot == 10 || slot == 17) ? 3 + new System.Random(index * 31 + 7).Next(5) : 0;   // 3-7 kat
         if (tall > 0) cap = Mathf.Max(cap, 6);
 
         // gereken ördek sayısı sınırı aşıyorsa daha küçük bir kale kur (en kötü ihtimalle yalnızca kule)
@@ -90,7 +90,7 @@ public static class LevelGen
         bool icy = baseTheme == 2 || baseTheme == 5 || baseTheme == 6;
         c.iceP = icy ? 0.28f : 0.1f;
         c.stoneP = Mathf.Clamp(0.08f + 0.014f * d, 0.08f, 0.55f);
-        c.helmetP = Mathf.Clamp(0.02f + 0.017f * d, 0f, 0.6f);
+        c.helmetP = Mathf.Clamp(0.02f + 0.017f * d, 0f, 0.45f);   // test raporu: çok miğferli tilki duvar yapıyordu
         c.kitP = d < 5f ? 0.4f : d < 15f ? 0.2f : 0.08f;
         c.boss = slot == Levels.PerWorld - 1;
         c.R();   // dalga için ayrılan sayı (eski tohum sırası korunsun)
@@ -105,7 +105,7 @@ public static class LevelGen
             TallTower(c, x, tall);
             placed.Add(10);
             end = x + 2.4f;
-            x = end + 1.2f + c.R() * 0.8f;
+            x = end + 1.8f + c.R() * 0.6f;   // tabandaki TNT'ye yer kalsın
             m0 = 1;
         }
 
@@ -229,12 +229,14 @@ public static class LevelGen
                 break;
             case 7:   // piramit
                 {
-                    var m0 = c.d > 12f ? S : c.Mat();
-                    float a = l.Frame(m0, m0, x, x + 8f, -4f, 1.4f);
-                    c.PutFox(c.Fox(), x + 2f, -4f); c.PutFox(c.Fox(), x + 4f, -4f); c.PutFox(c.Fox(), x + 6f, -4f);
+                    // test raporu: taş piramit (6-7 tilki) duvar oluyordu → taban kirişi tahta, daha az tilki
+                    var m0 = c.d > 30f && c.R() < 0.5f ? S : W;
+                    float a = l.Frame(m0, W, x, x + 8f, -4f, 1.4f);
+                    c.PutFox(c.Fox(), x + 2.6f, -4f); c.PutFox(c.d < 20f ? K : c.Fox(), x + 5.4f, -4f);
                     var m1 = c.Mat();
+                    if (m1 == S) m1 = W;
                     float b = l.Frame(m1, m1, x + 1f, x + 7f, a, 1.4f);
-                    c.PutFox(c.Fox(), x + 3f, a); c.PutFox(c.Fox(), x + 5f, a);
+                    c.PutFox(c.Fox(), x + 4f, a);
                     var m2 = c.Mat();
                     float t = l.Frame(m2, m2, x + 2.3f, x + 5.7f, b, 1.3f);
                     c.PutFox(c.Fox(), x + 4f, b);
@@ -243,7 +245,7 @@ public static class LevelGen
                 break;
             case 8:   // sığınak (patron)
                 {
-                    float y = l.Frame(S, c.d > 8f ? S : W, x, x + 6f, -4f, 2f); c.stone += 2;
+                    float y = l.Frame(S, W, x, x + 6f, -4f, 2f); c.stone += 2;   // çatı tahta: patrona ulaşılabilsin
                     c.PutFox(c.boss ? B : HL, x + 3f, -4f);
                     for (int side = 0; side < 2; side++)
                     {
@@ -267,15 +269,16 @@ public static class LevelGen
         float y = -4f;
         for (int f = 0; f < floors; f++)
         {
+            // sağlam kule: alt yarı taş sütun, üst yarı tahta; kirişler tahta; üst katlar hafif (buz/taş yok)
             bool low = f < (floors + 1) / 2;
-            var cm = low ? (c.R() < 0.5f ? S : W) : c.Mat();
-            var bm = low ? W : c.Mat(true);
-            if (cm == S) c.stone++; else if (cm == W) c.wood++;
-            float t = c.l.Frame(cm, bm, x, x + 2.4f, y, 1.3f);
-            if (f % 2 == 0) c.PutFox(f == 0 ? c.Fox() : (c.R() < 0.5f ? K : c.Fox()), x + 1.2f, y);
+            var cm = low ? S : W;
+            if (cm == S) c.stone++; else c.wood++;
+            float t = c.l.Frame(cm, W, x, x + 2.4f, y, 1.25f);
+            if (f % 2 == 0) c.PutFox(f == 0 ? c.Fox() : K, x + 1.2f, y);
             y = t;
         }
-        c.PutFox(c.Fox(), x + 1.2f, y);
+        // çatı tilkisi yalnız alçak kulelerde (yüksek kulelerde sallanıp kendiliğinden düşüyordu)
+        if (floors <= 5) c.PutFox(K, x + 1.2f, y);
         if (c.R() < 0.35f) { c.l.Tnt(x + 3.2f, -4f); c.tnt++; }
         return y;
     }

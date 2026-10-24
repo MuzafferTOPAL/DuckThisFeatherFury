@@ -2,6 +2,17 @@
 
 ## 1.0
 
+### Fixes from test report v3
+
+- Hidden-fox fix tightened: the camera now shows 1.2 units more on the right, and a fox is eliminated as soon as
+  it passes maxX + 0.3 (or slides behind the slingshot), so a fox can never be alive but invisible.
+- Towers are 3–7 floors, with stone columns below and light wood above; no roof fox on very tall towers
+  (it used to wobble off before the first shot). Stability test now waits 8 s on tower levels: 500/500 stable.
+- Walls softened: lighter pyramid template (wood base, fewer foxes), wooden roof on boss bunkers, helmeted foxes
+  capped at 45%. World 3 bot win rate 32% → 52%, boss L60 0/9 → 2/3.
+- Bot test v3 (before these fixes): 62.6% wins overall, 0/3 levels 145 → 91. Report: `docs/balance/TEST_RAPORU_v3.md`.
+
+
 ### Fixes: hidden foxes, tall towers
 
 - **Fix:** a fox pushed off the right edge of the level (or below the ground) stayed alive off-screen, so the level

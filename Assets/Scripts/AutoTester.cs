@@ -69,7 +69,9 @@ public class AutoTester : MonoBehaviour
             yield return null;
             int foxes0 = gm.EnemiesLeft;
             int pieces0 = CountPieces();
-            yield return new WaitForSeconds(trials == 0 ? 2.5f : 4f);
+            // yüksek kuleli levellerde (4., 11., 18.) daha uzun bekle: geç devrilmeleri de yakala
+            bool tallSlot = i >= 40 && (i % Levels.PerWorld == 3 || i % Levels.PerWorld == 10 || i % Levels.PerWorld == 17);
+            yield return new WaitForSeconds(trials == 0 ? (tallSlot ? 8f : 2.5f) : 4f);
             int foxes1 = gm.EnemiesLeft;
             int pieces1 = CountPieces();
             string stab = (foxes1 == foxes0 && pieces1 == pieces0) ? "SAĞLAM" : $"SORUN (tilki {foxes0}->{foxes1}, blok {pieces0}->{pieces1})";

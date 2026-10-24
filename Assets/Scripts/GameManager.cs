@@ -313,7 +313,7 @@ public class GameManager : MonoBehaviour
         }
 
         Vector2 focus = new Vector2(Level.maxX - 4.5f, -1f);
-        rig.Configure(-11.5f, Level.maxX, focus, cameraIntro, LevelLoader.FieldTop);
+        rig.Configure(-11.5f, Level.maxX + 1.2f, focus, cameraIntro, LevelLoader.FieldTop);   // sağda pay: kenara itilen tilki hep görünür
     }
 
     static int Round(float v) => Mathf.RoundToInt(v / 500f) * 500;

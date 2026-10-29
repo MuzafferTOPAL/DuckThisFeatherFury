@@ -52,6 +52,15 @@ public static class LevelLoader
         FieldTop = GroundY;
         foreach (var p in def.pieces) FieldTop = Mathf.Max(FieldTop, p.center.y + p.size.y * 0.5f);
         foreach (var f in def.foxes) FieldTop = Mathf.Max(FieldTop, f.bottom.y + 1.2f);
+
+        // Sağ sınır duvarı (görünmez): yuvarlanan tilki ve bloklar oyun alanının dışına çıkamaz, hep ekranda kalır.
+        // Kamera sağda maxX + 1.2'ye kadar gösterdiği için duvarın yüzü (maxX + 0.25) her zaman görünür alanda.
+        var wall = new GameObject("SinirDuvari");
+        wall.transform.SetParent(levelRoot.transform, false);
+        wall.transform.position = new Vector3(def.maxX + 0.25f + 0.5f, GroundY + 15f, 0f);
+        var wc = wall.AddComponent<BoxCollider2D>();
+        wc.size = new Vector2(1f, 34f);
+        wc.sharedMaterial = PhysMats.Ground;
         EnemyCount = 0;
         PotentialScore = 0;
         blockMul = BlockHealthMult(def.index);

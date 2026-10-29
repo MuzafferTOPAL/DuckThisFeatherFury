@@ -2,6 +2,12 @@
 
 ## 1.0
 
+### Boundary wall
+
+- Invisible boundary wall on the right edge of every level: foxes and blocks can no longer roll out of the playfield,
+  they stop at the edge and stay on screen. 500/500 levels stable.
+
+
 ### Fixes from test report v3
 
 - Hidden-fox fix tightened: the camera now shows 1.2 units more on the right, and a fox is eliminated as soon as

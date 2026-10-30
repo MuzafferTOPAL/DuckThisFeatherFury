@@ -2,6 +2,20 @@
 
 ## 1.0
 
+### TNT rules, boundary wall, rolling foxes, walls from report v4
+
+- **TNT:** explodes when a duck hits it faster than 4 u/s, when a heavy & fast object hits it (speed × mass factor ≥ 7),
+  or from any nearby explosion (chain). Never from the ground, the boundary wall, or during the first 2.5 s while the
+  fort settles. A strong-but-not-enough hit makes it flash red.
+- **Boundary wall:** moved 1.6 units past the level edge; ducks fly through it, only foxes and blocks are stopped.
+  Camera shows 2.6 units past the edge so the wall area is always visible.
+- **Foxes roll less:** rolling resistance on the ground (round foxes stop after a short roll); flight unaffected.
+- Walls from test v4: roof beams are never stone, fewer stone shields, at most 7 foxes on normal levels, extra ducks for
+  helmeted foxes, late-game fox toughness capped, +1 duck on L35/L37. 500/500 stable, no TNT goes off by itself.
+- Test v4 (before these fixes): foxes never leave the map, HUD always matches visible foxes; 72.4% bot wins,
+  confirmed walls 62 → 33. Report: `docs/balance/TEST_RAPORU_v4.md`.
+
+
 ### Boundary wall
 
 - Invisible boundary wall on the right edge of every level: foxes and blocks can no longer roll out of the playfield,

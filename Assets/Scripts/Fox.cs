@@ -66,8 +66,26 @@ public class Fox : MonoBehaviour
     {
         destructible = GetComponent<Destructible>();
         destructible.OnDamaged += _ => { hurt = true; wobble = 1f; };
+        body = GetComponent<Rigidbody2D>();
+        body.angularDamping = 6f;   // yuvarlak gövde fazla yuvarlanmasın
         blinkTimer = Random.Range(1f, 4f);
         phase = Random.Range(0f, 10f);
+    }
+
+    Rigidbody2D body;
+
+    // Yuvarlanma direnci: yerde (dikey hız küçükken) yuvarlanan tilki hızla yavaşlayıp durur,
+    // böylece kaleden düşen tilki oyun alanının kenarına kadar kayıp gitmez. Havadaki uçuşu etkilemez.
+    void FixedUpdate()
+    {
+        if (body == null) return;
+        Vector2 v = body.linearVelocity;
+        if (Mathf.Abs(v.y) < 0.6f && Mathf.Abs(v.x) > 0.01f)
+        {
+            float k = Mathf.Clamp01(1f - 3.5f * Time.fixedDeltaTime);
+            body.linearVelocity = new Vector2(v.x * k, v.y);
+            body.angularVelocity *= k;
+        }
     }
 
     void Update()

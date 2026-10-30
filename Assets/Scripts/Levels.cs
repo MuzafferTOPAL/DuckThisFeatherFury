@@ -141,7 +141,7 @@ public static class Levels
                 }
                 // ilk bölüm (%1-%11 zorluk) çok rahat olsun: bir yedek yeşilbaş; 2. bölümde en az 4 ördek
                 // test raporu: L13 (Kale Duvarı), L18 (Piramit) ve L40 (patron) duvar oluyordu → birer ördek daha
-                if (index == 12 || index == 17 || index == 39)
+                if (index == 12 || index == 17 || index == 34 || index == 36 || index == 39)
                 {
                     var list = new List<BirdType>(l.birds) { avail.Contains(BirdType.Merganser) ? BirdType.Merganser : BirdType.Mallard };
                     l.birds = list.ToArray();

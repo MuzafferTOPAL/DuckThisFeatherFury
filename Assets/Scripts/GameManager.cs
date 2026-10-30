@@ -84,6 +84,7 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
         Application.targetFrameRate = 60;
+        Application.runInBackground = true;   // masaüstü/editör testlerinde pencere arkadayken de çalışsın
         QualitySettings.vSyncCount = 0;
         LimitResolution();
         Time.timeScale = 1f;
@@ -313,7 +314,7 @@ public class GameManager : MonoBehaviour
         }
 
         Vector2 focus = new Vector2(Level.maxX - 4.5f, -1f);
-        rig.Configure(-11.5f, Level.maxX + 1.2f, focus, cameraIntro, LevelLoader.FieldTop);   // sağda pay: kenara itilen tilki hep görünür
+        rig.Configure(-11.5f, Level.maxX + 2.6f, focus, cameraIntro, LevelLoader.FieldTop);   // sağda pay: kenara itilen tilki hep görünür
     }
 
     static int Round(float v) => Mathf.RoundToInt(v / 500f) * 500;

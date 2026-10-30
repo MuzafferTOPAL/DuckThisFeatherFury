@@ -23,7 +23,7 @@ public static class LevelGen
         {
             float r = R();
             BlockMaterial m = r < iceP ? I : r < iceP + stoneP ? S : W;
-            if (beam && m == S && R() < 0.5f) m = W;
+            if (beam && m == S) m = W;   // test raporu: taş tavanlı kulübe duvar oluyordu → çatı kirişi asla taş değil
             if (m == W) wood++; else if (m == S) stone++; else ice++;
             return m;
         }
@@ -136,6 +136,7 @@ public static class LevelGen
 
         c.l.maxX = Mathf.Max(10.5f, end + 1.7f);
         c.l.birds = PickDucks(c, avail, intro, cap, out need);
+        if (!c.boss && c.foxes > 7) need = 99;   // normal levelde en fazla 7 tilki: fazlaysa Make daha küçük kale kurar
         return c.l;
     }
 
@@ -188,7 +189,7 @@ public static class LevelGen
                 }
                 break;
             case 2:   // önünde duvar, arkasında çerçeve
-                l.Block(c.R() < 0.5f + c.d * 0.02f ? S : W, x + 0.5f, -4f, 1f, 2f);
+                l.Block(c.R() < Mathf.Min(0.55f, 0.3f + c.d * 0.01f) ? S : W, x + 0.5f, -4f, 1f, 2f);
                 {
                     var cm = c.Mat(); var bm = c.Mat(true);
                     float t = l.Frame(cm, bm, x + 1.4f, x + 3.8f, -4f, 1.4f);
@@ -308,7 +309,8 @@ public static class LevelGen
         if (c.d >= 26f) spare++;
         if (c.d >= 45f) spare++;
         // en az 4 ördek; az tilkili ama korunaklı levellerde tilki sayısı + 1 (L43/L99 gibi duvarlar olmasın)
-        need = Mathf.Max(Mathf.CeilToInt(c.foxes / 2.0f) + spare, Mathf.Min(c.foxes + 1, 5), 4);
+        int helmets = 0; foreach (var f in c.l.foxes) if (f.kind == HL || f.kind == B) helmets++;
+        need = Mathf.Max(Mathf.CeilToInt(c.foxes / 2.0f) + spare + helmets / 3, Mathf.Min(c.foxes + 1, 5), 4);
         int n = Mathf.Min(need, cap);
         var weights = new Dictionary<BirdType, float>();
         foreach (var t in avail)

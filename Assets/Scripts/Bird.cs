@@ -80,6 +80,7 @@ public class Bird : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+        IgnoreWall();
         rb.bodyType = RigidbodyType2D.Kinematic;
         if (col != null) col.enabled = false;
         blinkTimer = UnityEngine.Random.Range(1f, 3f);
@@ -114,8 +115,16 @@ public class Bird : MonoBehaviour
         if (dir.sqrMagnitude > 0.001f) aimDir = dir.normalized;
     }
 
+    // sınır duvarı ördekleri durdurmasın (yalnızca tilki ve blokları tutar)
+    void IgnoreWall()
+    {
+        var w = LevelLoader.BoundaryWall;
+        if (w != null && col != null) Physics2D.IgnoreCollision(col, w, true);
+    }
+
     public void Launch(Vector2 velocity, bool silent = false)
     {
+        IgnoreWall();
         rb.bodyType = RigidbodyType2D.Dynamic;
         if (col != null) col.enabled = true;
         rb.linearVelocity = velocity;

@@ -13,7 +13,8 @@ public static class LevelLoader
 
     public static int EnemyCount { get; private set; }
     public static float FieldMaxX { get; private set; } = 11f;   // oyun alanının sağ sınırı (bunu geçen tilki elenir)
-    public static float FieldTop { get; private set; } = 0f;     // en yüksek yapının tepesi (kamera yüksekliği için)
+    public static float FieldTop { get; private set; } = 0f;
+    public static Collider2D BoundaryWall { get; private set; }     // en yüksek yapının tepesi (kamera yüksekliği için)
     public static int PotentialScore { get; private set; }
 
     // Zorluk yüzdesi (oyuncuya gösterilen): level 1'de %1, level 15'te %15, level 100'de %75,
@@ -31,7 +32,7 @@ public static class LevelLoader
     public static int Tier(int index) => Mathf.Clamp(index / Levels.PerWorld, 0, Levels.WorldCount - 1);
     // L100 sonrası ek dayanıklılık: oyuncunun yükseltmeleri ve yeni ördekleri büyüdükçe zorluk düz kalmasın
     static float Late(int index) => Mathf.Max(0f, index - 100);
-    public static float FoxHealthMult(int index) => 1f + 0.02f * Difficulty(index) + 0.0015f * Late(index);
+    public static float FoxHealthMult(int index) => Mathf.Min(2.1f, 1f + 0.02f * Difficulty(index) + 0.001f * Late(index));   // test raporu: geç oyunda miğferli tilki fazla dayanıklıydı
     public static float BlockHealthMult(int index) => 1f + 0.01f * Difficulty(index) + 0.0006f * Late(index);
     static float blockMul = 1f;
 
@@ -56,11 +57,13 @@ public static class LevelLoader
         // Sağ sınır duvarı (görünmez): yuvarlanan tilki ve bloklar oyun alanının dışına çıkamaz, hep ekranda kalır.
         // Kamera sağda maxX + 1.2'ye kadar gösterdiği için duvarın yüzü (maxX + 0.25) her zaman görünür alanda.
         var wall = new GameObject("SinirDuvari");
+        // ördekler duvardan geçer (Bird duvarla çarpışmayı yok sayar); duvar yalnızca tilki ve blokları tutar
         wall.transform.SetParent(levelRoot.transform, false);
-        wall.transform.position = new Vector3(def.maxX + 0.25f + 0.5f, GroundY + 15f, 0f);
+        wall.transform.position = new Vector3(def.maxX + 1.6f + 0.5f, GroundY + 15f, 0f);
         var wc = wall.AddComponent<BoxCollider2D>();
         wc.size = new Vector2(1f, 34f);
         wc.sharedMaterial = PhysMats.Ground;
+        BoundaryWall = wc;
         EnemyCount = 0;
         PotentialScore = 0;
         blockMul = BlockHealthMult(def.index);

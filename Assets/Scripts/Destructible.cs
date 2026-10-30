@@ -23,6 +23,7 @@ public class Destructible : MonoBehaviour
     public event Action<float> OnDamaged;
 
     float spawnGrace = 0.8f;
+    float age;
     float chipCooldown;
     bool dead;
 
@@ -40,15 +41,55 @@ public class Destructible : MonoBehaviour
     void Update()
     {
         if (spawnGrace > 0f) spawnGrace -= Time.deltaTime;
+        age += Time.deltaTime;
         chipCooldown -= Time.deltaTime;
         if (!dead && (transform.position.y < -15f || Mathf.Abs(transform.position.x) > 70f)) Die(isEnemy);
         // Ekranın dışına itilen / zeminden düşen tilki elenmiş sayılır (yoksa görünmeyen bir tilki levelin bitmesini engelliyordu)
-        if (!dead && isEnemy && (transform.position.x > LevelLoader.FieldMaxX + 1.6f || transform.position.x < -10.5f || transform.position.y < LevelLoader.GroundY - 2.5f)) Die(true);
+        if (!dead && isEnemy && (transform.position.x > LevelLoader.FieldMaxX + 3f || transform.position.x < -10.5f || transform.position.y < LevelLoader.GroundY - 2.5f)) Die(true);
+    }
+
+    // ---- TNT kuralları
+    // Ördek belirli hızın üstünde çarparsa patlar; diğer cisimler (blok, kaya, tilki) ancak ağır ve hızlı
+    // çarparsa patlatır; zemin/sınır duvarı hiç patlatmaz; level başında kale otururken patlamaz.
+    // Patlamalar (zincirleme TNT, Kara Ördek, yumurta bombası) her zaman patlatır (TakeDamage yolu).
+    public const float TntBirdSpeed = 4f;       // ördek çarpma hızı eşiği
+    public const float TntObjectImpulse = 7f;   // diğer cisimler: hız x ağırlık çarpanı eşiği
+    const float TntSettleTime = 2.5f;
+    float tntWarn;                              // patlamayacak kadar hafif darbe: kısa kırmızı yanıp sönme
+
+    bool HandleTntCollision(Collision2D collision, float impact)
+    {
+        if (age < TntSettleTime) return true;                     // level başında kale otururken patlamaz
+        if (collision.rigidbody == null) return true;             // zemin, sınır duvarı: asla
+        var bird = collision.collider.GetComponentInParent<Bird>();
+        float power;
+        float limit;
+        if (bird != null) { power = impact; limit = TntBirdSpeed; }
+        else
+        {
+            float massFactor = Mathf.Clamp(Mathf.Sqrt(collision.rigidbody.mass / 2f), 0.4f, 1.8f);
+            power = impact * massFactor; limit = TntObjectImpulse;
+        }
+        if (power >= limit) Die(true);
+        else if (power >= limit * 0.4f) tntWarn = 0.35f;
+        return true;
+    }
+
+    void LateUpdate()
+    {
+        if (material != BlockMaterial.Tnt || tntWarn <= 0f) return;
+        tntWarn -= Time.deltaTime;
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr == null) return;
+        bool on = tntWarn > 0f && Mathf.FloorToInt(tntWarn * 20f) % 2 == 0;
+        sr.color = on ? new Color(1f, 0.45f, 0.35f) : Color.white;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (dead || spawnGrace > 0f) return;
+        if (dead) return;
+        if (material == BlockMaterial.Tnt) { HandleTntCollision(collision, collision.relativeVelocity.magnitude); return; }
+        if (spawnGrace > 0f) return;
         float impact = collision.relativeVelocity.magnitude;
         if (impact < minImpact) return;
 

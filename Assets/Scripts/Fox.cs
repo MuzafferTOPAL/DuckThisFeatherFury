@@ -67,7 +67,7 @@ public class Fox : MonoBehaviour
         destructible = GetComponent<Destructible>();
         destructible.OnDamaged += _ => { hurt = true; wobble = 1f; };
         body = GetComponent<Rigidbody2D>();
-        body.angularDamping = 6f;   // yuvarlak gövde fazla yuvarlanmasın
+        body.angularDamping = 3f;   // yuvarlak gövde fazla yuvarlanmasın
         blinkTimer = Random.Range(1f, 4f);
         phase = Random.Range(0f, 10f);
     }
@@ -82,7 +82,7 @@ public class Fox : MonoBehaviour
         Vector2 v = body.linearVelocity;
         if (Mathf.Abs(v.y) < 0.6f && Mathf.Abs(v.x) > 0.01f)
         {
-            float k = Mathf.Clamp01(1f - 3.5f * Time.fixedDeltaTime);
+            float k = Mathf.Clamp01(1f - 2.2f * Time.fixedDeltaTime);
             body.linearVelocity = new Vector2(v.x * k, v.y);
             body.angularVelocity *= k;
         }

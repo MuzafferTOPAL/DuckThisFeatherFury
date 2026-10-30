@@ -53,7 +53,7 @@ public class Destructible : MonoBehaviour
     // çarparsa patlatır; zemin/sınır duvarı hiç patlatmaz; level başında kale otururken patlamaz.
     // Patlamalar (zincirleme TNT, Kara Ördek, yumurta bombası) her zaman patlatır (TakeDamage yolu).
     public const float TntBirdSpeed = 4f;       // ördek çarpma hızı eşiği
-    public const float TntObjectImpulse = 7f;   // diğer cisimler: hız x ağırlık çarpanı eşiği
+    public const float TntObjectImpulse = 5f;   // test v5: 7 çok yüksekti, düşen taş/kaya patlatamıyordu   // diğer cisimler: hız x ağırlık çarpanı eşiği
     const float TntSettleTime = 2.5f;
     float tntWarn;                              // patlamayacak kadar hafif darbe: kısa kırmızı yanıp sönme
 

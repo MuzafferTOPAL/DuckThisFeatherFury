@@ -2,6 +2,16 @@
 
 ## 1.0
 
+### Fixes from test report v5
+
+- Test v5 confirmed: TNT never goes off at the start, duck hits and chain explosions work, ducks pass the boundary
+  wall, foxes stay visible (HUD matched the screen on ~150 shots), foxes stop rolling quickly.
+- TNT object threshold 7 → 5 so a falling stone or boulder can set it off.
+- Twin-tower bridge beam is always wood (cause of 10 of the 25 walls). Ducks ≥ foxes (max 7) on generated levels.
+- Softer rolling resistance so foxes still take damage in collapses.
+- Hand-made: wood roof beams on L25, L35, L37; +1 duck on L25, L28. Worlds 2–3 bot win 33/48% → 43/53%.
+
+
 ### TNT rules, boundary wall, rolling foxes, walls from report v4
 
 - **TNT:** explodes when a duck hits it faster than 4 u/s, when a heavy & fast object hits it (speed × mass factor ≥ 7),

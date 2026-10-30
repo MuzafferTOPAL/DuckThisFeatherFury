@@ -224,7 +224,7 @@ public static class LevelGen
                     int floors = c.d >= 12f && c.R() < 0.5f ? 2 : 1;
                     float t1 = Tower(c, x, floors, false);
                     Tower(c, x + 3.4f, floors, false);
-                    float y = l.Beam(c.d > 10f ? S : W, x, x + 5.8f, t1);
+                    float y = l.Beam(W, x, x + 5.8f, t1);   // test v5: taş köprü kirişi 10 duvarın nedeniydi
                     c.PutFox(c.Fox(), x + 2.9f, y);
                 }
                 break;
@@ -310,7 +310,7 @@ public static class LevelGen
         if (c.d >= 45f) spare++;
         // en az 4 ördek; az tilkili ama korunaklı levellerde tilki sayısı + 1 (L43/L99 gibi duvarlar olmasın)
         int helmets = 0; foreach (var f in c.l.foxes) if (f.kind == HL || f.kind == B) helmets++;
-        need = Mathf.Max(Mathf.CeilToInt(c.foxes / 2.0f) + spare + helmets / 3, Mathf.Min(c.foxes + 1, 5), 4);
+        need = Mathf.Max(Mathf.CeilToInt(c.foxes / 2.0f) + spare + helmets / 3, Mathf.Min(c.foxes + 1, 5), Mathf.Min(c.foxes, 7), 4);   // ördek ≥ tilki (en fazla 7)
         int n = Mathf.Min(need, cap);
         var weights = new Dictionary<BirdType, float>();
         foreach (var t in avail)

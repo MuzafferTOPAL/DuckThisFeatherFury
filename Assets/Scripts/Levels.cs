@@ -141,7 +141,7 @@ public static class Levels
                 }
                 // ilk bölüm (%1-%11 zorluk) çok rahat olsun: bir yedek yeşilbaş; 2. bölümde en az 4 ördek
                 // test raporu: L13 (Kale Duvarı), L18 (Piramit) ve L40 (patron) duvar oluyordu → birer ördek daha
-                if (index == 12 || index == 17 || index == 34 || index == 36 || index == 39)
+                if (index == 12 || index == 17 || index == 24 || index == 27 || index == 34 || index == 36 || index == 39)
                 {
                     var list = new List<BirdType>(l.birds) { avail.Contains(BirdType.Merganser) ? BirdType.Merganser : BirdType.Mallard };
                     l.birds = list.ToArray();
@@ -369,7 +369,7 @@ public static class Levels
         l.Nest(7f, y);
 
         l = L(4, "FİRAVUN TİLKİ", 13f, new[] { G, C, SH, SP });
-        y = l.Frame(S, S, 3f, 11f, -4f, 2f);
+        y = l.Frame(S, W, 3f, 11f, -4f, 2f);
         l.Fox(B, 7f, -4f); l.Tnt(4.3f, -4f); l.Tnt(9.7f, -4f); l.Fox(K, 5.6f, -4f); l.Fox(K, 8.4f, -4f);
         a = l.Frame(S, W, 4f, 10f, y, 1.4f); l.Fox(HL, 5.5f, y); l.Fox(HL, 8.5f, y); l.Cube(I, 7f, y, 1f);
         t = l.Frame(W, W, 5.8f, 8.2f, a, 1.3f); l.Fox(N, 7f, a); l.Nest(7f, t);
@@ -442,7 +442,7 @@ public static class Levels
         l.Fox(B, 7f, -4f); l.Cube(I, 4.3f, -4f, 1f); l.Cube(I, 9.7f, -4f, 1f); l.Fox(K, 5.5f, -4f); l.Fox(K, 8.5f, -4f);
         l.Frame(W, W, 3.4f, 6.8f, y, 1.4f); l.Fox(HL, 5.1f, y);
         a = l.Frame(W, W, 7.2f, 10.6f, y, 1.4f); l.Fox(HL, 8.9f, y);
-        b = l.Beam(S, 3.4f, 10.6f, a);
+        b = l.Beam(W, 3.4f, 10.6f, a);
         t = l.Frame(I, I, 5.6f, 8.4f, b, 1.3f); l.Fox(N, 7f, b); l.Fox(N, 7f, t);
 
         // ======================= DÜNYA 8: ATEŞ DAĞI  (kademe 4, final)
@@ -453,7 +453,7 @@ public static class Levels
 
         l = L(7, "OBSİDYEN KULE", 11.5f, new[] { G, C, G, SH });
         a = l.Frame(S, S, 5f, 7.4f, -4f, 1.4f); l.Fox(HL, 6.2f, -4f);
-        b = l.Frame(S, S, 5f, 7.4f, a, 1.4f); l.Fox(HL, 6.2f, a);
+        b = l.Frame(W, W, 5f, 7.4f, a, 1.4f); l.Fox(HL, 6.2f, a);
         t = l.Frame(S, W, 5f, 7.4f, b, 1.3f); l.Fox(N, 6.2f, b); l.Fox(N, 6.2f, t);
         y = l.Cube(S, 3.6f, -4f, 1.2f); l.Fox(K, 3.6f, y);
         y = l.Cube(S, 8.8f, -4f, 1.2f); l.Fox(K, 8.8f, y);
